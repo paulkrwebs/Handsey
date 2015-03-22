@@ -7,11 +7,8 @@ using System.Threading.Tasks;
 
 namespace Handsey
 {
-    internal interface IApplicaton
+    public interface IHandleSearch
     {
-        void Init();
-
-        void Invoke<THandle>()
-            where THandle : IHandles;
+        IList<ClassInfo> Perform<THandler>(IList<ClassInfo> listToSearch);
     }
 }

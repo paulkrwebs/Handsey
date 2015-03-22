@@ -16,9 +16,11 @@ namespace Handsey
             _classes = classes;
         }
 
-        public void Find<THandler>()
+        public void Find<THandler>(IHandleSearch search)
             where THandler : IHandles
         {
+            // this is going to be a double dispatch method :)
+            // search.Perform<THandler>(_classes);
             throw new NotImplementedException("TODO");
         }
     }

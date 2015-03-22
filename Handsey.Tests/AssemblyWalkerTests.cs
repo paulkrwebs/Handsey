@@ -16,9 +16,10 @@ namespace Handsey.Tests
         {
             IAssemblyWalker assemblyWalker = new AssemblyWalker();
 
+            // this should really search for another interface so the names don't keep changing in the assert
             Type[] types = assemblyWalker.ListAllTypes(typeof(IHandles), new[] { "Handsey.Tests" });
 
-            Assert.That(types.Count(), Is.EqualTo(3));
+            Assert.That(types.Count(), Is.EqualTo(8));
         }
 
         public void ListAllTypes_TypeAndStringArray_NoImplementingTypesToArrayEmpty()
@@ -32,8 +33,8 @@ namespace Handsey.Tests
 
         #region // stub objects
 
-        interface INoHandle { } 
+        private interface INoHandle { }
 
-        #endregion
+        #endregion // stub objects
     }
 }

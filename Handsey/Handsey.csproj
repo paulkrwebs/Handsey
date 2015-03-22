@@ -50,6 +50,7 @@
     <Compile Include="Handlers\IHandles.cs" />
     <Compile Include="IHandlerFactory.cs" />
     <Compile Include="IIocContainer.cs" />
+    <Compile Include="IHandleSearch.cs" />
     <Compile Include="TypeInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

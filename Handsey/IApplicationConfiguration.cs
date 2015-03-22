@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace Handsey
 {
-    interface IApplicationConfiguration
+    internal interface IApplicationConfiguration
     {
+        Type BaseType { get; set; }
+
+        string[] AssemblyNamePrefixes { get; set; }
     }
 }
