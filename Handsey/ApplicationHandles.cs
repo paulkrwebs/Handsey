@@ -20,7 +20,7 @@ namespace Handsey
             where THandler : IHandles
         {
             // this is going to be a double dispatch method :)
-            // search.Perform<THandler>(_classes);
+            // search.Execute<THandler>(_classes);
             throw new NotImplementedException("TODO");
         }
     }
