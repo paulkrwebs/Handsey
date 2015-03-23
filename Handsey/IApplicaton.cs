@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Handsey
 {
-    internal interface IApplicaton
+    public interface IApplicaton
     {
         void Init();
 

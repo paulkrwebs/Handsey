@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Handsey
 {
-    internal interface IApplicationConfiguration
+    public interface IApplicationConfiguration
     {
         Type BaseType { get; set; }
 
