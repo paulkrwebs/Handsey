@@ -33,7 +33,7 @@ namespace Handsey.Tests
         {
             Type type = typeof(EmployeeHandler);
 
-            ClassInfo classInfo = _handlerFactory.Create(typeof(IHandles), type);
+            TypeInfo classInfo = _handlerFactory.Create(typeof(IHandles), type);
 
             Assert.That(classInfo, Is.Not.Null);
             Assert.That(classInfo.IsConstructed, Is.True);
@@ -48,7 +48,7 @@ namespace Handsey.Tests
         {
             Type type = typeof(EmployeeHandler<Employee>);
 
-            ClassInfo classInfo = _handlerFactory.Create(typeof(IHandles), type);
+            TypeInfo classInfo = _handlerFactory.Create(typeof(IHandles), type);
 
             Assert.That(classInfo, Is.Not.Null);
             Assert.That(classInfo.IsConstructed, Is.True);
@@ -63,7 +63,7 @@ namespace Handsey.Tests
         {
             Type type = typeof(EmployeeHandler<>);
 
-            ClassInfo classInfo = _handlerFactory.Create(typeof(IHandles), type);
+            TypeInfo classInfo = _handlerFactory.Create(typeof(IHandles), type);
 
             Assert.That(classInfo, Is.Not.Null);
             Assert.That(classInfo.IsConstructed, Is.False);
@@ -78,12 +78,12 @@ namespace Handsey.Tests
         {
             Type type = typeof(DeveloperMappingHandler<,>);
 
-            ClassInfo classInfo = _handlerFactory.Create(typeof(IHandles), type);
+            TypeInfo classInfo = _handlerFactory.Create(typeof(IHandles), type);
 
             Assert.That(classInfo, Is.Not.Null);
             Assert.That(classInfo.GenericParameterInfo.Count(), Is.EqualTo(2));
-            Assert.That(classInfo.GenericParameterInfo[0].FilteredContraints, Is.Empty);
-            Assert.That(classInfo.GenericParameterInfo[1].FilteredContraints, Is.Empty);
+            Assert.That(classInfo.GenericParameterInfo["TFrom"].FilteredContraints, Is.Empty);
+            Assert.That(classInfo.GenericParameterInfo["TTo"].FilteredContraints, Is.Empty);
         }
 
         [Test]
@@ -91,14 +91,14 @@ namespace Handsey.Tests
         {
             Type type = typeof(TechnicalEmployeeMappingHandler<,>);
 
-            ClassInfo classInfo = _handlerFactory.Create(typeof(IHandles), type);
+            TypeInfo classInfo = _handlerFactory.Create(typeof(IHandles), type);
 
             Assert.That(classInfo, Is.Not.Null);
             Assert.That(classInfo.GenericParameterInfo.Count(), Is.EqualTo(2));
-            Assert.That(classInfo.GenericParameterInfo[0].FilteredContraints.Count(), Is.EqualTo(1));
-            Assert.That(classInfo.GenericParameterInfo[1].FilteredContraints.Count(), Is.EqualTo(1));
-            Assert.That(classInfo.GenericParameterInfo[1].FilteredContraints[0].IsConstructed, Is.True);
-            Assert.That(classInfo.GenericParameterInfo[1].FilteredContraints[0].IsGenericType, Is.False);
+            Assert.That(classInfo.GenericParameterInfo["TFrom"].FilteredContraints.Count(), Is.EqualTo(1));
+            Assert.That(classInfo.GenericParameterInfo["TTo"].FilteredContraints.Count(), Is.EqualTo(1));
+            Assert.That(classInfo.GenericParameterInfo["TTo"].FilteredContraints[0].IsConstructed, Is.True);
+            Assert.That(classInfo.GenericParameterInfo["TTo"].FilteredContraints[0].IsGenericType, Is.False);
         }
 
         [Test]
@@ -106,14 +106,14 @@ namespace Handsey.Tests
         {
             Type type = typeof(EmployeePayloadMappingHandler<>);
 
-            ClassInfo classInfo = _handlerFactory.Create(typeof(IHandles), type);
+            TypeInfo classInfo = _handlerFactory.Create(typeof(IHandles), type);
 
             Assert.That(classInfo, Is.Not.Null);
             Assert.That(classInfo.GenericParameterInfo.Count(), Is.EqualTo(1));
-            Assert.That(classInfo.GenericParameterInfo[0].FilteredContraints.Count(), Is.EqualTo(1));
-            Assert.That(classInfo.GenericParameterInfo[0].FilteredContraints[0].IsConstructed, Is.True);
-            Assert.That(classInfo.GenericParameterInfo[0].FilteredContraints[0].IsGenericType, Is.True);
-            Assert.That(classInfo.GenericParameterInfo[0].FilteredContraints[0].GenericParameterInfo.Count(), Is.EqualTo(2));
+            Assert.That(classInfo.GenericParameterInfo["TPayLoad"].FilteredContraints.Count(), Is.EqualTo(1));
+            Assert.That(classInfo.GenericParameterInfo["TPayLoad"].FilteredContraints[0].IsConstructed, Is.True);
+            Assert.That(classInfo.GenericParameterInfo["TPayLoad"].FilteredContraints[0].IsGenericType, Is.True);
+            Assert.That(classInfo.GenericParameterInfo["TPayLoad"].FilteredContraints[0].GenericParameterInfo.Count(), Is.EqualTo(2));
         }
 
         [Test]
@@ -121,14 +121,31 @@ namespace Handsey.Tests
         {
             Type type = typeof(EmployeePayloadMappingHandler<,,>);
 
-            ClassInfo classInfo = _handlerFactory.Create(typeof(IHandles), type);
+            TypeInfo classInfo = _handlerFactory.Create(typeof(IHandles), type);
 
             Assert.That(classInfo, Is.Not.Null);
             Assert.That(classInfo.GenericParameterInfo.Count(), Is.EqualTo(3));
-            Assert.That(classInfo.GenericParameterInfo[0].FilteredContraints.Count(), Is.EqualTo(1));
-            Assert.That(classInfo.GenericParameterInfo[0].FilteredContraints[0].GenericParameterInfo.Count(), Is.EqualTo(2));
-            Assert.That(classInfo.GenericParameterInfo[0].FilteredContraints[0].GenericParameterInfo[0].FilteredContraints.Count(), Is.EqualTo(1));
-            Assert.That(classInfo.GenericParameterInfo[0].FilteredContraints[0].GenericParameterInfo[1].FilteredContraints.Count(), Is.EqualTo(1));
+            Assert.That(classInfo.GenericParameterInfo["TPayLoad"].FilteredContraints.Count(), Is.EqualTo(1));
+            Assert.That(classInfo.GenericParameterInfo["TPayLoad"].FilteredContraints[0].GenericParameterInfo.Count(), Is.EqualTo(2));
+            Assert.That(classInfo.GenericParameterInfo["TPayLoad"].FilteredContraints[0].GenericParameterInfo["TFrom"].FilteredContraints.Count(), Is.EqualTo(1));
+            Assert.That(classInfo.GenericParameterInfo["TPayLoad"].FilteredContraints[0].GenericParameterInfo["TTo"].FilteredContraints.Count(), Is.EqualTo(1));
+        }
+
+        [Test]
+        public void Create_TypeAndType_ClassInfoForConcreteTypeWithGenericConstructedInterface()
+        {
+            Type type = typeof(TechnicalArchitectMappingHandler);
+
+            TypeInfo classInfo = _handlerFactory.Create(typeof(IHandles), type);
+
+            Assert.That(classInfo, Is.Not.Null);
+            Assert.That(classInfo.GenericParameterInfo.Count(), Is.EqualTo(0));
+            Assert.That(classInfo.FilteredInterfaces.Count(), Is.EqualTo(2));
+            Assert.That(classInfo.FilteredInterfaces[1].IsConstructed, Is.True);
+            Assert.That(classInfo.FilteredInterfaces[1].IsGenericType, Is.True);
+            Assert.That(classInfo.FilteredInterfaces[1].GenericParameterInfo.ContainsKey("TechnicalArchitect"), Is.True);
+            Assert.That(classInfo.FilteredInterfaces[1].GenericParameterInfo.ContainsKey("TechnicalArchitectViewModel"), Is.True);
+            Assert.That(classInfo.FilteredInterfaces[1].FilteredInterfaces.Count(), Is.EqualTo(0), "Interfaces don't have interface, they appear on the class implementing the interface");
         }
 
         [Test]

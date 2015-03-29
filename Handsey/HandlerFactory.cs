@@ -10,65 +10,80 @@ namespace Handsey
     {
         private Type _handlerBaseType;
 
-        public IList<ClassInfo> Create(Type[] types)
+        public IList<TypeInfo> Create(Type[] types)
         {
             return Create(_handlerBaseType, types);
         }
 
-        public IList<ClassInfo> Create(Type handlerBaseType, Type[] types)
+        public IList<TypeInfo> Create(Type handlerBaseType, Type[] types)
         {
             _handlerBaseType = handlerBaseType;
 
             if (types == null)
-                return new List<ClassInfo>();
+                return new List<TypeInfo>();
 
             if (types.Count() == 0)
-                return new List<ClassInfo>();
+                return new List<TypeInfo>();
 
             return types.Select(t => Create(t)).ToList();
         }
 
-        private ClassInfo Create(Type type)
+        private TypeInfo Create(Type type)
         {
             return Create(_handlerBaseType, type);
         }
 
-        public ClassInfo Create(Type handlerBaseType, Type type)
+        public TypeInfo Create(Type handlerBaseType, Type type)
         {
             _handlerBaseType = handlerBaseType;
 
             if (type == null)
                 return null;
 
-            return CreateClassInfo(type);
+            return CreateTypeInfo(type);
         }
 
-        private ClassInfo CreateClassInfo(Type type)
+        private TypeInfo CreateTypeInfo(Type type)
         {
-            return new ClassInfo()
-            {
-                IsGenericType = type.IsGenericType,
-                IsConstructed = IsConstructed(type),
-                Type = type,
-                FilteredInterfaces = CreateTypeInfo(ListFilteredInterfaces(type)),
-                GenericParameterInfo = CreateGenerictParameters(type)
-            };
+            return CreateTypeInfo<TypeInfo>(type);
         }
 
         private TypeInfo[] CreateTypeInfo(Type[] types)
         {
             return types
                 .Where(t => t != _handlerBaseType)
-                .Select(t => CreateClassInfo(t))
+                .Select(t => CreateTypeInfo(t))
                 .ToArray();
         }
 
-        private GenericParameterInfo[] CreateGenerictParameters(Type type)
+        private TTypeInfo CreateTypeInfo<TTypeInfo>(Type type)
+            where TTypeInfo : TypeInfo, new()
+        {
+            return new TTypeInfo()
+            {
+                IsGenericType = type.IsGenericType,
+                IsConstructed = IsConstructed(type),
+                Type = type,
+                GenericParameterInfo = CreateGenerictParameters(type),
+                FilteredInterfaces = CreateTypeInfo(ListFilteredInterfaces(type))
+            };
+        }
+
+        private IDictionary<string, GenericParameterInfo> CreateGenerictParameters(Type type)
         {
             return type.GetGenericArguments()
                 .Where(t => t.IsClass)
-                .Select(t => new GenericParameterInfo() { Type = t, Name = t.Name, FilteredContraints = Create(ListFilteredContraints(t)) })
-                .ToArray();
+                .Select(t => CreateGenericParameterInfo(t))
+                .ToDictionary(g => g.Name, g => g);
+        }
+
+        private GenericParameterInfo CreateGenericParameterInfo(Type type)
+        {
+            GenericParameterInfo genericParameterInfo = CreateTypeInfo<GenericParameterInfo>(type);
+            genericParameterInfo.Name = type.Name;
+            genericParameterInfo.FilteredContraints = Create(ListFilteredContraints(type));
+
+            return genericParameterInfo;
         }
 
         private static bool IsConstructed(Type type)

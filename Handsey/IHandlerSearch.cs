@@ -9,6 +9,6 @@ namespace Handsey
 {
     public interface IHandlerSearch
     {
-        IList<ClassInfo> Execute<THandler>(IList<ClassInfo> listToSearch);
+        IList<TypeInfo> Execute<THandler>(IList<TypeInfo> listToSearch);
     }
 }

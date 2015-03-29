@@ -46,12 +46,11 @@
     <Compile Include="IAssemblyWalker.cs" />
     <Compile Include="IApplicationConfiguration.cs" />
     <Compile Include="GenericParameterInfo.cs" />
-    <Compile Include="ClassInfo.cs" />
+    <Compile Include="TypeInfo.cs" />
     <Compile Include="Handlers\IHandles.cs" />
     <Compile Include="IHandlerFactory.cs" />
     <Compile Include="IIocContainer.cs" />
     <Compile Include="IHandlerSearch.cs" />
-    <Compile Include="TypeInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -5,15 +5,13 @@ using System.Text;
 
 namespace Handsey
 {
-    public class GenericParameterInfo
+    public class GenericParameterInfo : TypeInfo
     {
         /// <summary>
         /// Generic constraints filtered to include class and interface constrains
         /// </summary>
-        public IList<ClassInfo> FilteredContraints { get; set; }
+        public IList<TypeInfo> FilteredContraints { get; set; }
 
         public string Name { get; set; }
-
-        public Type Type { get; set; }
     }
 }
