@@ -32,10 +32,10 @@ namespace Handsey
             if (Null(a, b, a.Type, b.Type))
                 return false;
 
-            return IsMatchAgainstRules(a, b);
+            return IsMatchedAgainstRules(a, b);
         }
 
-        private static bool IsMatchAgainstRules(TypeInfo a, TypeInfo b)
+        private static bool IsMatchedAgainstRules(TypeInfo a, TypeInfo b)
         {
             foreach (ValidMatch validMatch in _validMAtches)
             {
@@ -56,15 +56,6 @@ namespace Handsey
             return a.Type.IsAssignableFrom(b.Type);
         }
 
-        private static bool DoesHaveEnoughtGenericParametersToConstruct(TypeInfo a, TypeInfo b)
-        {
-            if (Null(a.GenericParametersInfo, b.GenericParametersInfo))
-                return false;
-
-            return b.GenericParametersInfo
-                .Where(v => !v.IsConstructed).Count() == a.GenericParametersInfo.Count;
-        }
-
         private static bool IsGenericParamtersAssignable(TypeInfo a, TypeInfo b)
         {
             if (!DoesHaveEnoughtGenericParametersToConstruct(a, b))
@@ -81,6 +72,15 @@ namespace Handsey
             }
 
             return true;
+        }
+
+        private static bool DoesHaveEnoughtGenericParametersToConstruct(TypeInfo a, TypeInfo b)
+        {
+            if (Null(a.GenericParametersInfo, b.GenericParametersInfo))
+                return false;
+
+            return b.GenericParametersInfo
+                .Where(v => !v.IsConstructed).Count() == a.GenericParametersInfo.Count;
         }
 
         private static bool IsGenericParameterAssignable(GenericParameterInfo aGenParam, GenericParameterInfo bGenParam)

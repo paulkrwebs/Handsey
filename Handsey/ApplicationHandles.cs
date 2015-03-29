@@ -16,7 +16,7 @@ namespace Handsey
             _classes = classes;
         }
 
-        public IList<ClassInfo> Find<THandler>(IHandlerSearch search)
+        public IList<TypeInfo> Find<THandler>(IHandlerSearch search)
             where THandler : IHandles
         {
             // this is going to be a double dispatch method :)
