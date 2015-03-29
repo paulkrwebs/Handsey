@@ -39,7 +39,7 @@ namespace Handsey.Tests
             Assert.That(classInfo.IsConstructed, Is.True);
             Assert.That(classInfo.IsGenericType, Is.False);
             Assert.That(classInfo.Type.FullName, Is.EqualTo(type.FullName));
-            Assert.That(classInfo.GenericParameterInfo, Is.Empty);
+            Assert.That(classInfo.GenericParametersInfo, Is.Empty);
             Assert.That(classInfo.FilteredInterfaces.Count(), Is.EqualTo(1));
         }
 
@@ -54,7 +54,7 @@ namespace Handsey.Tests
             Assert.That(classInfo.IsConstructed, Is.True);
             Assert.That(classInfo.IsGenericType, Is.True);
             Assert.That(classInfo.Type.FullName, Is.EqualTo(type.FullName));
-            Assert.That(classInfo.GenericParameterInfo.Count(), Is.EqualTo(1));
+            Assert.That(classInfo.GenericParametersInfo.Count(), Is.EqualTo(1));
             Assert.That(classInfo.FilteredInterfaces.Count(), Is.EqualTo(1));
         }
 
@@ -69,7 +69,7 @@ namespace Handsey.Tests
             Assert.That(classInfo.IsConstructed, Is.False);
             Assert.That(classInfo.IsGenericType, Is.True);
             Assert.That(classInfo.Type.FullName, Is.EqualTo(type.FullName));
-            Assert.That(classInfo.GenericParameterInfo.Count(), Is.EqualTo(1));
+            Assert.That(classInfo.GenericParametersInfo.Count(), Is.EqualTo(1));
             Assert.That(classInfo.FilteredInterfaces.Count(), Is.EqualTo(1));
         }
 
@@ -81,9 +81,9 @@ namespace Handsey.Tests
             TypeInfo classInfo = _handlerFactory.Create(typeof(IHandles), type);
 
             Assert.That(classInfo, Is.Not.Null);
-            Assert.That(classInfo.GenericParameterInfo.Count(), Is.EqualTo(2));
-            Assert.That(classInfo.GenericParameterInfo["TFrom"].FilteredContraints, Is.Empty);
-            Assert.That(classInfo.GenericParameterInfo["TTo"].FilteredContraints, Is.Empty);
+            Assert.That(classInfo.GenericParametersInfo.Count(), Is.EqualTo(2));
+            Assert.That(classInfo.GenericParametersInfo[0].FilteredContraints, Is.Empty);
+            Assert.That(classInfo.GenericParametersInfo[1].FilteredContraints, Is.Empty);
         }
 
         [Test]
@@ -94,11 +94,11 @@ namespace Handsey.Tests
             TypeInfo classInfo = _handlerFactory.Create(typeof(IHandles), type);
 
             Assert.That(classInfo, Is.Not.Null);
-            Assert.That(classInfo.GenericParameterInfo.Count(), Is.EqualTo(2));
-            Assert.That(classInfo.GenericParameterInfo["TFrom"].FilteredContraints.Count(), Is.EqualTo(1));
-            Assert.That(classInfo.GenericParameterInfo["TTo"].FilteredContraints.Count(), Is.EqualTo(1));
-            Assert.That(classInfo.GenericParameterInfo["TTo"].FilteredContraints[0].IsConstructed, Is.True);
-            Assert.That(classInfo.GenericParameterInfo["TTo"].FilteredContraints[0].IsGenericType, Is.False);
+            Assert.That(classInfo.GenericParametersInfo.Count(), Is.EqualTo(2));
+            Assert.That(classInfo.GenericParametersInfo[0].FilteredContraints.Count(), Is.EqualTo(1));
+            Assert.That(classInfo.GenericParametersInfo[1].FilteredContraints.Count(), Is.EqualTo(1));
+            Assert.That(classInfo.GenericParametersInfo[1].FilteredContraints[0].IsConstructed, Is.True);
+            Assert.That(classInfo.GenericParametersInfo[1].FilteredContraints[0].IsGenericType, Is.False);
         }
 
         [Test]
@@ -109,11 +109,11 @@ namespace Handsey.Tests
             TypeInfo classInfo = _handlerFactory.Create(typeof(IHandles), type);
 
             Assert.That(classInfo, Is.Not.Null);
-            Assert.That(classInfo.GenericParameterInfo.Count(), Is.EqualTo(1));
-            Assert.That(classInfo.GenericParameterInfo["TPayLoad"].FilteredContraints.Count(), Is.EqualTo(1));
-            Assert.That(classInfo.GenericParameterInfo["TPayLoad"].FilteredContraints[0].IsConstructed, Is.True);
-            Assert.That(classInfo.GenericParameterInfo["TPayLoad"].FilteredContraints[0].IsGenericType, Is.True);
-            Assert.That(classInfo.GenericParameterInfo["TPayLoad"].FilteredContraints[0].GenericParameterInfo.Count(), Is.EqualTo(2));
+            Assert.That(classInfo.GenericParametersInfo.Count(), Is.EqualTo(1));
+            Assert.That(classInfo.GenericParametersInfo[0].FilteredContraints.Count(), Is.EqualTo(1));
+            Assert.That(classInfo.GenericParametersInfo[0].FilteredContraints[0].IsConstructed, Is.True);
+            Assert.That(classInfo.GenericParametersInfo[0].FilteredContraints[0].IsGenericType, Is.True);
+            Assert.That(classInfo.GenericParametersInfo[0].FilteredContraints[0].GenericParametersInfo.Count(), Is.EqualTo(2));
         }
 
         [Test]
@@ -124,11 +124,11 @@ namespace Handsey.Tests
             TypeInfo classInfo = _handlerFactory.Create(typeof(IHandles), type);
 
             Assert.That(classInfo, Is.Not.Null);
-            Assert.That(classInfo.GenericParameterInfo.Count(), Is.EqualTo(3));
-            Assert.That(classInfo.GenericParameterInfo["TPayLoad"].FilteredContraints.Count(), Is.EqualTo(1));
-            Assert.That(classInfo.GenericParameterInfo["TPayLoad"].FilteredContraints[0].GenericParameterInfo.Count(), Is.EqualTo(2));
-            Assert.That(classInfo.GenericParameterInfo["TPayLoad"].FilteredContraints[0].GenericParameterInfo["TFrom"].FilteredContraints.Count(), Is.EqualTo(1));
-            Assert.That(classInfo.GenericParameterInfo["TPayLoad"].FilteredContraints[0].GenericParameterInfo["TTo"].FilteredContraints.Count(), Is.EqualTo(1));
+            Assert.That(classInfo.GenericParametersInfo.Count(), Is.EqualTo(3));
+            Assert.That(classInfo.GenericParametersInfo[0].FilteredContraints.Count(), Is.EqualTo(1));
+            Assert.That(classInfo.GenericParametersInfo[0].FilteredContraints[0].GenericParametersInfo.Count(), Is.EqualTo(2));
+            Assert.That(classInfo.GenericParametersInfo[0].FilteredContraints[0].GenericParametersInfo[0].FilteredContraints.Count(), Is.EqualTo(1));
+            Assert.That(classInfo.GenericParametersInfo[0].FilteredContraints[0].GenericParametersInfo[1].FilteredContraints.Count(), Is.EqualTo(1));
         }
 
         [Test]
@@ -139,12 +139,12 @@ namespace Handsey.Tests
             TypeInfo classInfo = _handlerFactory.Create(typeof(IHandles), type);
 
             Assert.That(classInfo, Is.Not.Null);
-            Assert.That(classInfo.GenericParameterInfo.Count(), Is.EqualTo(0));
+            Assert.That(classInfo.GenericParametersInfo.Count(), Is.EqualTo(0));
             Assert.That(classInfo.FilteredInterfaces.Count(), Is.EqualTo(2));
             Assert.That(classInfo.FilteredInterfaces[1].IsConstructed, Is.True);
             Assert.That(classInfo.FilteredInterfaces[1].IsGenericType, Is.True);
-            Assert.That(classInfo.FilteredInterfaces[1].GenericParameterInfo.ContainsKey("TechnicalArchitect"), Is.True);
-            Assert.That(classInfo.FilteredInterfaces[1].GenericParameterInfo.ContainsKey("TechnicalArchitectViewModel"), Is.True);
+            Assert.That(classInfo.FilteredInterfaces[1].GenericParametersInfo[0].Name, Is.EqualTo("TechnicalArchitect"));
+            Assert.That(classInfo.FilteredInterfaces[1].GenericParametersInfo[1].Name, Is.EqualTo("TechnicalArchitectViewModel"));
             Assert.That(classInfo.FilteredInterfaces[1].FilteredInterfaces.Count(), Is.EqualTo(0), "Interfaces don't have interface, they appear on the class implementing the interface");
         }
 

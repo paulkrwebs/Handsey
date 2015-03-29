@@ -42,6 +42,7 @@
     <Compile Include="ApplicationHandles.cs" />
     <Compile Include="AssemblyWalker.cs" />
     <Compile Include="HandlerFactory.cs" />
+    <Compile Include="HandlerSearch.cs" />
     <Compile Include="IApplicaton.cs" />
     <Compile Include="IAssemblyWalker.cs" />
     <Compile Include="IApplicationConfiguration.cs" />

@@ -7,7 +7,7 @@ namespace Handsey
 {
     public class TypeInfo
     {
-        public IDictionary<string, GenericParameterInfo> GenericParameterInfo { get; set; }
+        public IList<GenericParameterInfo> GenericParametersInfo { get; set; }
 
         public bool IsConstructed { get; set; }
 

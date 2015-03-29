@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyWalkerTests.cs" />
+    <Compile Include="HandlerSearchTests.cs" />
     <Compile Include="TestObjects\Handlers\DeveloperMappingHandler.cs" />
     <Compile Include="TestObjects\Handlers\EmployeeHandler.cs" />
     <Compile Include="TestObjects\Handlers\EmployeeMappingHandler.cs" />
