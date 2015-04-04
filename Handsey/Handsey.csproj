@@ -47,6 +47,7 @@
     <Compile Include="IAssemblyWalker.cs" />
     <Compile Include="IApplicationConfiguration.cs" />
     <Compile Include="GenericParameterInfo.cs" />
+    <Compile Include="IConstructedTypeFactory.cs" />
     <Compile Include="TypeInfo.cs" />
     <Compile Include="Handlers\IHandles.cs" />
     <Compile Include="IHandlerFactory.cs" />
