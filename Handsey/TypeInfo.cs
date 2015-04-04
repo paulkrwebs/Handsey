@@ -15,6 +15,8 @@ namespace Handsey
 
         public Type Type { get; set; }
 
+        public Type GenericTypeDefinition { get; set; }
+
         public TypeInfo[] FilteredInterfaces { get; set; }
     }
 }

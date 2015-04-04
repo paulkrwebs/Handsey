@@ -64,12 +64,21 @@ namespace Handsey
                 IsGenericType = type.IsGenericType,
                 IsConstructed = IsConstructed(type),
                 Type = type,
-                GenericParametersInfo = CreateGenerictParameters(type),
+                GenericTypeDefinition = CreateGenericTypeDefinition(type),
+                GenericParametersInfo = CreateGenericParameters(type),
                 FilteredInterfaces = CreateTypeInfo(ListFilteredInterfaces(type))
             };
         }
 
-        private IList<GenericParameterInfo> CreateGenerictParameters(Type type)
+        private Type CreateGenericTypeDefinition(Type type)
+        {
+            if (!type.IsGenericType)
+                return null;
+
+            return type.GetGenericTypeDefinition();
+        }
+
+        private IList<GenericParameterInfo> CreateGenericParameters(Type type)
         {
             return type.GetGenericArguments()
                 .Where(t => t.IsClass)

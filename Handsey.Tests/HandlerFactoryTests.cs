@@ -54,6 +54,7 @@ namespace Handsey.Tests
             Assert.That(classInfo.IsConstructed, Is.True);
             Assert.That(classInfo.IsGenericType, Is.True);
             Assert.That(classInfo.Type.FullName, Is.EqualTo(type.FullName));
+            Assert.That(classInfo.GenericTypeDefinition.FullName, Is.EqualTo(type.GetGenericTypeDefinition().FullName));
             Assert.That(classInfo.GenericParametersInfo.Count(), Is.EqualTo(1));
             Assert.That(classInfo.FilteredInterfaces.Count(), Is.EqualTo(1));
         }
@@ -69,6 +70,7 @@ namespace Handsey.Tests
             Assert.That(classInfo.IsConstructed, Is.False);
             Assert.That(classInfo.IsGenericType, Is.True);
             Assert.That(classInfo.Type.FullName, Is.EqualTo(type.FullName));
+            Assert.That(classInfo.GenericTypeDefinition.FullName, Is.EqualTo(type.GetGenericTypeDefinition().FullName));
             Assert.That(classInfo.GenericParametersInfo.Count(), Is.EqualTo(1));
             Assert.That(classInfo.FilteredInterfaces.Count(), Is.EqualTo(1));
         }

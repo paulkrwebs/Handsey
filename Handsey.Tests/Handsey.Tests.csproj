@@ -50,11 +50,13 @@
     <Compile Include="TestObjects\Handlers\DeveloperMappingHandler.cs" />
     <Compile Include="TestObjects\Handlers\EmployeeHandler.cs" />
     <Compile Include="TestObjects\Handlers\EmployeeMappingHandler.cs" />
+    <Compile Include="TestObjects\Handlers\EmployeePayloadHandler.cs" />
     <Compile Include="TestObjects\Handlers\EmployeePayloadMappingHandler.cs" />
     <Compile Include="TestObjects\Handlers\IOneToOneDataPopulation.cs" />
     <Compile Include="TestObjects\Handlers\TechnicalArchitectMappingHandler.cs" />
     <Compile Include="TestObjects\Handlers\TechnicalEmployeeMappingHandler.cs" />
     <Compile Include="HandlerFactoryTests.cs" />
+    <Compile Include="TestObjects\Models\Payload.cs" />
     <Compile Include="TestObjects\Models\Developer.cs" />
     <Compile Include="TestObjects\Models\Employee.cs" />
     <Compile Include="TestObjects\Models\IFoo.cs" />
