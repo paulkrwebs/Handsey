@@ -14,6 +14,71 @@ namespace Handsey.Tests
     public class HandlerSearchTests
     {
         [Test]
+        public void Execute_TypeInfoAndListOfTypeInfo_ArgumentsNullSoEmptyListReturned()
+        {
+            IHandlerSearch search = new HandlerSearch();
+            IList<TypeInfo> results = search.Execute(null, null).ToList();
+
+            Assert.That(results.Count, Is.EqualTo(0));
+        }
+
+        [Test]
+        public void Execute_TypeInfoAndListOfTypeInfo_CorrectHandlerMAtchedInList()
+        {
+            TypeInfo a = new TypeInfo()
+            {
+                GenericParametersInfo = CreateGenericParameters<Payload<Developer, DeveloperViewModel>, Developer, DeveloperViewModel>(),
+                Type = typeof(EmployeePayloadHandler<Payload<Developer>, Developer, DeveloperViewModel>)
+            };
+
+            TypeInfo notMatched1 = new TypeInfo()
+            {
+                GenericParametersInfo = CreateGenericParametersWithConstraints(typeof(MapperPayload<,>), typeof(Developer), typeof(DeveloperViewModel)),
+                Type = typeof(EmployeePayloadMappingHandler<,,>)
+            };
+
+            TypeInfo matched1 = new TypeInfo()
+            {
+                GenericParametersInfo = CreateGenericParametersWithConstraints(typeof(Payload<,>), typeof(Developer), typeof(DeveloperViewModel)),
+                Type = typeof(EmployeePayloadMappingHandler<,,>)
+            };
+
+            TypeInfo matched2 = new TypeInfo()
+            {
+                GenericParametersInfo = CreateGenericParametersWithConstraints(typeof(Payload<,>), typeof(Employee), typeof(EmployeeViewModel)),
+                Type = typeof(EmployeePayloadMappingHandler<,,>)
+            };
+
+            IHandlerSearch search = new HandlerSearch();
+            IList<TypeInfo> results = search.Execute(a, new List<TypeInfo>() { notMatched1, matched1, matched2 }).ToList();
+
+            Assert.That(results.Count, Is.EqualTo(2));
+            Assert.That(results[0], Is.EqualTo(matched1));
+            Assert.That(results[1], Is.EqualTo(matched2));
+        }
+
+        [Test]
+        public void Execute_TypeInfoAndListOfTypeInfo_NoHandlersMatchedSoEmptyListReturned()
+        {
+            TypeInfo a = new TypeInfo()
+            {
+                GenericParametersInfo = CreateGenericParameter<Developer>(),
+                Type = typeof(EmployeeHandler<Developer>)
+            };
+
+            TypeInfo notMatched1 = new TypeInfo()
+            {
+                GenericParametersInfo = CreateGenericParametersWithConstraints(typeof(MapperPayload<,>), typeof(Developer), typeof(DeveloperViewModel)),
+                Type = typeof(EmployeePayloadMappingHandler<,,>)
+            };
+
+            IHandlerSearch search = new HandlerSearch();
+            IList<TypeInfo> results = search.Execute(a, new List<TypeInfo>() { notMatched1 }).ToList();
+
+            Assert.That(results.Count, Is.EqualTo(0));
+        }
+
+        [Test]
         public void Compare_TypeInfoAndTypeInfo_NullCheck()
         {
             TypeInfo a = new TypeInfo()
