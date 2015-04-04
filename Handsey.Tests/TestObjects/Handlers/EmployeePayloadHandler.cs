@@ -20,7 +20,7 @@ namespace Handsey.Tests.TestObjects.Handlers
     }
 
     public class EmployeePayloadHandler<TPayload, TData1, TData2> : IHandles<TPayload>
-        where TPayload : Payload<TData1>
+        where TPayload : Payload<TData1, TData2>
         where TData1 : Employee
         where TData2 : EmployeeViewModel
     {

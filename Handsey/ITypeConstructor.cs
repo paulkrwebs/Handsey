@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Handsey
 {
-    public interface IConstructedTypeFactory
+    public interface ITypeConstructor
     {
-        Type Create(TypeInfo typeInfo);
+        Type Create(TypeInfo constructedFrom, TypeInfo toBeConstructued);
     }
 }

@@ -22,5 +22,14 @@ namespace Handsey.Utilities
         {
             return obj == null;
         }
+
+        public static void ThowIfNull<TException>(object obj, Func<TException> factory)
+            where TException : Exception, new()
+        {
+            if (obj == null)
+            {
+                throw factory();
+            }
+        }
     }
 }

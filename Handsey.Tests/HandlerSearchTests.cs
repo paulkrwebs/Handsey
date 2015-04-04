@@ -28,7 +28,7 @@ namespace Handsey.Tests
             TypeInfo a = new TypeInfo()
             {
                 GenericParametersInfo = CreateGenericParameters<Payload<Developer, DeveloperViewModel>, Developer, DeveloperViewModel>(),
-                Type = typeof(EmployeePayloadHandler<Payload<Developer>, Developer, DeveloperViewModel>)
+                Type = typeof(EmployeePayloadHandler<Payload<Developer, DeveloperViewModel>, Developer, DeveloperViewModel>)
             };
 
             TypeInfo notMatched1 = new TypeInfo()
@@ -320,7 +320,7 @@ namespace Handsey.Tests
             TypeInfo a = new TypeInfo()
             {
                 GenericParametersInfo = CreateGenericParameters<Payload<Developer, DeveloperViewModel>, Developer, DeveloperViewModel>(),
-                Type = typeof(EmployeePayloadHandler<Payload<Developer>, Developer, DeveloperViewModel>)
+                Type = typeof(EmployeePayloadHandler<Payload<Developer, DeveloperViewModel>, Developer, DeveloperViewModel>)
             };
 
             TypeInfo b = new TypeInfo()

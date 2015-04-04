@@ -45,7 +45,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ApplicationHandlesTest.cs" />
     <Compile Include="AssemblyWalkerTests.cs" />
+    <Compile Include="TypeConstructorTests.cs" />
     <Compile Include="HandlerSearchTests.cs" />
     <Compile Include="TestObjects\Handlers\DeveloperMappingHandler.cs" />
     <Compile Include="TestObjects\Handlers\EmployeeHandler.cs" />

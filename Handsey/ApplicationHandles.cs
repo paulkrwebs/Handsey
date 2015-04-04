@@ -1,4 +1,5 @@
 ﻿using Handsey.Handlers;
+using Handsey.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,19 +10,22 @@ namespace Handsey
 {
     public class ApplicationHandles
     {
-        private readonly IList<TypeInfo> _classes;
+        private readonly IList<TypeInfo> _handles;
+        private readonly IHandlerFactory _handlerFactory;
 
-        public ApplicationHandles(IList<TypeInfo> classes)
+        public ApplicationHandles(IList<TypeInfo> handles)
         {
-            _classes = classes;
+            NullCheck.ThowIfNull<ArgumentNullException>(handles, () => new ArgumentNullException("Handles parameter cannot be null"));
+
+            _handles = handles;
         }
 
-        public IList<TypeInfo> Find<THandler>(IHandlerSearch search)
-            where THandler : IHandles
+        public IEnumerable<TypeInfo> Find(TypeInfo toSearchFor, IHandlerSearch search)
         {
+            NullCheck.ThowIfNull<ArgumentNullException>(search, () => new ArgumentNullException("Search parameter cannot be null"));
+
             // this is going to be a double dispatch method :)
-            // search.Execute<THandler>(_classes);
-            throw new NotImplementedException("TODO");
+            return search.Execute(toSearchFor, _handles);
         }
     }
 }
