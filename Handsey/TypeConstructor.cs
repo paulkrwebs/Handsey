@@ -9,6 +9,18 @@ namespace Handsey
 {
     public class TypeConstructor : ITypeConstructor
     {
+        public IEnumerable<Type> Create(TypeInfo constructedFrom, IList<TypeInfo> toBeConstructued)
+        {
+            NullCheck.ThowIfNull<ArgumentNullException>(constructedFrom, () => new ArgumentNullException("constructedFrom parameter cannot be null"));
+            NullCheck.ThowIfNull<ArgumentNullException>(toBeConstructued, () => new ArgumentNullException("toBeConstructued parameter cannot be null"));
+            NullCheck.ThowIfNull<ArgumentNullException>(() => new ArgumentNullException("toBeConstructued must have a type"), toBeConstructued.Select(x => x.Type).ToArray());
+
+            foreach (TypeInfo typeInfo in toBeConstructued)
+            {
+                yield return Create(constructedFrom, typeInfo);
+            }
+        }
+
         public Type Create(TypeInfo constructedFrom, TypeInfo toBeConstructued)
         {
             NullCheck.ThowIfNull<ArgumentNullException>(constructedFrom, () => new ArgumentNullException("constructedFrom parameter cannot be null"));

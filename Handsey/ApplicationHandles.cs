@@ -20,9 +20,16 @@ namespace Handsey
             _handles = handles;
         }
 
-        public IEnumerable<TypeInfo> Find(TypeInfo toSearchFor, IHandlerSearch search)
+        public virtual bool PreviouslyAttemptedToFind(TypeInfo toSearchFor)
+        {
+            throw new NotFiniteNumberException("TODO Look up from thread safe list");
+        }
+
+        public virtual IEnumerable<TypeInfo> Find(TypeInfo toSearchFor, IHandlerSearch search)
         {
             NullCheck.ThowIfNull<ArgumentNullException>(search, () => new ArgumentNullException("Search parameter cannot be null"));
+
+            // TODO Add toSearchFor to thread safe collection so we can remember we have already searched for this type
 
             // this is going to be a double dispatch method :)
             return search.Execute(toSearchFor, _handles);

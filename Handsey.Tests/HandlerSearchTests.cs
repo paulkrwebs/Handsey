@@ -334,7 +334,7 @@ namespace Handsey.Tests
             Assert.That(search.Compare(a, b), Is.False);
         }
 
-        #region // Helpers
+        #region // Helpers MOVE TO UTILITIES
 
         private IList<GenericParameterInfo> CreateGenericParameterWithConstraints<TParam1>()
         {
@@ -445,6 +445,6 @@ namespace Handsey.Tests
             };
         }
 
-        #endregion // Helpers
+        #endregion // Helpers MOVE TO UTILITIES
     }
 }

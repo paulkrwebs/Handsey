@@ -31,5 +31,17 @@ namespace Handsey.Utilities
                 throw factory();
             }
         }
+
+        public static void ThowIfNull<TException>(Func<TException> factory, params object[] objs)
+            where TException : Exception, new()
+        {
+            foreach (object obj in objs)
+            {
+                if (obj == null)
+                {
+                    throw factory();
+                }
+            }
+        }
     }
 }

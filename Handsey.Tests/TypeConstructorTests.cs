@@ -14,11 +14,52 @@ namespace Handsey.Tests
     public class TypeConstructorTests
     {
         [Test]
+        public void Create_TypeInfoAndTypeInfoAsList_NullPassedInSoArgumentExceptionThrown()
+        {
+            ITypeConstructor factory = new TypeConstructor();
+
+            Assert.That(() => factory.Create(new TypeInfo(), null as IList<TypeInfo>).ToList(), Throws.Exception.TypeOf<ArgumentNullException>());
+            Assert.That(() => factory.Create(null, new List<TypeInfo>()).ToList(), Throws.Exception.TypeOf<ArgumentNullException>());
+            Assert.That(() => factory.Create(new TypeInfo(), new List<TypeInfo>() { new TypeInfo() }).ToList(), Throws.Exception.TypeOf<ArgumentNullException>());
+        }
+
+        [Test]
+        public void Create_TypeInfoAndTypeInfoAsList_AllTypesInListConstructed()
+        {
+            TypeInfo constructedFrom = new TypeInfo()
+            {
+                GenericParametersInfo = CreateGenericParameters<Developer, DeveloperViewModel>()
+            };
+
+            TypeInfo typeToBeConstructed1 = new TypeInfo()
+            {
+                IsConstructed = false,
+                IsGenericType = true,
+                Type = typeof(EmployeeMappingHandler<,>),
+                GenericParametersInfo = CreateGenericParametersWithConstraints<Employee, EmployeeViewModel>()
+            };
+
+            TypeInfo typeToBeConstructed2 = new TypeInfo()
+            {
+                IsConstructed = false,
+                IsGenericType = true,
+                Type = typeof(DeveloperMappingHandler<,>),
+                GenericParametersInfo = CreateGenericParametersWithConstraints<Developer, DeveloperViewModel>()
+            };
+
+            ITypeConstructor factory = new TypeConstructor();
+            IList<Type> constructedTypes = factory.Create(constructedFrom, new List<TypeInfo>() { typeToBeConstructed1, typeToBeConstructed2 }).ToList();
+
+            Assert.That(constructedTypes[0], Is.EqualTo(typeof(EmployeeMappingHandler<Developer, DeveloperViewModel>)));
+            Assert.That(constructedTypes[1], Is.EqualTo(typeof(DeveloperMappingHandler<Developer, DeveloperViewModel>)));
+        }
+
+        [Test]
         public void Create_TypeInfoAndTypeInfo_NullPassedInSoArgumentExceptionThrown()
         {
             ITypeConstructor factory = new TypeConstructor();
 
-            Assert.That(() => factory.Create(new TypeInfo(), null), Throws.Exception.TypeOf<ArgumentNullException>());
+            Assert.That(() => factory.Create(new TypeInfo(), null as TypeInfo), Throws.Exception.TypeOf<ArgumentNullException>());
             Assert.That(() => factory.Create(null, new TypeInfo()), Throws.Exception.TypeOf<ArgumentNullException>());
             Assert.That(() => factory.Create(new TypeInfo(), new TypeInfo()), Throws.Exception.TypeOf<ArgumentNullException>());
         }
@@ -95,7 +136,7 @@ namespace Handsey.Tests
             Assert.That(factory.Create(constructedFrom, typeToBeConstructed), Is.EqualTo(typeof(EmployeePayloadHandler<Payload<Developer, DeveloperViewModel>, Developer, DeveloperViewModel>)));
         }
 
-        #region // Helpers
+        #region // Helpers MOVE TO UTILITIES
 
         private IList<GenericParameterInfo> CreateGenericParameterWithConstraints<TParam1>()
         {
@@ -206,6 +247,6 @@ namespace Handsey.Tests
             };
         }
 
-        #endregion // Helpers
+        #endregion // Helpers MOVE TO UTILITIES
     }
 }
