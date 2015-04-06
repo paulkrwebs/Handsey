@@ -23,7 +23,7 @@ namespace Handsey.Utilities
             return obj == null;
         }
 
-        public static void ThowIfNull<TException>(object obj, Func<TException> factory)
+        public static void ThrowIfNull<TException>(object obj, Func<TException> factory)
             where TException : Exception, new()
         {
             if (obj == null)
@@ -32,7 +32,7 @@ namespace Handsey.Utilities
             }
         }
 
-        public static void ThowIfNull<TException>(Func<TException> factory, params object[] objs)
+        public static void ThrowIfNull<TException>(Func<TException> factory, params object[] objs)
             where TException : Exception, new()
         {
             foreach (object obj in objs)

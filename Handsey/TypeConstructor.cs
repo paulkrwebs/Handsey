@@ -11,9 +11,9 @@ namespace Handsey
     {
         public IEnumerable<Type> Create(TypeInfo constructedFrom, IList<TypeInfo> toBeConstructued)
         {
-            NullCheck.ThowIfNull<ArgumentNullException>(constructedFrom, () => new ArgumentNullException("constructedFrom parameter cannot be null"));
-            NullCheck.ThowIfNull<ArgumentNullException>(toBeConstructued, () => new ArgumentNullException("toBeConstructued parameter cannot be null"));
-            NullCheck.ThowIfNull<ArgumentNullException>(() => new ArgumentNullException("toBeConstructued must have a type"), toBeConstructued.Select(x => x.Type).ToArray());
+            NullCheck.ThrowIfNull<ArgumentNullException>(constructedFrom, () => new ArgumentNullException("constructedFrom parameter cannot be null"));
+            NullCheck.ThrowIfNull<ArgumentNullException>(toBeConstructued, () => new ArgumentNullException("toBeConstructued parameter cannot be null"));
+            NullCheck.ThrowIfNull<ArgumentNullException>(() => new ArgumentNullException("toBeConstructued must have a type"), toBeConstructued.Select(x => x.Type).ToArray());
 
             foreach (TypeInfo typeInfo in toBeConstructued)
             {
@@ -23,9 +23,9 @@ namespace Handsey
 
         public Type Create(TypeInfo constructedFrom, TypeInfo toBeConstructued)
         {
-            NullCheck.ThowIfNull<ArgumentNullException>(constructedFrom, () => new ArgumentNullException("constructedFrom parameter cannot be null"));
-            NullCheck.ThowIfNull<ArgumentNullException>(toBeConstructued, () => new ArgumentNullException("toBeConstructued parameter cannot be null"));
-            NullCheck.ThowIfNull<ArgumentNullException>(toBeConstructued.Type, () => new ArgumentNullException("toBeConstructued must have a type"));
+            NullCheck.ThrowIfNull<ArgumentNullException>(constructedFrom, () => new ArgumentNullException("constructedFrom parameter cannot be null"));
+            NullCheck.ThrowIfNull<ArgumentNullException>(toBeConstructued, () => new ArgumentNullException("toBeConstructued parameter cannot be null"));
+            NullCheck.ThrowIfNull<ArgumentNullException>(toBeConstructued.Type, () => new ArgumentNullException("toBeConstructued must have a type"));
 
             if (toBeConstructued.IsConstructed)
                 return toBeConstructued.Type;
@@ -35,7 +35,7 @@ namespace Handsey
 
         private Type ConstructType(TypeInfo constructedFrom, TypeInfo typeInfo)
         {
-            NullCheck.ThowIfNull<ArgumentException>(constructedFrom.GenericParametersInfo, () => new ArgumentException("GenericParametersInfo cannot be null"));
+            NullCheck.ThrowIfNull<ArgumentException>(constructedFrom.GenericParametersInfo, () => new ArgumentException("GenericParametersInfo cannot be null"));
             CheckGenericParameterCountMatches(constructedFrom.GenericParametersInfo, typeInfo.GenericParametersInfo);
 
             return typeInfo.Type.MakeGenericType(CreateTypeArray(constructedFrom));
