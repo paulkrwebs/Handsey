@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace Handsey
 {
-    public interface IHandlerResolver
+    public interface IApplicationHandlersFactory
     {
-        bool ResolveAll<TType>();
-
-        bool Register<TType>(IList<Type> types);
+        ApplicationHandlers Create(IList<HandlerInfo> handlers);
     }
 }

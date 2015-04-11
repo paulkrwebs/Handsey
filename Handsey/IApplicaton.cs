@@ -9,7 +9,11 @@ namespace Handsey
 {
     public interface IApplicaton
     {
-        void Init();
+        IApplicationConfiguration ApplicationConfiguration { get; set; }
+
+        ApplicationHandlers ApplicationHandlers { get; }
+
+        void Initialise();
 
         void Invoke<THandle>(Action<THandle> trigger)
             where THandle : IHandles;

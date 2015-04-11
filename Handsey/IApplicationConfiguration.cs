@@ -8,6 +8,8 @@ namespace Handsey
 {
     public interface IApplicationConfiguration
     {
+        IIocContainer IocConatainer { get; set; }
+
         Type BaseType { get; set; }
 
         string[] AssemblyNamePrefixes { get; set; }

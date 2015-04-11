@@ -39,7 +39,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ApplicationHandles.cs" />
+    <Compile Include="ApplicationHandlers.cs" />
+    <Compile Include="ApplicationHandlersFactory.cs" />
+    <Compile Include="IApplicationHandlersFactory.cs" />
     <Compile Include="AssemblyWalker.cs" />
     <Compile Include="Attributes\HandlerAttribute.cs" />
     <Compile Include="Attributes\HandlesAfter.cs" />
@@ -47,7 +49,7 @@
     <Compile Include="Attributes\HandlesLast.cs" />
     <Compile Include="ExecutionOrder.cs" />
     <Compile Include="HandlerInfo.cs" />
-    <Compile Include="IHandlerResolver.cs" />
+    <Compile Include="Application.cs" />
     <Compile Include="IHandlersSort.cs" />
     <Compile Include="HandlersSort.cs" />
     <Compile Include="TypeConstructor.cs" />

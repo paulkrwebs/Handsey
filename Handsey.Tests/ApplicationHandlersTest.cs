@@ -10,12 +10,12 @@ using System.Threading.Tasks;
 namespace Handsey.Tests
 {
     [TestFixture]
-    public class ApplicationHandlesTest
+    public class ApplicationHandlersTest
     {
         [Test]
         public void Find_HandlerInfoAndHandlerSearch_SearchClassesAreNullSoExceptionThrown()
         {
-            Assert.That(() => new ApplicationHandles(null), Throws.Exception.TypeOf<ArgumentNullException>());
+            Assert.That(() => new ApplicationHandlers(null), Throws.Exception.TypeOf<ArgumentNullException>());
         }
 
         [Test]
@@ -23,7 +23,7 @@ namespace Handsey.Tests
         {
             List<HandlerInfo> handles = new List<HandlerInfo>();
             Mock<IHandlerSearch> handlerSearch = new Mock<IHandlerSearch>();
-            ApplicationHandles applicationHandles = new ApplicationHandles(handles);
+            ApplicationHandlers applicationHandles = new ApplicationHandlers(handles);
 
             Assert.That(() => applicationHandles.Find(null, handlerSearch.Object), Throws.Exception.TypeOf<ArgumentNullException>(), "Type to search for must have a type");
             Assert.That(() => applicationHandles.Find(new HandlerInfo(), handlerSearch.Object), Throws.Exception.TypeOf<ArgumentNullException>(), "Type to search for must have a type");
@@ -35,7 +35,7 @@ namespace Handsey.Tests
         {
             List<HandlerInfo> handles = new List<HandlerInfo>();
             Mock<IHandlerSearch> handlerSearch = new Mock<IHandlerSearch>();
-            ApplicationHandles applicationHandles = new ApplicationHandles(handles);
+            ApplicationHandlers applicationHandles = new ApplicationHandlers(handles);
 
             applicationHandles.Find(new HandlerInfo() { Type = this.GetType() }, handlerSearch.Object);
 
@@ -47,7 +47,7 @@ namespace Handsey.Tests
         {
             List<HandlerInfo> handles = new List<HandlerInfo>();
             Mock<IHandlerSearch> handlerSearch = new Mock<IHandlerSearch>();
-            ApplicationHandles applicationHandles = new ApplicationHandles(handles);
+            ApplicationHandlers applicationHandles = new ApplicationHandlers(handles);
 
             applicationHandles.Find(new HandlerInfo() { Type = this.GetType() }, handlerSearch.Object);
 
@@ -59,7 +59,7 @@ namespace Handsey.Tests
         {
             List<HandlerInfo> handles = new List<HandlerInfo>();
             Mock<IHandlerSearch> handlerSearch = new Mock<IHandlerSearch>();
-            ApplicationHandles applicationHandles = new ApplicationHandles(handles);
+            ApplicationHandlers applicationHandles = new ApplicationHandlers(handles);
 
             Assert.That(() => applicationHandles.PreviouslyAttemptedToFind(null), Throws.Exception.TypeOf<ArgumentNullException>(), "Must provide a type info with a type");
             Assert.That(() => applicationHandles.PreviouslyAttemptedToFind(new HandlerInfo()), Throws.Exception.TypeOf<ArgumentNullException>(), "Must provide a type info with a type");
@@ -70,7 +70,7 @@ namespace Handsey.Tests
         {
             List<HandlerInfo> handles = new List<HandlerInfo>();
             Mock<IHandlerSearch> handlerSearch = new Mock<IHandlerSearch>();
-            ApplicationHandles applicationHandles = new ApplicationHandles(handles);
+            ApplicationHandlers applicationHandles = new ApplicationHandlers(handles);
 
             applicationHandles.Find(new HandlerInfo() { Type = typeof(string) }, handlerSearch.Object);
 
@@ -82,7 +82,7 @@ namespace Handsey.Tests
         {
             List<HandlerInfo> handles = new List<HandlerInfo>();
             Mock<IHandlerSearch> handlerSearch = new Mock<IHandlerSearch>();
-            ApplicationHandles applicationHandles = new ApplicationHandles(handles);
+            ApplicationHandlers applicationHandles = new ApplicationHandlers(handles);
 
             applicationHandles.Find(new HandlerInfo() { Type = typeof(int) }, handlerSearch.Object);
 
