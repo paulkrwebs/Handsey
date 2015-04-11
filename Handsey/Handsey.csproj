@@ -48,6 +48,8 @@
     <Compile Include="ExecutionOrder.cs" />
     <Compile Include="HandlerInfo.cs" />
     <Compile Include="IHandlerResolver.cs" />
+    <Compile Include="IHandlersSort.cs" />
+    <Compile Include="HandlersSort.cs" />
     <Compile Include="TypeConstructor.cs" />
     <Compile Include="HandlerFactory.cs" />
     <Compile Include="HandlerSearch.cs" />

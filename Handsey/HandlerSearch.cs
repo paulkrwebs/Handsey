@@ -1,5 +1,6 @@
 ﻿using Handsey.Utilities;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,18 +10,16 @@ namespace Handsey
 {
     public class HandlerSearch : IHandlerSearch
     {
-        private static readonly IList<ValidMatch> _validMAtches;
+        private static readonly ConcurrentQueue<ValidMatch> _validMAtches;
 
         private delegate bool ValidMatch(TypeInfo a, TypeInfo b);
 
         static HandlerSearch()
         {
-            _validMAtches = new List<ValidMatch>()
-            {
-                ExactMatch,
-                Assignable,
-                GenericParamtersAssignable
-            };
+            _validMAtches = new ConcurrentQueue<ValidMatch>();
+            _validMAtches.Enqueue(ExactMatch);
+            _validMAtches.Enqueue(Assignable);
+            _validMAtches.Enqueue(GenericParamtersAssignable);
         }
 
         public IEnumerable<HandlerInfo> Execute(HandlerInfo toMatch, IList<HandlerInfo> listToSearch)

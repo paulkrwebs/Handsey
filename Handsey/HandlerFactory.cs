@@ -12,11 +12,6 @@ namespace Handsey
     {
         private Type _handlerBaseType;
 
-        public IList<HandlerInfo> Create(Type[] types)
-        {
-            return Create(_handlerBaseType, types);
-        }
-
         public IList<HandlerInfo> Create(Type handlerBaseType, Type[] types)
         {
             _handlerBaseType = handlerBaseType;
