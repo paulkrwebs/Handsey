@@ -23,19 +23,19 @@ namespace Handsey
             };
         }
 
-        public IEnumerable<TypeInfo> Execute(TypeInfo toMatch, IList<TypeInfo> listToSearch)
+        public IEnumerable<HandlerInfo> Execute(HandlerInfo toMatch, IList<HandlerInfo> listToSearch)
         {
             if (PerformCheck.IsNull(toMatch, listToSearch).Eval())
                 yield break;
 
-            foreach (TypeInfo typeInfo in listToSearch)
+            foreach (HandlerInfo typeInfo in listToSearch)
             {
                 if (Compare(toMatch, typeInfo))
                     yield return typeInfo;
             }
         }
 
-        public bool Compare(TypeInfo a, TypeInfo b)
+        public bool Compare(HandlerInfo a, HandlerInfo b)
         {
             if (PerformCheck.IsNull(() => a, () => b, () => a.Type, () => b.Type).Eval())
                 return false;

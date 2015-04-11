@@ -35,7 +35,7 @@ namespace Handsey.Tests
         [TestCase(new object[] { typeof(DeveloperMappingHandler<,>), ExecutionOrder.NotSet })]
         public void Create_TypeAndType_PopulateExecutionOrder(Type type, ExecutionOrder expectedExecutionOrder)
         {
-            TypeInfo classInfo = _handlerFactory.Create(typeof(IHandles), type);
+            HandlerInfo classInfo = _handlerFactory.Create(typeof(IHandles), type);
 
             Assert.That(classInfo, Is.Not.Null);
             Assert.That(classInfo.ExecutionOrder, Is.EqualTo(expectedExecutionOrder));
@@ -44,7 +44,7 @@ namespace Handsey.Tests
         [Test]
         public void Create_TypeAndType_PopulateExecutesAfter()
         {
-            TypeInfo classInfo = _handlerFactory.Create(typeof(IHandles), typeof(TechnicalEmployeeMappingHandler<,>));
+            HandlerInfo classInfo = _handlerFactory.Create(typeof(IHandles), typeof(TechnicalEmployeeMappingHandler<,>));
 
             Assert.That(classInfo, Is.Not.Null);
             Assert.That(classInfo.ExecutionOrder, Is.EqualTo(ExecutionOrder.InSequence));
@@ -58,7 +58,7 @@ namespace Handsey.Tests
         {
             Type type = typeof(EmployeeHandler);
 
-            TypeInfo classInfo = _handlerFactory.Create(typeof(IHandles), type);
+            HandlerInfo classInfo = _handlerFactory.Create(typeof(IHandles), type);
 
             Assert.That(classInfo, Is.Not.Null);
             Assert.That(classInfo.IsConstructed, Is.True);
@@ -73,7 +73,7 @@ namespace Handsey.Tests
         {
             Type type = typeof(EmployeeHandler<Employee>);
 
-            TypeInfo classInfo = _handlerFactory.Create(typeof(IHandles), type);
+            HandlerInfo classInfo = _handlerFactory.Create(typeof(IHandles), type);
 
             Assert.That(classInfo, Is.Not.Null);
             Assert.That(classInfo.IsConstructed, Is.True);
@@ -89,7 +89,7 @@ namespace Handsey.Tests
         {
             Type type = typeof(EmployeeHandler<>);
 
-            TypeInfo classInfo = _handlerFactory.Create(typeof(IHandles), type);
+            HandlerInfo classInfo = _handlerFactory.Create(typeof(IHandles), type);
 
             Assert.That(classInfo, Is.Not.Null);
             Assert.That(classInfo.IsConstructed, Is.False);
@@ -105,7 +105,7 @@ namespace Handsey.Tests
         {
             Type type = typeof(DeveloperMappingHandler<,>);
 
-            TypeInfo classInfo = _handlerFactory.Create(typeof(IHandles), type);
+            HandlerInfo classInfo = _handlerFactory.Create(typeof(IHandles), type);
 
             Assert.That(classInfo, Is.Not.Null);
             Assert.That(classInfo.GenericParametersInfo.Count(), Is.EqualTo(2));
@@ -118,7 +118,7 @@ namespace Handsey.Tests
         {
             Type type = typeof(TechnicalEmployeeMappingHandler<,>);
 
-            TypeInfo classInfo = _handlerFactory.Create(typeof(IHandles), type);
+            HandlerInfo classInfo = _handlerFactory.Create(typeof(IHandles), type);
 
             Assert.That(classInfo, Is.Not.Null);
             Assert.That(classInfo.GenericParametersInfo.Count(), Is.EqualTo(2));
@@ -133,7 +133,7 @@ namespace Handsey.Tests
         {
             Type type = typeof(EmployeePayloadMappingHandler<>);
 
-            TypeInfo classInfo = _handlerFactory.Create(typeof(IHandles), type);
+            HandlerInfo classInfo = _handlerFactory.Create(typeof(IHandles), type);
 
             Assert.That(classInfo, Is.Not.Null);
             Assert.That(classInfo.GenericParametersInfo.Count(), Is.EqualTo(1));
@@ -148,7 +148,7 @@ namespace Handsey.Tests
         {
             Type type = typeof(EmployeePayloadMappingHandler<,,>);
 
-            TypeInfo classInfo = _handlerFactory.Create(typeof(IHandles), type);
+            HandlerInfo classInfo = _handlerFactory.Create(typeof(IHandles), type);
 
             Assert.That(classInfo, Is.Not.Null);
             Assert.That(classInfo.GenericParametersInfo.Count(), Is.EqualTo(3));
@@ -163,7 +163,7 @@ namespace Handsey.Tests
         {
             Type type = typeof(TechnicalArchitectMappingHandler);
 
-            TypeInfo classInfo = _handlerFactory.Create(typeof(IHandles), type);
+            HandlerInfo classInfo = _handlerFactory.Create(typeof(IHandles), type);
 
             Assert.That(classInfo, Is.Not.Null);
             Assert.That(classInfo.GenericParametersInfo.Count(), Is.EqualTo(0));

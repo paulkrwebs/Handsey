@@ -13,10 +13,6 @@ namespace Handsey
 
         public bool IsGenericType { get; set; }
 
-        public ExecutionOrder ExecutionOrder { get; set; }
-
-        public Type[] ExecutesAfter { get; set; }
-
         public Type Type { get; set; }
 
         public Type GenericTypeDefinition { get; set; }

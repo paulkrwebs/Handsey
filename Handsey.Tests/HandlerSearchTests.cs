@@ -14,43 +14,43 @@ namespace Handsey.Tests
     public class HandlerSearchTests
     {
         [Test]
-        public void Execute_TypeInfoAndListOfTypeInfo_ArgumentsNullSoEmptyListReturned()
+        public void Execute_HandlerInfoAndListOfHandlerInfo_ArgumentsNullSoEmptyListReturned()
         {
             IHandlerSearch search = new HandlerSearch();
-            IList<TypeInfo> results = search.Execute(null, null).ToList();
+            IList<HandlerInfo> results = search.Execute(null, null).ToList();
 
             Assert.That(results.Count, Is.EqualTo(0));
         }
 
         [Test]
-        public void Execute_TypeInfoAndListOfTypeInfo_CorrectHandlerMAtchedInList()
+        public void Execute_HandlerInfoAndListOfHandlerInfo_CorrectHandlerMAtchedInList()
         {
-            TypeInfo a = new TypeInfo()
+            HandlerInfo a = new HandlerInfo()
             {
                 GenericParametersInfo = CreateGenericParameters<Payload<Developer, DeveloperViewModel>, Developer, DeveloperViewModel>(),
                 Type = typeof(EmployeePayloadHandler<Payload<Developer, DeveloperViewModel>, Developer, DeveloperViewModel>)
             };
 
-            TypeInfo notMatched1 = new TypeInfo()
+            HandlerInfo notMatched1 = new HandlerInfo()
             {
                 GenericParametersInfo = CreateGenericParametersWithConstraints(typeof(MapperPayload<,>), typeof(Developer), typeof(DeveloperViewModel)),
                 Type = typeof(EmployeePayloadMappingHandler<,,>)
             };
 
-            TypeInfo matched1 = new TypeInfo()
+            HandlerInfo matched1 = new HandlerInfo()
             {
                 GenericParametersInfo = CreateGenericParametersWithConstraints(typeof(Payload<,>), typeof(Developer), typeof(DeveloperViewModel)),
                 Type = typeof(EmployeePayloadMappingHandler<,,>)
             };
 
-            TypeInfo matched2 = new TypeInfo()
+            HandlerInfo matched2 = new HandlerInfo()
             {
                 GenericParametersInfo = CreateGenericParametersWithConstraints(typeof(Payload<,>), typeof(Employee), typeof(EmployeeViewModel)),
                 Type = typeof(EmployeePayloadMappingHandler<,,>)
             };
 
             IHandlerSearch search = new HandlerSearch();
-            IList<TypeInfo> results = search.Execute(a, new List<TypeInfo>() { notMatched1, matched1, matched2 }).ToList();
+            IList<HandlerInfo> results = search.Execute(a, new List<HandlerInfo>() { notMatched1, matched1, matched2 }).ToList();
 
             Assert.That(results.Count, Is.EqualTo(2));
             Assert.That(results[0], Is.EqualTo(matched1));
@@ -58,35 +58,35 @@ namespace Handsey.Tests
         }
 
         [Test]
-        public void Execute_TypeInfoAndListOfTypeInfo_NoHandlersMatchedSoEmptyListReturned()
+        public void Execute_HandlerInfoAndListOfHandlerInfo_NoHandlersMatchedSoEmptyListReturned()
         {
-            TypeInfo a = new TypeInfo()
+            HandlerInfo a = new HandlerInfo()
             {
                 GenericParametersInfo = CreateGenericParameter<Developer>(),
                 Type = typeof(EmployeeHandler<Developer>)
             };
 
-            TypeInfo notMatched1 = new TypeInfo()
+            HandlerInfo notMatched1 = new HandlerInfo()
             {
                 GenericParametersInfo = CreateGenericParametersWithConstraints(typeof(MapperPayload<,>), typeof(Developer), typeof(DeveloperViewModel)),
                 Type = typeof(EmployeePayloadMappingHandler<,,>)
             };
 
             IHandlerSearch search = new HandlerSearch();
-            IList<TypeInfo> results = search.Execute(a, new List<TypeInfo>() { notMatched1 }).ToList();
+            IList<HandlerInfo> results = search.Execute(a, new List<HandlerInfo>() { notMatched1 }).ToList();
 
             Assert.That(results.Count, Is.EqualTo(0));
         }
 
         [Test]
-        public void Compare_TypeInfoAndTypeInfo_NullCheck()
+        public void Compare_HandlerInfoAndHandlerInfo_NullCheck()
         {
-            TypeInfo a = new TypeInfo()
+            HandlerInfo a = new HandlerInfo()
             {
                 Type = typeof(TechnicalArchitectMappingHandler)
             };
 
-            TypeInfo b = new TypeInfo()
+            HandlerInfo b = new HandlerInfo()
             {
                 Type = typeof(TechnicalArchitectMappingHandler)
             };
@@ -95,19 +95,19 @@ namespace Handsey.Tests
 
             Assert.That(search.Compare(null, b), Is.False);
             Assert.That(search.Compare(a, null), Is.False);
-            Assert.That(search.Compare(new TypeInfo(), b), Is.False);
-            Assert.That(search.Compare(a, new TypeInfo()), Is.False);
+            Assert.That(search.Compare(new HandlerInfo(), b), Is.False);
+            Assert.That(search.Compare(a, new HandlerInfo()), Is.False);
         }
 
         [Test]
-        public void Compare_TypeInfoAndTypeInfo_ExactTypeMatch()
+        public void Compare_HandlerInfoAndHandlerInfo_ExactTypeMatch()
         {
-            TypeInfo a = new TypeInfo()
+            HandlerInfo a = new HandlerInfo()
             {
                 Type = typeof(TechnicalArchitectMappingHandler)
             };
 
-            TypeInfo b = new TypeInfo()
+            HandlerInfo b = new HandlerInfo()
             {
                 Type = typeof(TechnicalArchitectMappingHandler)
             };
@@ -118,14 +118,14 @@ namespace Handsey.Tests
         }
 
         [Test]
-        public void Compare_TypeInfoAndTypeInfo_ExactTypeNoMatch()
+        public void Compare_HandlerInfoAndHandlerInfo_ExactTypeNoMatch()
         {
-            TypeInfo a = new TypeInfo()
+            HandlerInfo a = new HandlerInfo()
             {
                 Type = typeof(TechnicalArchitectMappingHandler)
             };
 
-            TypeInfo b = new TypeInfo()
+            HandlerInfo b = new HandlerInfo()
             {
                 Type = typeof(EmployeeHandler)
             };
@@ -139,14 +139,14 @@ namespace Handsey.Tests
         [TestCase(typeof(IOneToOneDataPopulation<TechnicalArchitect, TechnicalArchitectViewModel>), typeof(TechnicalArchitectMappingHandler))]
         [TestCase(typeof(IOneToOneDataPopulation<TechnicalArchitect, TechnicalArchitectViewModel>), typeof(EmployeeMappingHandler<TechnicalArchitect, TechnicalArchitectViewModel>))]
         [TestCase(typeof(EmployeeMappingHandler<TechnicalArchitect, TechnicalArchitectViewModel>), typeof(EmployeeMappingHandler<TechnicalArchitect, TechnicalArchitectViewModel>))]
-        public void Compare_TypeInfoAndTypeInfo_IsAssignableMatch(Type typeA, Type typeB)
+        public void Compare_HandlerInfoAndHandlerInfo_IsAssignableMatch(Type typeA, Type typeB)
         {
-            TypeInfo a = new TypeInfo()
+            HandlerInfo a = new HandlerInfo()
             {
                 Type = typeA
             };
 
-            TypeInfo b = new TypeInfo()
+            HandlerInfo b = new HandlerInfo()
             {
                 Type = typeB
             };
@@ -157,14 +157,14 @@ namespace Handsey.Tests
         }
 
         [Test]
-        public void Compare_TypeInfoAndTypeInfo_IsAssignableNoMatch()
+        public void Compare_HandlerInfoAndHandlerInfo_IsAssignableNoMatch()
         {
-            TypeInfo a = new TypeInfo()
+            HandlerInfo a = new HandlerInfo()
             {
                 Type = typeof(IOneToOneDataPopulation<TechnicalArchitect, TechnicalArchitectViewModel>)
             };
 
-            TypeInfo b = new TypeInfo()
+            HandlerInfo b = new HandlerInfo()
             {
                 Type = typeof(EmployeeHandler)
             };
@@ -175,15 +175,15 @@ namespace Handsey.Tests
         }
 
         [Test]
-        public void Compare_TypeInfoAndTypeInfo_GenericParameterAssingableMatch()
+        public void Compare_HandlerInfoAndHandlerInfo_GenericParameterAssingableMatch()
         {
-            TypeInfo a = new TypeInfo()
+            HandlerInfo a = new HandlerInfo()
             {
                 GenericParametersInfo = CreateGenericParameters<Developer, DeveloperViewModel>(),
                 Type = typeof(EmployeeMappingHandler<Developer, DeveloperViewModel>)
             };
 
-            TypeInfo b = new TypeInfo()
+            HandlerInfo b = new HandlerInfo()
             {
                 GenericParametersInfo = CreateGenericParameters<Developer, DeveloperViewModel>(),
                 Type = typeof(EmployeeMappingHandler<Employee, EmployeeViewModel>)
@@ -195,15 +195,15 @@ namespace Handsey.Tests
         }
 
         [Test]
-        public void Compare_TypeInfoAndTypeInfo_GenericParameterAssingableNoMatch()
+        public void Compare_HandlerInfoAndHandlerInfo_GenericParameterAssingableNoMatch()
         {
-            TypeInfo a = new TypeInfo()
+            HandlerInfo a = new HandlerInfo()
             {
                 GenericParametersInfo = CreateGenericParameters<Developer, DeveloperViewModel>(),
                 Type = typeof(EmployeeMappingHandler<Developer, DeveloperViewModel>)
             };
 
-            TypeInfo b = new TypeInfo()
+            HandlerInfo b = new HandlerInfo()
             {
                 GenericParametersInfo = CreateGenericParameters<TechnicalArchitect, TechnicalArchitectViewModel>(),
                 Type = typeof(EmployeeMappingHandler<Employee, EmployeeViewModel>)
@@ -215,15 +215,15 @@ namespace Handsey.Tests
         }
 
         [Test]
-        public void Compare_TypeInfoAndTypeInfo_GenericParameterConstraintAssingableMatch()
+        public void Compare_HandlerInfoAndHandlerInfo_GenericParameterConstraintAssingableMatch()
         {
-            TypeInfo a = new TypeInfo()
+            HandlerInfo a = new HandlerInfo()
             {
                 GenericParametersInfo = CreateGenericParameters<Developer, DeveloperViewModel>(),
                 Type = typeof(EmployeeMappingHandler<Developer, DeveloperViewModel>)
             };
 
-            TypeInfo b = new TypeInfo()
+            HandlerInfo b = new HandlerInfo()
             {
                 GenericParametersInfo = CreateGenericParametersWithConstraints<Employee, EmployeeViewModel>(),
                 Type = typeof(EmployeeMappingHandler<,>)
@@ -235,15 +235,15 @@ namespace Handsey.Tests
         }
 
         [Test]
-        public void Compare_TypeInfoAndTypeInfo_GenericParameterConstraintAssingableNoMatch()
+        public void Compare_HandlerInfoAndHandlerInfo_GenericParameterConstraintAssingableNoMatch()
         {
-            TypeInfo a = new TypeInfo()
+            HandlerInfo a = new HandlerInfo()
             {
                 GenericParametersInfo = CreateGenericParameters<Employee, EmployeeViewModel>(),
                 Type = typeof(EmployeeMappingHandler<Employee, EmployeeViewModel>)
             };
 
-            TypeInfo b = new TypeInfo()
+            HandlerInfo b = new HandlerInfo()
             {
                 GenericParametersInfo = CreateGenericParametersWithConstraints<TechnicalEmployee, TechnicalEmployeeViewModel>(),
                 Type = typeof(TechnicalEmployeeMappingHandler<,>)
@@ -255,15 +255,15 @@ namespace Handsey.Tests
         }
 
         [Test]
-        public void Compare_TypeInfoAndTypeInfo_GenericParameterConstraintIsGenericTypeWhichIsConstructedMatch()
+        public void Compare_HandlerInfoAndHandlerInfo_GenericParameterConstraintIsGenericTypeWhichIsConstructedMatch()
         {
-            TypeInfo a = new TypeInfo()
+            HandlerInfo a = new HandlerInfo()
             {
                 GenericParametersInfo = CreateGenericParameter<MapperPayload<Employee, EmployeeViewModel>>(),
                 Type = typeof(EmployeePayloadMappingHandler<MapperPayload<Employee, EmployeeViewModel>>)
             };
 
-            TypeInfo b = new TypeInfo()
+            HandlerInfo b = new HandlerInfo()
             {
                 GenericParametersInfo = CreateGenericParameterWithConstraints<MapperPayload<Employee, EmployeeViewModel>>(),
                 Type = typeof(EmployeePayloadMappingHandler<>)
@@ -275,15 +275,15 @@ namespace Handsey.Tests
         }
 
         [Test]
-        public void Compare_TypeInfoAndTypeInfo_GenericParameterConstraintIsGenericTypeWhichIsConstructedNoMatch()
+        public void Compare_HandlerInfoAndHandlerInfo_GenericParameterConstraintIsGenericTypeWhichIsConstructedNoMatch()
         {
-            TypeInfo a = new TypeInfo()
+            HandlerInfo a = new HandlerInfo()
             {
                 GenericParametersInfo = CreateGenericParameter<MapperPayload<Employee, EmployeeViewModel>>(),
                 Type = typeof(EmployeePayloadMappingHandler<MapperPayload<Employee, EmployeeViewModel>>)
             };
 
-            TypeInfo b = new TypeInfo()
+            HandlerInfo b = new HandlerInfo()
             {
                 GenericParametersInfo = CreateGenericParameterWithConstraints<MapperPayload<Developer, DeveloperViewModel>>(),
                 Type = typeof(EmployeePayloadMappingHandler<>)
@@ -295,15 +295,15 @@ namespace Handsey.Tests
         }
 
         [Test]
-        public void Compare_TypeInfoAndTypeInfo_GenericParameterConstraintIsGenericTypeWhichIsNotConstructedMatch()
+        public void Compare_HandlerInfoAndHandlerInfo_GenericParameterConstraintIsGenericTypeWhichIsNotConstructedMatch()
         {
-            TypeInfo a = new TypeInfo()
+            HandlerInfo a = new HandlerInfo()
             {
                 GenericParametersInfo = CreateGenericParameters<MapperPayload<Developer, DeveloperViewModel>, Developer, DeveloperViewModel>(),
                 Type = typeof(EmployeePayloadMappingHandler<MapperPayload<Developer, DeveloperViewModel>, Developer, DeveloperViewModel>)
             };
 
-            TypeInfo b = new TypeInfo()
+            HandlerInfo b = new HandlerInfo()
             {
                 GenericParametersInfo = CreateGenericParametersWithConstraints(typeof(MapperPayload<,>), typeof(Employee), typeof(EmployeeViewModel)),
                 Type = typeof(EmployeePayloadMappingHandler<,,>)
@@ -315,15 +315,15 @@ namespace Handsey.Tests
         }
 
         [Test]
-        public void Compare_TypeInfoAndTypeInfo_GenericParameterConstraintIsGenericTypeWhichIsNotConstructedNoMatch()
+        public void Compare_HandlerInfoAndHandlerInfo_GenericParameterConstraintIsGenericTypeWhichIsNotConstructedNoMatch()
         {
-            TypeInfo a = new TypeInfo()
+            HandlerInfo a = new HandlerInfo()
             {
                 GenericParametersInfo = CreateGenericParameters<Payload<Developer, DeveloperViewModel>, Developer, DeveloperViewModel>(),
                 Type = typeof(EmployeePayloadHandler<Payload<Developer, DeveloperViewModel>, Developer, DeveloperViewModel>)
             };
 
-            TypeInfo b = new TypeInfo()
+            HandlerInfo b = new HandlerInfo()
             {
                 GenericParametersInfo = CreateGenericParametersWithConstraints(typeof(MapperPayload<,>), typeof(Developer), typeof(DeveloperViewModel)),
                 Type = typeof(EmployeePayloadMappingHandler<,,>)
@@ -348,7 +348,7 @@ namespace Handsey.Tests
         {
             return new List<GenericParameterInfo>()
             {
-                 CreateTypeInfo<GenericParameterInfo>(typeof(TParam1))
+                 CreateHandlerInfo<GenericParameterInfo>(typeof(TParam1))
             };
         }
 
@@ -356,8 +356,8 @@ namespace Handsey.Tests
         {
             return new List<GenericParameterInfo>()
             {
-                 CreateTypeInfo<GenericParameterInfo>(typeof(TParam1)),
-                 CreateTypeInfo<GenericParameterInfo>(typeof(TParam2))
+                 CreateHandlerInfo<GenericParameterInfo>(typeof(TParam1)),
+                 CreateHandlerInfo<GenericParameterInfo>(typeof(TParam2))
             };
         }
 
@@ -365,9 +365,9 @@ namespace Handsey.Tests
         {
             return new List<GenericParameterInfo>()
             {
-                 CreateTypeInfo<GenericParameterInfo>(typeof(TParam1)),
-                 CreateTypeInfo<GenericParameterInfo>(typeof(TParam2)),
-                 CreateTypeInfo<GenericParameterInfo>(typeof(TParam3)),
+                 CreateHandlerInfo<GenericParameterInfo>(typeof(TParam1)),
+                 CreateHandlerInfo<GenericParameterInfo>(typeof(TParam2)),
+                 CreateHandlerInfo<GenericParameterInfo>(typeof(TParam3)),
             };
         }
 
@@ -376,11 +376,11 @@ namespace Handsey.Tests
             List<GenericParameterInfo> toReturn = new List<GenericParameterInfo>();
 
             if (type1 != null)
-                toReturn.Add(CreateTypeInfo<GenericParameterInfo>(type1));
+                toReturn.Add(CreateHandlerInfo<GenericParameterInfo>(type1));
             if (type2 != null)
-                toReturn.Add(CreateTypeInfo<GenericParameterInfo>(type2));
+                toReturn.Add(CreateHandlerInfo<GenericParameterInfo>(type2));
             if (type3 != null)
-                toReturn.Add(CreateTypeInfo<GenericParameterInfo>(type3));
+                toReturn.Add(CreateHandlerInfo<GenericParameterInfo>(type3));
 
             return toReturn;
         }
@@ -425,15 +425,15 @@ namespace Handsey.Tests
 
         private IList<TypeInfo> CreateTypesInfo(Type type)
         {
-            return new List<TypeInfo>() { CreateTypeInfo(type) };
+            return new List<TypeInfo>() { CreateHandlerInfo(type) };
         }
 
-        private TypeInfo CreateTypeInfo(Type type)
+        private TypeInfo CreateHandlerInfo(Type type)
         {
-            return CreateTypeInfo<TypeInfo>(type);
+            return CreateHandlerInfo<TypeInfo>(type);
         }
 
-        private TTypeInfo CreateTypeInfo<TTypeInfo>(Type type)
+        private TTypeInfo CreateHandlerInfo<TTypeInfo>(Type type)
             where TTypeInfo : TypeInfo, new()
         {
             return new TTypeInfo()

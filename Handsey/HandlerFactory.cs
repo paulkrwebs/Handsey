@@ -12,42 +12,46 @@ namespace Handsey
     {
         private Type _handlerBaseType;
 
-        public IList<TypeInfo> Create(Type[] types)
+        public IList<HandlerInfo> Create(Type[] types)
         {
             return Create(_handlerBaseType, types);
         }
 
-        public IList<TypeInfo> Create(Type handlerBaseType, Type[] types)
+        public IList<HandlerInfo> Create(Type handlerBaseType, Type[] types)
         {
             _handlerBaseType = handlerBaseType;
 
             if (types == null)
-                return new List<TypeInfo>();
+                return new List<HandlerInfo>();
 
             if (types.Count() == 0)
-                return new List<TypeInfo>();
+                return new List<HandlerInfo>();
 
             return types.Select(t => Create(t)).ToList();
         }
 
-        private TypeInfo Create(Type type)
+        private HandlerInfo Create(Type type)
         {
             return Create(_handlerBaseType, type);
         }
 
-        public TypeInfo Create(Type handlerBaseType, Type type)
+        public HandlerInfo Create(Type handlerBaseType, Type type)
         {
             _handlerBaseType = handlerBaseType;
 
             if (type == null)
                 return null;
 
-            return CreateTypeInfo(type);
+            return CreateHandlerInfo(type);
         }
 
-        private TypeInfo CreateTypeInfo(Type type)
+        private HandlerInfo CreateHandlerInfo(Type type)
         {
-            return CreateTypeInfo<TypeInfo>(type);
+            HandlerInfo handlerInfo = CreateTypeInfo<HandlerInfo>(type);
+
+            PopulateAttributeInfo(type, handlerInfo);
+
+            return handlerInfo;
         }
 
         private TTypeInfo CreateTypeInfo<TTypeInfo>(Type type)
@@ -60,15 +64,13 @@ namespace Handsey
                 Type = type,
                 GenericTypeDefinition = CreateGenericTypeDefinition(type),
                 GenericParametersInfo = CreateGenericParameters(type),
-                FilteredInterfaces = CreateFilteredInterfaces(ListFilteredInterfaces(type))
+                FilteredInterfaces = CreateTypeInfo(ListFilteredInterfaces(type))
             };
-
-            PopulateAttributeInfo(type, typeInfo);
 
             return typeInfo;
         }
 
-        private void PopulateAttributeInfo(Type type, TypeInfo typeInfo)
+        private void PopulateAttributeInfo(Type type, HandlerInfo typeInfo)
         {
             if (!_handlerBaseType.IsAssignableFrom(type))
                 return;
@@ -81,11 +83,6 @@ namespace Handsey
                 typeInfo.ExecutionOrder = handlesAttribute[0].ExecutionOrder;
 
             typeInfo.ExecutesAfter = handlesAttribute.OfType<HandlesAfter>().Select(h => h.Type).ToArray();
-        }
-
-        private TypeInfo[] CreateFilteredInterfaces(Type[] types)
-        {
-            return Create(_handlerBaseType, types).ToArray();
         }
 
         private Type CreateGenericTypeDefinition(Type type)
@@ -108,9 +105,14 @@ namespace Handsey
         {
             GenericParameterInfo genericParameterInfo = CreateTypeInfo<GenericParameterInfo>(type);
             genericParameterInfo.Name = type.Name;
-            genericParameterInfo.FilteredContraints = Create(ListFilteredContraints(type));
+            genericParameterInfo.FilteredContraints = CreateTypeInfo(ListFilteredContraints(type));
 
             return genericParameterInfo;
+        }
+
+        private TypeInfo[] CreateTypeInfo(Type[] types)
+        {
+            return Create(_handlerBaseType, types).ToArray();
         }
 
         private static bool IsConstructed(Type type)

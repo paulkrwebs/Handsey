@@ -11,10 +11,10 @@ namespace Handsey
 {
     public class ApplicationHandles
     {
-        private readonly IList<TypeInfo> _handles;
+        private readonly IList<HandlerInfo> _handles;
         private readonly ConcurrentDictionary<Type, bool> _previousFindAttemptsCache;
 
-        public ApplicationHandles(IList<TypeInfo> handles)
+        public ApplicationHandles(IList<HandlerInfo> handles)
         {
             PerformCheck.IsNull(handles).Throw<ArgumentNullException>(() => new ArgumentNullException("Handles parameter cannot be null"));
 
@@ -27,7 +27,7 @@ namespace Handsey
             _previousFindAttemptsCache.Clear();
         }
 
-        public virtual bool PreviouslyAttemptedToFind(TypeInfo toSearchFor)
+        public virtual bool PreviouslyAttemptedToFind(HandlerInfo toSearchFor)
         {
             PerformCheck.IsNull(toSearchFor).Throw<ArgumentNullException>(() => new ArgumentNullException("Search parameter cannot be null"));
             PerformCheck.IsNull(() => toSearchFor.Type).Throw<ArgumentNullException>(() => new ArgumentNullException("Search parameter cannot be null"));
@@ -36,7 +36,7 @@ namespace Handsey
             return _previousFindAttemptsCache.TryGetValue(toSearchFor.Type, out foo);
         }
 
-        public virtual IEnumerable<TypeInfo> Find(TypeInfo toSearchFor, IHandlerSearch search)
+        public virtual IEnumerable<HandlerInfo> Find(HandlerInfo toSearchFor, IHandlerSearch search)
         {
             PerformCheck.IsNull(search, toSearchFor).Throw<ArgumentNullException>(() => new ArgumentNullException("Search parameter cannot be null"));
             PerformCheck.IsNull(() => toSearchFor.Type).Throw<ArgumentNullException>(() => new ArgumentNullException("Search parameter cannot be null"));

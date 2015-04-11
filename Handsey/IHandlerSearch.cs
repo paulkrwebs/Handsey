@@ -9,8 +9,8 @@ namespace Handsey
 {
     public interface IHandlerSearch
     {
-        IEnumerable<TypeInfo> Execute(TypeInfo toMatch, IList<TypeInfo> listToSearch);
+        IEnumerable<HandlerInfo> Execute(HandlerInfo toMatch, IList<HandlerInfo> listToSearch);
 
-        bool Compare(TypeInfo a, TypeInfo b);
+        bool Compare(HandlerInfo a, HandlerInfo b);
     }
 }

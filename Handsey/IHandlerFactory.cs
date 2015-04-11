@@ -8,8 +8,8 @@ namespace Handsey
 {
     public interface IHandlerFactory
     {
-        IList<TypeInfo> Create(Type handlerBaseType, Type[] types);
+        IList<HandlerInfo> Create(Type handlerBaseType, Type[] types);
 
-        TypeInfo Create(Type handlerBaseType, Type type);
+        HandlerInfo Create(Type handlerBaseType, Type type);
     }
 }
