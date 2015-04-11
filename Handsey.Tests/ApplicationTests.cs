@@ -1,4 +1,5 @@
-﻿using Moq;
+﻿using Handsey.Handlers;
+using Moq;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -99,6 +100,26 @@ namespace Handsey.Tests
             _assemblyWalker.Verify(a => a.ListAllTypes(It.IsAny<Type>(), It.IsAny<string[]>()), Times.Once());
             _handlerFactory.Verify(h => h.Create(It.IsAny<Type>(), It.IsAny<Type[]>()), Times.Once());
             Assert.That(_application.ApplicationHandlers, Is.Not.Null);
+        }
+
+        [Test]
+        public void Invoke_Action_InitialisedNotCalledOnObjectSoThrowException()
+        {
+            Assert.That(() => _application.Invoke<String>((s) => s.ToString()), Throws.Exception.TypeOf<InvalidOperationException>());
+        }
+
+        [Test]
+        public void Invoke_Action_HandlerResolvesSoTriggerCalledOnEachHandler()
+        {
+            Mock<Action<Mock<IHandles>>> trigger = new Mock<Action<Mock<IHandles>>>();
+
+            _iocContainer.Setup(i => i.ResolveAll<Mock<IHandles>>()).
+                Returns(new Mock<IHandles>[2] { new Mock<IHandles>(), new Mock<IHandles>() });
+
+            _application.Initialise();
+            _application.Invoke<Mock<IHandles>>(trigger.Object);
+
+            trigger.Verify(t => t(It.IsAny<Mock<IHandles>>()), Times.Exactly(2));
         }
     }
 }

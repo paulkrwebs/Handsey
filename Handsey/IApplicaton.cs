@@ -15,7 +15,6 @@ namespace Handsey
 
         void Initialise();
 
-        void Invoke<THandle>(Action<THandle> trigger)
-            where THandle : IHandles;
+        void Invoke<THandler>(Action<THandler> trigger);
     }
 }

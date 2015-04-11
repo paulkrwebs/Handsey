@@ -18,6 +18,7 @@ namespace Handsey
         private readonly IHandlersSort _handlerSort;
         private readonly ITypeConstructor _typeConstructor;
         private readonly IApplicationHandlersFactory _applicationHandlersFactory;
+        private bool _isInitialised;
 
         public IApplicationConfiguration ApplicationConfiguration { get; set; }
 
@@ -63,7 +64,9 @@ namespace Handsey
 
             Type[] types = _assemblyWalker.ListAllTypes(ApplicationConfiguration.BaseType, ApplicationConfiguration.AssemblyNamePrefixes);
             IList<HandlerInfo> handlers = _handlerFactory.Create(ApplicationConfiguration.BaseType, types);
+
             ApplicationHandlers = _applicationHandlersFactory.Create(handlers);
+            _isInitialised = true;
         }
 
         private bool CheckFilterConfiguration()
@@ -73,10 +76,14 @@ namespace Handsey
                 || ApplicationConfiguration.BaseType == null;
         }
 
-        public void Invoke<THandle>(Action<THandle> trigger)
-            where THandle : IHandles
+        public void Invoke<THandler>(Action<THandler> trigger)
         {
+            // make sure the application is initialised
+            PerformCheck.IsTrue(() => !_isInitialised).Throw<InvalidOperationException>(() => new InvalidOperationException("Application must be initialised before calling Invoke"));
+
             // try to resolve
+            if (TryInvoke(ApplicationConfiguration.IocConatainer.ResolveAll<THandler>(), trigger))
+                return;
 
             // check if tried to find before
 
@@ -87,8 +94,20 @@ namespace Handsey
             // construct
 
             // lock and register
+            throw new NotImplementedException("TODO!");
+        }
 
-            throw new NotImplementedException();
+        private bool TryInvoke<THandler>(THandler[] handlers, Action<THandler> trigger)
+        {
+            bool invoked = false;
+
+            foreach (THandler handle in handlers)
+            {
+                trigger(handle);
+                invoked = true;
+            }
+
+            return invoked;
         }
 
         #endregion Methods
