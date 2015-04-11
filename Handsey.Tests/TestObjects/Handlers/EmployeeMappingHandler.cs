@@ -1,4 +1,5 @@
-﻿using Handsey.Tests.TestObjects.Models;
+﻿using Handsey.Attributes;
+using Handsey.Tests.TestObjects.Models;
 using Handsey.Tests.TestObjects.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -8,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace Handsey.Tests.TestObjects.Handlers
 {
+    [HandlesFirst]
     public class EmployeeMappingHandler<TFrom, TTo> : IOneToOneDataPopulation<TFrom, TTo>, IFoo
         where TFrom : Employee
         where TTo : EmployeeViewModel

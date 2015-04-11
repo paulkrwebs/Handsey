@@ -29,6 +29,31 @@ namespace Handsey.Tests
         }
 
         [Test]
+        [TestCase(new object[] { typeof(EmployeeMappingHandler<,>), ExecutionOrder.First })]
+        [TestCase(new object[] { typeof(TechnicalEmployeeMappingHandler<,>), ExecutionOrder.InSequence })]
+        [TestCase(new object[] { typeof(TechnicalArchitectMappingHandler), ExecutionOrder.Last })]
+        [TestCase(new object[] { typeof(DeveloperMappingHandler<,>), ExecutionOrder.NotSet })]
+        public void Create_TypeAndType_PopulateExecutionOrder(Type type, ExecutionOrder expectedExecutionOrder)
+        {
+            TypeInfo classInfo = _handlerFactory.Create(typeof(IHandles), type);
+
+            Assert.That(classInfo, Is.Not.Null);
+            Assert.That(classInfo.ExecutionOrder, Is.EqualTo(expectedExecutionOrder));
+        }
+
+        [Test]
+        public void Create_TypeAndType_PopulateExecutesAfter()
+        {
+            TypeInfo classInfo = _handlerFactory.Create(typeof(IHandles), typeof(TechnicalEmployeeMappingHandler<,>));
+
+            Assert.That(classInfo, Is.Not.Null);
+            Assert.That(classInfo.ExecutionOrder, Is.EqualTo(ExecutionOrder.InSequence));
+            Assert.That(classInfo.ExecutesAfter, Is.Not.Null);
+            Assert.That(classInfo.ExecutesAfter.Count(), Is.EqualTo(1));
+            Assert.That(classInfo.ExecutesAfter[0], Is.EqualTo(typeof(DeveloperMappingHandler<,>)));
+        }
+
+        [Test]
         public void Create_TypeAndType_ClassInfoForConcreateType()
         {
             Type type = typeof(EmployeeHandler);

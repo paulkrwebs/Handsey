@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Handsey.Attributes;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -48,26 +50,42 @@ namespace Handsey
             return CreateTypeInfo<TypeInfo>(type);
         }
 
-        private TypeInfo[] CreateTypeInfo(Type[] types)
-        {
-            return types
-                .Where(t => t != _handlerBaseType)
-                .Select(t => CreateTypeInfo(t))
-                .ToArray();
-        }
-
         private TTypeInfo CreateTypeInfo<TTypeInfo>(Type type)
             where TTypeInfo : TypeInfo, new()
         {
-            return new TTypeInfo()
+            TTypeInfo typeInfo = new TTypeInfo()
             {
                 IsGenericType = type.IsGenericType,
                 IsConstructed = IsConstructed(type),
                 Type = type,
                 GenericTypeDefinition = CreateGenericTypeDefinition(type),
                 GenericParametersInfo = CreateGenericParameters(type),
-                FilteredInterfaces = CreateTypeInfo(ListFilteredInterfaces(type))
+                FilteredInterfaces = CreateFilteredInterfaces(ListFilteredInterfaces(type))
             };
+
+            PopulateAttributeInfo(type, typeInfo);
+
+            return typeInfo;
+        }
+
+        private void PopulateAttributeInfo(Type type, TypeInfo typeInfo)
+        {
+            if (!_handlerBaseType.IsAssignableFrom(type))
+                return;
+
+            AttributeCollection attributes = TypeDescriptor.GetAttributes(type);
+            List<HandlerAttribute> handlesAttribute = attributes.OfType<HandlerAttribute>().ToList();
+
+            // There can only be one execution type so only take first one
+            if (handlesAttribute.Count > 0)
+                typeInfo.ExecutionOrder = handlesAttribute[0].ExecutionOrder;
+
+            typeInfo.ExecutesAfter = handlesAttribute.OfType<HandlesAfter>().Select(h => h.Type).ToArray();
+        }
+
+        private TypeInfo[] CreateFilteredInterfaces(Type[] types)
+        {
+            return Create(_handlerBaseType, types).ToArray();
         }
 
         private Type CreateGenericTypeDefinition(Type type)

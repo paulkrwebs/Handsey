@@ -41,6 +41,11 @@
   <ItemGroup>
     <Compile Include="ApplicationHandles.cs" />
     <Compile Include="AssemblyWalker.cs" />
+    <Compile Include="Attributes\HandlerAttribute.cs" />
+    <Compile Include="Attributes\HandlesAfter.cs" />
+    <Compile Include="Attributes\HandlesFirst.cs" />
+    <Compile Include="Attributes\HandlesLast.cs" />
+    <Compile Include="ExecutionOrder.cs" />
     <Compile Include="IHandlerResolver.cs" />
     <Compile Include="TypeConstructor.cs" />
     <Compile Include="HandlerFactory.cs" />
