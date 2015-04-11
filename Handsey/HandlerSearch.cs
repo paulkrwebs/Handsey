@@ -25,7 +25,7 @@ namespace Handsey
 
         public IEnumerable<TypeInfo> Execute(TypeInfo toMatch, IList<TypeInfo> listToSearch)
         {
-            if (NullCheck.IsNull(toMatch, listToSearch))
+            if (PerformCheck.IsNull(toMatch, listToSearch).Eval())
                 yield break;
 
             foreach (TypeInfo typeInfo in listToSearch)
@@ -37,7 +37,7 @@ namespace Handsey
 
         public bool Compare(TypeInfo a, TypeInfo b)
         {
-            if (NullCheck.IsNull(() => a, () => b, () => a.Type, () => b.Type))
+            if (PerformCheck.IsNull(() => a, () => b, () => a.Type, () => b.Type).Eval())
                 return false;
 
             return MatchedAgainstRules(a, b);
@@ -81,7 +81,7 @@ namespace Handsey
 
         private static bool DoesHaveEnoughtGenericParametersToConstruct(TypeInfo a, TypeInfo b)
         {
-            if (NullCheck.IsNull(a.GenericParametersInfo, b.GenericParametersInfo))
+            if (PerformCheck.IsNull(a.GenericParametersInfo, b.GenericParametersInfo).Eval())
                 return false;
 
             return b.GenericParametersInfo.Count() == a.GenericParametersInfo.Count;
@@ -101,7 +101,7 @@ namespace Handsey
 
         private static bool AnyGenericParametersContraintAssignable(GenericParameterInfo aGenericParameterInfo, GenericParameterInfo bGenericParameterInfo)
         {
-            if (NullCheck.IsNull(bGenericParameterInfo.FilteredContraints))
+            if (PerformCheck.IsNull(bGenericParameterInfo.FilteredContraints).Eval())
                 return false;
 
             return bGenericParameterInfo.FilteredContraints.Any(fc => ConstraintMatched(aGenericParameterInfo, fc));
