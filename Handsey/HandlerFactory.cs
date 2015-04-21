@@ -101,6 +101,7 @@ namespace Handsey
             GenericParameterInfo genericParameterInfo = CreateTypeInfo<GenericParameterInfo>(type);
             genericParameterInfo.Name = type.Name;
             genericParameterInfo.FilteredContraints = CreateTypeInfo(ListFilteredContraints(type));
+            genericParameterInfo.SpecialConstraintMask = type.GenericParameterAttributes;
 
             return genericParameterInfo;
         }

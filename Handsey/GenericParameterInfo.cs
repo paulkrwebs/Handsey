@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 
 namespace Handsey
@@ -13,5 +14,7 @@ namespace Handsey
         public IList<TypeInfo> FilteredContraints { get; set; }
 
         public string Name { get; set; }
+
+        public GenericParameterAttributes SpecialConstraintMask { get; set; }
     }
 }

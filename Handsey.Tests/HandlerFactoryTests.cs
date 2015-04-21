@@ -6,6 +6,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -126,6 +127,22 @@ namespace Handsey.Tests
             Assert.That(classInfo.GenericParametersInfo[1].FilteredContraints.Count(), Is.EqualTo(1));
             Assert.That(classInfo.GenericParametersInfo[1].FilteredContraints[0].IsConstructed, Is.True);
             Assert.That(classInfo.GenericParametersInfo[1].FilteredContraints[0].IsGenericType, Is.False);
+        }
+
+        [Test]
+        public void Create_TypeAndType_ClassInfoForGenericTypeWithGenericParametersThatHaveConstrainsAndASpecialConstrainsMask()
+        {
+            Type type = typeof(VersionableHandler<>);
+
+            HandlerInfo classInfo = _handlerFactory.Create(typeof(IHandles), type);
+
+            Assert.That(classInfo, Is.Not.Null);
+            Assert.That(classInfo.GenericParametersInfo.Count(), Is.EqualTo(1));
+            Assert.That(classInfo.GenericParametersInfo[0].FilteredContraints.Count(), Is.EqualTo(1));
+            Assert.That(classInfo.GenericParametersInfo[0].FilteredContraints[0].IsConstructed, Is.True);
+            Assert.That(classInfo.GenericParametersInfo[0].FilteredContraints[0].IsGenericType, Is.False);
+            Assert.That(classInfo.GenericParametersInfo[0].FilteredContraints[0].Type, Is.EqualTo(typeof(IVersionable)));
+            Assert.That(classInfo.GenericParametersInfo[0].SpecialConstraintMask, Is.EqualTo(GenericParameterAttributes.DefaultConstructorConstraint | GenericParameterAttributes.ReferenceTypeConstraint));
         }
 
         [Test]

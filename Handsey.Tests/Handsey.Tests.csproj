@@ -49,6 +49,8 @@
     <Compile Include="ApplicationTests.cs" />
     <Compile Include="AssemblyWalkerTests.cs" />
     <Compile Include="HandlersSortTests.cs" />
+    <Compile Include="TestObjects\Handlers\VersionableHandler.cs" />
+    <Compile Include="TestObjects\Models\IVersionable.cs" />
     <Compile Include="TypeConstructorTests.cs" />
     <Compile Include="HandlerSearchTests.cs" />
     <Compile Include="TestObjects\Handlers\DeveloperMappingHandler.cs" />
