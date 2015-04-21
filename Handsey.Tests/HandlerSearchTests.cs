@@ -1,10 +1,12 @@
-﻿using Handsey.Tests.TestObjects.Handlers;
+﻿using Handsey.Handlers;
+using Handsey.Tests.TestObjects.Handlers;
 using Handsey.Tests.TestObjects.Models;
 using Handsey.Tests.TestObjects.ViewModels;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -255,6 +257,94 @@ namespace Handsey.Tests
         }
 
         [Test]
+        public void Compare_HandlerInfoAndHandlerInfo_GenericParameterSpecialConstraintRequiresReferenceTypeMatch()
+        {
+            HandlerInfo a = new HandlerInfo()
+            {
+                GenericParametersInfo = CreateGenericParameter<VersionableValueType>(),
+                Type = typeof(VersioableValueHandler<VersionableValueType>)
+            };
+
+            a.GenericParametersInfo[0].IsValueType = false;
+
+            HandlerInfo b = new HandlerInfo()
+            {
+                GenericParametersInfo = CreateGenericParametersWithConstraint<IVersionable>(GenericParameterAttributes.ReferenceTypeConstraint),
+                Type = typeof(VersioableValueHandler<>)
+            };
+
+            IHandlerSearch search = new HandlerSearch();
+
+            Assert.That(search.Compare(a, b), Is.True);
+        }
+
+        [Test]
+        public void Compare_HandlerInfoAndHandlerInfo_GenericParameterSpecialConstraintRequiresReferenceTypeNoMatch()
+        {
+            HandlerInfo a = new HandlerInfo()
+            {
+                GenericParametersInfo = CreateGenericParameter<VersionableValueType>(),
+                Type = typeof(VersioableValueHandler<VersionableValueType>)
+            };
+
+            a.GenericParametersInfo[0].IsValueType = true;
+
+            HandlerInfo b = new HandlerInfo()
+            {
+                GenericParametersInfo = CreateGenericParametersWithConstraint<IVersionable>(GenericParameterAttributes.ReferenceTypeConstraint),
+                Type = typeof(VersioableValueHandler<>)
+            };
+
+            IHandlerSearch search = new HandlerSearch();
+
+            Assert.That(search.Compare(a, b), Is.False);
+        }
+
+        [Test]
+        public void Compare_HandlerInfoAndHandlerInfo_GenericParameterSpecialConstraintRequiresDefaultConstructorMatch()
+        {
+            HandlerInfo a = new HandlerInfo()
+            {
+                GenericParametersInfo = CreateGenericParameter<VersionableValueType>(),
+                Type = typeof(VersioableValueHandler<VersionableValueType>)
+            };
+
+            a.GenericParametersInfo[0].HasDefaultConstuctor = true;
+
+            HandlerInfo b = new HandlerInfo()
+            {
+                GenericParametersInfo = CreateGenericParametersWithConstraint<IVersionable>(GenericParameterAttributes.DefaultConstructorConstraint),
+                Type = typeof(VersioableValueHandler<>)
+            };
+
+            IHandlerSearch search = new HandlerSearch();
+
+            Assert.That(search.Compare(a, b), Is.True);
+        }
+
+        [Test]
+        public void Compare_HandlerInfoAndHandlerInfo_GenericParameterSpecialConstraintRequiresDefaultConstructorNoMatch()
+        {
+            HandlerInfo a = new HandlerInfo()
+            {
+                GenericParametersInfo = CreateGenericParameter<VersionableValueType>(),
+                Type = typeof(VersioableValueHandler<VersionableValueType>)
+            };
+
+            a.GenericParametersInfo[0].HasDefaultConstuctor = false;
+
+            HandlerInfo b = new HandlerInfo()
+            {
+                GenericParametersInfo = CreateGenericParametersWithConstraint<IVersionable>(GenericParameterAttributes.DefaultConstructorConstraint),
+                Type = typeof(VersioableValueHandler<>)
+            };
+
+            IHandlerSearch search = new HandlerSearch();
+
+            Assert.That(search.Compare(a, b), Is.False);
+        }
+
+        [Test]
         public void Compare_HandlerInfoAndHandlerInfo_GenericParameterConstraintIsGenericTypeWhichIsConstructedMatch()
         {
             HandlerInfo a = new HandlerInfo()
@@ -385,6 +475,14 @@ namespace Handsey.Tests
             return toReturn;
         }
 
+        private IList<GenericParameterInfo> CreateGenericParametersWithConstraint<TParam1>(GenericParameterAttributes specialAttributes = GenericParameterAttributes.None)
+        {
+            return new List<GenericParameterInfo>()
+            {
+                new GenericParameterInfo() { FilteredContraints = CreateTypesInfo<TParam1>(), Type = typeof(TParam1), SpecialConstraint = specialAttributes}
+            };
+        }
+
         private IList<GenericParameterInfo> CreateGenericParametersWithConstraints<TParam1, TParam2>()
         {
             return new List<GenericParameterInfo>()
@@ -443,6 +541,17 @@ namespace Handsey.Tests
                 IsGenericType = type.IsGenericType,
                 GenericTypeDefinition = type.IsGenericType ? type.GetGenericTypeDefinition() : null
             };
+        }
+
+        public struct VersionableValueType : IVersionable
+        { }
+
+        public class VersioableValueHandler<TType> : IHandler<IVersionable>
+        {
+            public void Handle(IVersionable arg1)
+            {
+                throw new NotImplementedException();
+            }
         }
 
         #endregion // Helpers MOVE TO UTILITIES

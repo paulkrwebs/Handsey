@@ -3,6 +3,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -103,10 +104,36 @@ namespace Handsey
             if (PerformCheck.IsNull(bGenericParameterInfo.FilteredContraints).Eval())
                 return false;
 
-            return bGenericParameterInfo.FilteredContraints.Any(fc => ConstraintMatched(aGenericParameterInfo, fc));
+            if (!SpecialConstraintsMatched(aGenericParameterInfo, bGenericParameterInfo))
+                return false;
+
+            return bGenericParameterInfo.FilteredContraints.Any(fc => FilteredConstraintMatched(aGenericParameterInfo, fc));
         }
 
-        private static bool ConstraintMatched(TypeInfo aType, TypeInfo bType)
+        private static bool SpecialConstraintsMatched(GenericParameterInfo aGenericParameterInfo, GenericParameterInfo bGenericParameterInfo)
+        {
+            if (ReferenceTypeConstraintRequiredAndMatched(aGenericParameterInfo, bGenericParameterInfo))
+                return false;
+
+            if (DefaultConstructorContraintRequiredAndMatched(aGenericParameterInfo, bGenericParameterInfo))
+                return false;
+
+            return true;
+        }
+
+        private static bool DefaultConstructorContraintRequiredAndMatched(GenericParameterInfo aGenericParameterInfo, GenericParameterInfo bGenericParameterInfo)
+        {
+            return bGenericParameterInfo.SpecialConstraint == GenericParameterAttributes.DefaultConstructorConstraint
+                            && !aGenericParameterInfo.HasDefaultConstuctor;
+        }
+
+        private static bool ReferenceTypeConstraintRequiredAndMatched(GenericParameterInfo aGenericParameterInfo, GenericParameterInfo bGenericParameterInfo)
+        {
+            return bGenericParameterInfo.SpecialConstraint == GenericParameterAttributes.ReferenceTypeConstraint
+                            && aGenericParameterInfo.IsValueType;
+        }
+
+        private static bool FilteredConstraintMatched(TypeInfo aType, TypeInfo bType)
         {
             // Check if the generic parameter has a constraint that is assignable from b's generic parameter
             if (Assignable(bType, aType))
