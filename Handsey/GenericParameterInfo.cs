@@ -16,5 +16,9 @@ namespace Handsey
         public string Name { get; set; }
 
         public GenericParameterAttributes SpecialConstraint { get; set; }
+
+        public bool IsValueType { get; set; }
+
+        public bool HasDefaultConstuctor { get; set; }
     }
 }

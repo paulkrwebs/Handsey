@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Handsey.Tests.TestObjects.Models
 {
-    public interface IFoo : IVersionable
+    public interface IFoo
     {
     }
 }

@@ -70,9 +70,9 @@ namespace Handsey.Tests
         }
 
         [Test]
-        public void Create_TypeAndType_ClassInfoForGenericConstructedType()
+        public void Create_TypeAndType_ClassInfoForGenericConstructedTypeReferenceTypeParameterWithDefaultConstructore()
         {
-            Type type = typeof(EmployeeHandler<Employee>);
+            Type type = typeof(IHandler<Employee>);
 
             HandlerInfo classInfo = _handlerFactory.Create(typeof(IHandler), type);
 
@@ -82,7 +82,42 @@ namespace Handsey.Tests
             Assert.That(classInfo.Type.FullName, Is.EqualTo(type.FullName));
             Assert.That(classInfo.GenericTypeDefinition.FullName, Is.EqualTo(type.GetGenericTypeDefinition().FullName));
             Assert.That(classInfo.GenericParametersInfo.Count(), Is.EqualTo(1));
-            Assert.That(classInfo.FilteredInterfaces.Count(), Is.EqualTo(1));
+            Assert.That(classInfo.GenericParametersInfo[0].IsValueType, Is.EqualTo(false));
+            Assert.That(classInfo.GenericParametersInfo[0].HasDefaultConstuctor, Is.EqualTo(true));
+        }
+
+        [Test]
+        public void Create_TypeAndType_ClassInfoForGenericConstructedTypeReferenceTypeParameterWithoutDefaultConstructore()
+        {
+            Type type = typeof(IHandler<NoDefaultConstructor>);
+
+            HandlerInfo classInfo = _handlerFactory.Create(typeof(IHandler), type);
+
+            Assert.That(classInfo, Is.Not.Null);
+            Assert.That(classInfo.IsConstructed, Is.True);
+            Assert.That(classInfo.IsGenericType, Is.True);
+            Assert.That(classInfo.Type.FullName, Is.EqualTo(type.FullName));
+            Assert.That(classInfo.GenericTypeDefinition.FullName, Is.EqualTo(type.GetGenericTypeDefinition().FullName));
+            Assert.That(classInfo.GenericParametersInfo.Count(), Is.EqualTo(1));
+            Assert.That(classInfo.GenericParametersInfo[0].IsValueType, Is.EqualTo(false));
+            Assert.That(classInfo.GenericParametersInfo[0].HasDefaultConstuctor, Is.EqualTo(false));
+        }
+
+        [Test]
+        public void Create_TypeAndType_ClassInfoForGenericConstructedTypeValueTypeParameter()
+        {
+            Type type = typeof(IHandler<int>);
+
+            HandlerInfo classInfo = _handlerFactory.Create(typeof(IHandler), type);
+
+            Assert.That(classInfo, Is.Not.Null);
+            Assert.That(classInfo.IsConstructed, Is.True);
+            Assert.That(classInfo.IsGenericType, Is.True);
+            Assert.That(classInfo.Type.FullName, Is.EqualTo(type.FullName));
+            Assert.That(classInfo.GenericTypeDefinition.FullName, Is.EqualTo(type.GetGenericTypeDefinition().FullName));
+            Assert.That(classInfo.GenericParametersInfo.Count(), Is.EqualTo(1));
+            Assert.That(classInfo.GenericParametersInfo[0].IsValueType, Is.EqualTo(true));
+            Assert.That(classInfo.GenericParametersInfo[0].HasDefaultConstuctor, Is.EqualTo(false));
         }
 
         [Test]
@@ -208,5 +243,15 @@ namespace Handsey.Tests
 
             Assert.That(_handlerFactory.Create(typeof(IHandler), types.ToArray()).Count, Is.EqualTo(2));
         }
+
+        #region // test objects
+
+        public class NoDefaultConstructor
+        {
+            public NoDefaultConstructor(int param1)
+            { }
+        }
+
+        #endregion // test objects
     }
 }

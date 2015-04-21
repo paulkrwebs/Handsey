@@ -92,7 +92,7 @@ namespace Handsey
         private IList<GenericParameterInfo> CreateGenericParameters(Type type)
         {
             return type.GetGenericArguments()
-                .Where(t => t.IsClass)
+                //.Where(t => t.IsClass)
                 .Select(t => CreateGenericParameterInfo(t))
                 .ToList();
         }
@@ -103,8 +103,15 @@ namespace Handsey
             genericParameterInfo.Name = type.Name;
             genericParameterInfo.FilteredContraints = CreateTypeInfo(ListFilteredContraints(type));
             genericParameterInfo.SpecialConstraint = CreateSpecialConstraints(type);
+            genericParameterInfo.IsValueType = type.IsValueType;
+            genericParameterInfo.HasDefaultConstuctor = HasDefaultConstructor(type);
 
             return genericParameterInfo;
+        }
+
+        private bool HasDefaultConstructor(Type type)
+        {
+            return type.GetConstructor(new Type[0]) != null;
         }
 
         private static GenericParameterAttributes CreateSpecialConstraints(Type type)
