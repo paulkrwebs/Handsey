@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Handsey.Tests.TestObjects.Handlers
 {
-    public class VersionableHandler<TType> : IHandles<IVersionable>
+    public class VersionableHandler<TType> : IHandler<IVersionable>
         where TType : class, IVersionable, new()
     {
         public void Handle(IVersionable arg1)

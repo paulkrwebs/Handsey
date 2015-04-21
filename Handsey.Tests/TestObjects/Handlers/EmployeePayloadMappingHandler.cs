@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Handsey.Tests.TestObjects.Handlers
 {
-    public class EmployeePayloadMappingHandler<TPayLoad> : IHandles<TPayLoad>
+    public class EmployeePayloadMappingHandler<TPayLoad> : IHandler<TPayLoad>
         where TPayLoad : MapperPayload<Employee, EmployeeViewModel>
     {
         public void Handle(TPayLoad arg1)
@@ -18,7 +18,7 @@ namespace Handsey.Tests.TestObjects.Handlers
         }
     }
 
-    public class EmployeePayloadMappingHandler<TPayLoad, TFrom, TTo> : IHandles<TPayLoad>
+    public class EmployeePayloadMappingHandler<TPayLoad, TFrom, TTo> : IHandler<TPayLoad>
         where TPayLoad : MapperPayload<TFrom, TTo>
         where TFrom : Employee
         where TTo : EmployeeViewModel

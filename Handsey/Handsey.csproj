@@ -61,7 +61,7 @@
     <Compile Include="GenericParameterInfo.cs" />
     <Compile Include="ITypeConstructor.cs" />
     <Compile Include="TypeInfo.cs" />
-    <Compile Include="Handlers\IHandles.cs" />
+    <Compile Include="Handlers\IHandler.cs" />
     <Compile Include="IHandlerFactory.cs" />
     <Compile Include="IIocContainer.cs" />
     <Compile Include="IHandlerSearch.cs" />

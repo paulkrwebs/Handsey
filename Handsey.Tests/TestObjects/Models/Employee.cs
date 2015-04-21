@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Handsey.Tests.TestObjects.Models
 {
-    public class Employee
+    public class Employee : IVersionable
     {
         public string Name { get; set; }
     }

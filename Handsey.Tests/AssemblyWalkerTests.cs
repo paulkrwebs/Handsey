@@ -17,7 +17,7 @@ namespace Handsey.Tests
             IAssemblyWalker assemblyWalker = new AssemblyWalker();
 
             // this should really search for another interface so the names don't keep changing in the assert
-            Type[] types = assemblyWalker.ListAllTypes(typeof(IHandles), new[] { "Handsey.Tests" });
+            Type[] types = assemblyWalker.ListAllTypes(typeof(IHandler), new[] { "Handsey.Tests" });
 
             Assert.That(types.Count(), Is.EqualTo(11));
         }

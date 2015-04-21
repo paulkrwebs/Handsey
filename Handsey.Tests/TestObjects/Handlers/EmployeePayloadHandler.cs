@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Handsey.Tests.TestObjects.Handlers
 {
-    public class EmployeePayloadHandler<TPayload, TData1> : IHandles<TPayload>
+    public class EmployeePayloadHandler<TPayload, TData1> : IHandler<TPayload>
         where TPayload : Payload<TData1>
         where TData1 : Employee
     {
@@ -19,7 +19,7 @@ namespace Handsey.Tests.TestObjects.Handlers
         }
     }
 
-    public class EmployeePayloadHandler<TPayload, TData1, TData2> : IHandles<TPayload>
+    public class EmployeePayloadHandler<TPayload, TData1, TData2> : IHandler<TPayload>
         where TPayload : Payload<TData1, TData2>
         where TData1 : Employee
         where TData2 : EmployeeViewModel

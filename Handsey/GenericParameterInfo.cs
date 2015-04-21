@@ -15,6 +15,6 @@ namespace Handsey
 
         public string Name { get; set; }
 
-        public GenericParameterAttributes SpecialConstraintMask { get; set; }
+        public GenericParameterAttributes SpecialConstraint { get; set; }
     }
 }

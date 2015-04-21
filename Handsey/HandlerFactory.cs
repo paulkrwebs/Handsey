@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -101,9 +102,17 @@ namespace Handsey
             GenericParameterInfo genericParameterInfo = CreateTypeInfo<GenericParameterInfo>(type);
             genericParameterInfo.Name = type.Name;
             genericParameterInfo.FilteredContraints = CreateTypeInfo(ListFilteredContraints(type));
-            genericParameterInfo.SpecialConstraintMask = type.GenericParameterAttributes;
+            genericParameterInfo.SpecialConstraint = CreateSpecialConstraints(type);
 
             return genericParameterInfo;
+        }
+
+        private static GenericParameterAttributes CreateSpecialConstraints(Type type)
+        {
+            if (!type.IsGenericParameter)
+                return GenericParameterAttributes.None;
+
+            return type.GenericParameterAttributes & GenericParameterAttributes.SpecialConstraintMask;
         }
 
         private TypeInfo[] CreateTypeInfo(Type[] types)

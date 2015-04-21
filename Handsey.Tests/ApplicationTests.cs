@@ -111,15 +111,15 @@ namespace Handsey.Tests
         [Test]
         public void Invoke_Action_HandlerResolvesSoTriggerCalledOnEachHandler()
         {
-            Mock<Action<Mock<IHandles>>> trigger = new Mock<Action<Mock<IHandles>>>();
+            Mock<Action<Mock<IHandler>>> trigger = new Mock<Action<Mock<IHandler>>>();
 
-            _iocContainer.Setup(i => i.ResolveAll<Mock<IHandles>>()).
-                Returns(new Mock<IHandles>[2] { new Mock<IHandles>(), new Mock<IHandles>() });
+            _iocContainer.Setup(i => i.ResolveAll<Mock<IHandler>>()).
+                Returns(new Mock<IHandler>[2] { new Mock<IHandler>(), new Mock<IHandler>() });
 
             _application.Initialise();
-            _application.Invoke<Mock<IHandles>>(trigger.Object);
+            _application.Invoke<Mock<IHandler>>(trigger.Object);
 
-            trigger.Verify(t => t(It.IsAny<Mock<IHandles>>()), Times.Exactly(2));
+            trigger.Verify(t => t(It.IsAny<Mock<IHandler>>()), Times.Exactly(2));
         }
     }
 }

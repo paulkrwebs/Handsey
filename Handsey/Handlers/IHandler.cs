@@ -6,20 +6,20 @@ using System.Threading.Tasks;
 
 namespace Handsey.Handlers
 {
-    public interface IHandles
-    {    }
+    public interface IHandler
+    { }
 
-    public interface IHandles<TArgs1> : IHandles
+    public interface IHandler<TArgs1> : IHandler
     {
         void Handle(TArgs1 arg1);
     }
 
-    public interface IHandles<TArgs1, TArgs2> : IHandles
+    public interface IHandler<TArgs1, TArgs2> : IHandler
     {
         void Handle(TArgs1 arg1, TArgs2 args2);
     }
 
-    public interface IHandles<TArgs1, TArgs2, TArgs3> : IHandles
+    public interface IHandler<TArgs1, TArgs2, TArgs3> : IHandler
     {
         void Handle(TArgs1 arg1, TArgs2 args2, TArgs3 args3);
     }

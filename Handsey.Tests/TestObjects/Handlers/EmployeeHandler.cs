@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace Handsey.Tests.TestObjects.Handlers
 {
-    public class EmployeeHandler : IHandles, IFoo
+    public class EmployeeHandler : IHandler, IFoo
     {
     }
 
-    public class EmployeeHandler<TEmployee> : IHandles<TEmployee>
+    public class EmployeeHandler<TEmployee> : IHandler<TEmployee>
     {
         public void Handle(TEmployee arg1)
         {
