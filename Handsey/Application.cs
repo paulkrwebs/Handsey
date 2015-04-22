@@ -24,6 +24,8 @@ namespace Handsey
 
         public IApplicationHandlers ApplicationHandlers { get; private set; }
 
+        public static IApplicaton Instance { get { throw new NotImplementedException("Need to implement a singleton"); } }
+
         #endregion // Fields
 
         #region // Constructors
