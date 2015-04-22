@@ -41,6 +41,7 @@
   <ItemGroup>
     <Compile Include="ApplicationHandlers.cs" />
     <Compile Include="ApplicationHandlersFactory.cs" />
+    <Compile Include="IApplicationHandlers.cs" />
     <Compile Include="IApplicationHandlersFactory.cs" />
     <Compile Include="AssemblyWalker.cs" />
     <Compile Include="Attributes\HandlerAttribute.cs" />

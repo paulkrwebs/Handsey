@@ -23,7 +23,7 @@ namespace Handsey
             _validMAtches.Enqueue(GenericParamtersAssignable);
         }
 
-        public IEnumerable<HandlerInfo> Execute(HandlerInfo toMatch, IList<HandlerInfo> listToSearch)
+        public IEnumerable<HandlerInfo> Execute(HandlerInfo toMatch, IEnumerable<HandlerInfo> listToSearch)
         {
             if (PerformCheck.IsNull(toMatch, listToSearch).Eval())
                 yield break;

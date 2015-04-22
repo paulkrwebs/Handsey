@@ -2,6 +2,7 @@
 using Moq;
 using NUnit.Framework;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -39,7 +40,7 @@ namespace Handsey.Tests
 
             applicationHandles.Find(new HandlerInfo() { Type = this.GetType() }, handlerSearch.Object);
 
-            handlerSearch.Verify(h => h.Execute(It.IsAny<HandlerInfo>(), It.Is<IList<HandlerInfo>>(hls => hls == handles)), Times.Once(), "Excute not called on handler search");
+            handlerSearch.Verify(h => h.Execute(It.IsAny<HandlerInfo>(), It.IsAny<ConcurrentQueue<HandlerInfo>>()), Times.Once(), "Excute not called on handler search");
         }
 
         [Test]
@@ -51,7 +52,7 @@ namespace Handsey.Tests
 
             applicationHandles.Find(new HandlerInfo() { Type = this.GetType() }, handlerSearch.Object);
 
-            handlerSearch.Verify(h => h.Execute(It.IsAny<HandlerInfo>(), It.Is<IList<HandlerInfo>>(hls => hls == handles)), Times.Once(), "Excute not called on handler search");
+            handlerSearch.Verify(h => h.Execute(It.IsAny<HandlerInfo>(), It.IsAny<ConcurrentQueue<HandlerInfo>>()), Times.Once(), "Excute not called on handler search");
         }
 
         [Test]

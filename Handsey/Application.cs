@@ -22,20 +22,11 @@ namespace Handsey
 
         public IApplicationConfiguration ApplicationConfiguration { get; set; }
 
-        public ApplicationHandlers ApplicationHandlers { get; private set; }
+        public IApplicationHandlers ApplicationHandlers { get; private set; }
 
         #endregion // Fields
 
         #region // Constructors
-
-        public Application()
-            : this(new AssemblyWalker()
-            , new HandlerFactory()
-            , new HandlerSearch()
-            , new HandlersSort()
-            , new TypeConstructor()
-            , new ApplicationHandlersFactory())
-        { }
 
         public Application(IAssemblyWalker assemblyWalker
             , IHandlerFactory handlerFactory

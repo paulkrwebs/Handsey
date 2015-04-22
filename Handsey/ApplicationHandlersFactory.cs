@@ -8,7 +8,7 @@ namespace Handsey
 {
     public class ApplicationHandlersFactory : IApplicationHandlersFactory
     {
-        public ApplicationHandlers Create(IList<HandlerInfo> handlers)
+        public IApplicationHandlers Create(IList<HandlerInfo> handlers)
         {
             throw new NotImplementedException();
         }

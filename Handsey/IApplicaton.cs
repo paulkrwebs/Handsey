@@ -11,7 +11,7 @@ namespace Handsey
     {
         IApplicationConfiguration ApplicationConfiguration { get; set; }
 
-        ApplicationHandlers ApplicationHandlers { get; }
+        IApplicationHandlers ApplicationHandlers { get; }
 
         void Initialise();
 

@@ -9,16 +9,19 @@ using System.Threading.Tasks;
 
 namespace Handsey
 {
-    public class ApplicationHandlers
+    /// <summary>
+    /// Thread safe container for handlers
+    /// </summary>
+    public class ApplicationHandlers : Handsey.IApplicationHandlers
     {
-        private readonly IList<HandlerInfo> _handles;
+        private readonly ConcurrentQueue<HandlerInfo> _handles;
         private readonly ConcurrentDictionary<Type, bool> _previousFindAttemptsCache;
 
         public ApplicationHandlers(IList<HandlerInfo> handles)
         {
             PerformCheck.IsNull(handles).Throw<ArgumentNullException>(() => new ArgumentNullException("Handles parameter cannot be null"));
 
-            _handles = handles;
+            _handles = new ConcurrentQueue<HandlerInfo>(handles);
             _previousFindAttemptsCache = new ConcurrentDictionary<Type, bool>();
         }
 

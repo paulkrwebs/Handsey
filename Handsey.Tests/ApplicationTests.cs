@@ -20,7 +20,7 @@ namespace Handsey.Tests
         private Mock<IApplicationConfiguration> _applicationConfiguration;
         private Mock<IIocContainer> _iocContainer;
         private Mock<IApplicationHandlersFactory> _applicationHandlersFactory;
-        private Mock<ApplicationHandlers> _applicationHandlers;
+        private Mock<IApplicationHandlers> _applicationHandlers;
         private IApplicaton _application;
 
         [SetUp]
@@ -34,7 +34,7 @@ namespace Handsey.Tests
             _applicationConfiguration = new Mock<IApplicationConfiguration>();
             _iocContainer = new Mock<IIocContainer>();
             _applicationHandlersFactory = new Mock<IApplicationHandlersFactory>();
-            _applicationHandlers = new Mock<ApplicationHandlers>(new Mock<IList<HandlerInfo>>().Object);
+            _applicationHandlers = new Mock<IApplicationHandlers>();
 
             _application = new Application(_assemblyWalker.Object
                 , _handlerFactory.Object
