@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Handsey
 {
@@ -6,7 +7,7 @@ namespace Handsey
     {
         void ClearPreviousFindAttemptsCache();
 
-        System.Collections.Generic.IEnumerable<HandlerInfo> Find(HandlerInfo toSearchFor, IHandlerSearch search);
+        IEnumerable<HandlerInfo> Find(HandlerInfo toSearchFor, IHandlerSearch search);
 
         bool PreviouslyAttemptedToFind(HandlerInfo toSearchFor);
     }
