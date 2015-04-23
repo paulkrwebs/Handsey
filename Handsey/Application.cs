@@ -79,15 +79,42 @@ namespace Handsey
                 return;
 
             // check if tried to find before
+            // TODO
 
-            // try to find
+            // create handler
+            HandlerInfo toSearchFor = _handlerFactory.Create(ApplicationConfiguration.BaseType, typeof(THandler));
+
+            // Find
+            IList<HandlerInfo> handlersFoundList = FindHandlers<THandler>(toSearchFor);
 
             // order
+            // TODO
 
             // construct
+            // TODO
 
             // lock and register
+            // TODO
+
             throw new NotImplementedException("TODO!");
+        }
+
+        /// <summary>
+        /// Finds handlers in the ApplicationHandlers object
+        /// </summary>
+        /// <param name="toSearchFor"></param>
+        /// <exception cref="HandlerNotFoundException">Is thrown if no handlers are matched</exception>
+        /// <returns></returns>
+        private IList<HandlerInfo> FindHandlers<THandler>(HandlerInfo toSearchFor)
+        {
+            // try to find
+            IEnumerable<HandlerInfo> handlersFound = ApplicationHandlers.Find(toSearchFor, _handlerSearch);
+            PerformCheck.IsNull(handlersFound).Throw<HandlerNotFoundException>(() => new HandlerNotFoundException("The handler of type " + typeof(THandler) + " could not be found"));
+
+            IList<HandlerInfo> handlersFoundList = handlersFound.ToList();
+            PerformCheck.IsTrue(() => !handlersFoundList.Any()).Throw<HandlerNotFoundException>(() => new HandlerNotFoundException("The handler of type " + typeof(THandler) + " could not be found"));
+
+            return handlersFoundList;
         }
 
         private bool TryInvoke<THandler>(THandler[] handlers, Action<THandler> trigger)
