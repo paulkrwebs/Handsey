@@ -8,8 +8,8 @@ namespace Handsey
 {
     public interface ITypeConstructor
     {
-        IEnumerable<Type> Create(TypeInfo constructedFrom, IList<TypeInfo> toBeConstructued);
+        IEnumerable<Type> Create(HandlerInfo constructedFrom, IList<HandlerInfo> toBeConstructued);
 
-        Type Create(TypeInfo constructedFrom, TypeInfo toBeConstructued);
+        Type Create(HandlerInfo constructedFrom, HandlerInfo toBeConstructued);
     }
 }

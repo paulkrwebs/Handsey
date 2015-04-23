@@ -18,20 +18,20 @@ namespace Handsey.Tests
         {
             ITypeConstructor factory = new TypeConstructor();
 
-            Assert.That(() => factory.Create(new TypeInfo(), null as IList<TypeInfo>).ToList(), Throws.Exception.TypeOf<ArgumentNullException>());
-            Assert.That(() => factory.Create(null, new List<TypeInfo>()).ToList(), Throws.Exception.TypeOf<ArgumentNullException>());
-            Assert.That(() => factory.Create(new TypeInfo(), new List<TypeInfo>() { new TypeInfo() }).ToList(), Throws.Exception.TypeOf<ArgumentNullException>());
+            Assert.That(() => factory.Create(new HandlerInfo(), null as IList<HandlerInfo>).ToList(), Throws.Exception.TypeOf<ArgumentNullException>());
+            Assert.That(() => factory.Create(null, new List<HandlerInfo>()).ToList(), Throws.Exception.TypeOf<ArgumentNullException>());
+            Assert.That(() => factory.Create(new HandlerInfo(), new List<HandlerInfo>() { new HandlerInfo() }).ToList(), Throws.Exception.TypeOf<ArgumentNullException>());
         }
 
         [Test]
         public void Create_TypeInfoAndTypeInfoAsList_AllTypesInListConstructed()
         {
-            TypeInfo constructedFrom = new TypeInfo()
+            HandlerInfo constructedFrom = new HandlerInfo()
             {
                 GenericParametersInfo = CreateGenericParameters<Developer, DeveloperViewModel>()
             };
 
-            TypeInfo typeToBeConstructed1 = new TypeInfo()
+            HandlerInfo typeToBeConstructed1 = new HandlerInfo()
             {
                 IsConstructed = false,
                 IsGenericType = true,
@@ -39,7 +39,7 @@ namespace Handsey.Tests
                 GenericParametersInfo = CreateGenericParametersWithConstraints<Employee, EmployeeViewModel>()
             };
 
-            TypeInfo typeToBeConstructed2 = new TypeInfo()
+            HandlerInfo typeToBeConstructed2 = new HandlerInfo()
             {
                 IsConstructed = false,
                 IsGenericType = true,
@@ -48,26 +48,26 @@ namespace Handsey.Tests
             };
 
             ITypeConstructor factory = new TypeConstructor();
-            IList<Type> constructedTypes = factory.Create(constructedFrom, new List<TypeInfo>() { typeToBeConstructed1, typeToBeConstructed2 }).ToList();
+            IList<Type> constructedTypes = factory.Create(constructedFrom, new List<HandlerInfo>() { typeToBeConstructed1, typeToBeConstructed2 }).ToList();
 
             Assert.That(constructedTypes[0], Is.EqualTo(typeof(EmployeeMappingHandler<Developer, DeveloperViewModel>)));
             Assert.That(constructedTypes[1], Is.EqualTo(typeof(DeveloperMappingHandler<Developer, DeveloperViewModel>)));
         }
 
         [Test]
-        public void Create_TypeInfoAndTypeInfo_NullPassedInSoArgumentExceptionThrown()
+        public void Create_HandlerInfoAndHandlerInfo_NullPassedInSoArgumentExceptionThrown()
         {
             ITypeConstructor factory = new TypeConstructor();
 
-            Assert.That(() => factory.Create(new TypeInfo(), null as TypeInfo), Throws.Exception.TypeOf<ArgumentNullException>());
-            Assert.That(() => factory.Create(null, new TypeInfo()), Throws.Exception.TypeOf<ArgumentNullException>());
-            Assert.That(() => factory.Create(new TypeInfo(), new TypeInfo()), Throws.Exception.TypeOf<ArgumentNullException>());
+            Assert.That(() => factory.Create(new HandlerInfo(), null as HandlerInfo), Throws.Exception.TypeOf<ArgumentNullException>());
+            Assert.That(() => factory.Create(null, new HandlerInfo()), Throws.Exception.TypeOf<ArgumentNullException>());
+            Assert.That(() => factory.Create(new HandlerInfo(), new HandlerInfo()), Throws.Exception.TypeOf<ArgumentNullException>());
         }
 
         [Test]
-        public void Create_TypeInfoAndTypeInfo_ConcreteTypeSoConcreteTypeReturned()
+        public void Create_HandlerInfoAndHandlerInfo_ConcreteTypeSoConcreteTypeReturned()
         {
-            TypeInfo typeToBeConstructed = new TypeInfo()
+            HandlerInfo typeToBeConstructed = new HandlerInfo()
             {
                 IsConstructed = true,
                 IsGenericType = false,
@@ -76,13 +76,13 @@ namespace Handsey.Tests
 
             ITypeConstructor factory = new TypeConstructor();
 
-            Assert.That(factory.Create(new TypeInfo(), typeToBeConstructed), Is.EqualTo(typeToBeConstructed.Type));
+            Assert.That(factory.Create(new HandlerInfo(), typeToBeConstructed), Is.EqualTo(typeToBeConstructed.Type));
         }
 
         [Test]
-        public void Create_TypeInfoAndTypeInfo_GenericTypeButConstructedFromDoesNotHAveGenericParametersSoExceptionThrown()
+        public void Create_HandlerInfoAndHandlerInfo_GenericTypeButConstructedFromDoesNotHAveGenericParametersSoExceptionThrown()
         {
-            TypeInfo typeToBeConstructed = new TypeInfo()
+            HandlerInfo typeToBeConstructed = new HandlerInfo()
             {
                 IsConstructed = false,
                 IsGenericType = true,
@@ -91,18 +91,18 @@ namespace Handsey.Tests
 
             ITypeConstructor factory = new TypeConstructor();
 
-            Assert.That(() => factory.Create(new TypeInfo(), typeToBeConstructed), Throws.Exception.TypeOf<ArgumentException>());
+            Assert.That(() => factory.Create(new HandlerInfo(), typeToBeConstructed), Throws.Exception.TypeOf<ArgumentException>());
         }
 
         [Test]
-        public void Create_TypeInfoAndTypeInfo_ConstructedFromDoesNotHaveCorrectNumberOFGenericParametersSoExceptionThrown()
+        public void Create_HandlerInfoAndHandlerInfo_ConstructedFromDoesNotHaveCorrectNumberOFGenericParametersSoExceptionThrown()
         {
-            TypeInfo constructedFrom = new TypeInfo()
+            HandlerInfo constructedFrom = new HandlerInfo()
             {
                 GenericParametersInfo = new GenericParameterInfo[1] { new GenericParameterInfo() },
             };
 
-            TypeInfo typeToBeConstructed = new TypeInfo()
+            HandlerInfo typeToBeConstructed = new HandlerInfo()
             {
                 IsConstructed = false,
                 IsGenericType = true,
@@ -116,14 +116,14 @@ namespace Handsey.Tests
         }
 
         [Test]
-        public void Create_TypeInfoAndTypeInfo_GenericTypeConstructed()
+        public void Create_HandlerInfoAndHandlerInfo_GenericTypeConstructed()
         {
-            TypeInfo constructedFrom = new TypeInfo()
+            HandlerInfo constructedFrom = new HandlerInfo()
             {
                 GenericParametersInfo = CreateGenericParameters<Payload<Developer, DeveloperViewModel>, Developer, DeveloperViewModel>()
             };
 
-            TypeInfo typeToBeConstructed = new TypeInfo()
+            HandlerInfo typeToBeConstructed = new HandlerInfo()
             {
                 IsConstructed = false,
                 IsGenericType = true,
