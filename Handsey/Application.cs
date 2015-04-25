@@ -82,39 +82,130 @@ namespace Handsey
             // TODO
 
             // create handler
-            HandlerInfo toSearchFor = _handlerFactory.Create(ApplicationConfiguration.BaseType, typeof(THandler));
+            HandlerInfo toSearchFor = CreateHandler<THandler>();
 
             // Find
-            IList<HandlerInfo> handlersFoundList = FindHandlers<THandler>(toSearchFor);
+            IList<HandlerInfo> handlersList = FindHandlers<THandler>(toSearchFor);
 
             // order
-            // TODO
+            handlersList = Order(handlersList);
 
             // construct
-            // TODO
+            IEnumerable<Type> constructedTypes = ConstructTypes(toSearchFor, handlersList);
 
-            // lock and register
-            // TODO
+            // register types
+            RegisterTypes<THandler>(constructedTypes, trigger);
+        }
 
-            throw new NotImplementedException("TODO!");
+        private void RegisterTypes<THandler>(IEnumerable<Type> constructedTypes, Action<THandler> trigger)
+        {
+            // TODO NEED To TEST THE FIRST TRY INVOKE!
+
+            lock (Lock<THandler>.SyncLock)
+            {
+                // Make sure the handlers haven't been registered in another thread.
+                // If it has been registered then invoke
+                if (TryInvoke(ApplicationConfiguration.IocConatainer.ResolveAll<THandler>(), trigger))
+                    return;
+
+                // If it hasn't then register
+                RegisterTypes<THandler>(constructedTypes);
+            }
+
+            // Construct from the IocContainer to inject dependencies.
+            TryInvoke(ApplicationConfiguration.IocConatainer.ResolveAll<THandler>(), trigger);
+        }
+
+        private void RegisterTypes<THandler>(IEnumerable<Type> constructedTypes)
+        {
+            foreach (Type type in constructedTypes)
+            {
+                ApplicationConfiguration.IocConatainer.Register(typeof(THandler), type);
+            }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <typeparam name="THandler"></typeparam>
+        /// <exception cref="RequestedHandlerNotValid"></exception>
+        /// <returns></returns>
+        private HandlerInfo CreateHandler<THandler>()
+        {
+            HandlerInfo toSearchFor = null;
+
+            PerformCheck.IsTrue(() => !TryCreateHandler<THandler>(ApplicationConfiguration.BaseType, out toSearchFor)).Throw<RequestedHandlerNotValid>(() => new RequestedHandlerNotValid("Requested handler " + typeof(THandler).FullName + " cannot be converted to a handler."));
+
+            return toSearchFor;
+        }
+
+        private bool TryCreateHandler<THandler>(Type baseType, out HandlerInfo handlerInfo)
+        {
+            handlerInfo = _handlerFactory.Create(ApplicationConfiguration.BaseType, typeof(THandler));
+            return handlerInfo != null;
+        }
+
+        /// <summary>
+        /// Finds handlers
+        /// </summary>
+        /// <typeparam name="THandler"></typeparam>
+        /// <param name="handlerTypeName"></param>
+        /// <param name="toSearchFor"></param>
+        /// <exception cref="HandlerNotFoundException"></exception>
+        /// <returns></returns>
+        private IList<HandlerInfo> FindHandlers<THandler>(HandlerInfo toSearchFor)
+        {
+            IEnumerable<HandlerInfo> handlersFound = null;
+            PerformCheck.IsTrue(() => !TryFindHandlers<THandler>(toSearchFor, out handlersFound)).Throw<HandlerNotFoundException>(() => new HandlerNotFoundException("The handler of type " + typeof(THandler).FullName + " could not be found"));
+
+            // check some are returned
+            IList<HandlerInfo> handlersList = handlersFound.ToList();
+            PerformCheck.IsTrue(() => !handlersList.Any()).Throw<HandlerNotFoundException>(() => new HandlerNotFoundException("The handler of type " + typeof(THandler).FullName + " could not be found"));
+
+            return handlersList;
         }
 
         /// <summary>
         /// Finds handlers in the ApplicationHandlers object
         /// </summary>
         /// <param name="toSearchFor"></param>
-        /// <exception cref="HandlerNotFoundException">Is thrown if no handlers are matched</exception>
         /// <returns></returns>
-        private IList<HandlerInfo> FindHandlers<THandler>(HandlerInfo toSearchFor)
+        private bool TryFindHandlers<THandler>(HandlerInfo toSearchFor, out IEnumerable<HandlerInfo> handlersFound)
         {
             // try to find
-            IEnumerable<HandlerInfo> handlersFound = ApplicationHandlers.Find(toSearchFor, _handlerSearch);
-            PerformCheck.IsNull(handlersFound).Throw<HandlerNotFoundException>(() => new HandlerNotFoundException("The handler of type " + typeof(THandler) + " could not be found"));
+            handlersFound = ApplicationHandlers.Find(toSearchFor, _handlerSearch);
+            return handlersFound != null;
+        }
 
-            IList<HandlerInfo> handlersFoundList = handlersFound.ToList();
-            PerformCheck.IsTrue(() => !handlersFoundList.Any()).Throw<HandlerNotFoundException>(() => new HandlerNotFoundException("The handler of type " + typeof(THandler) + " could not be found"));
+        private IList<HandlerInfo> Order(IList<HandlerInfo> handlersList)
+        {
+            if (handlersList.Count == 1)
+                return handlersList;
 
-            return handlersFoundList;
+            throw new NotImplementedException("Implement order by");
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="toConstructFrom"></param>
+        /// <param name="handlersList"></param>
+        /// <exception cref="HandlerCannotBeConstructedException"></exception>
+        /// <returns></returns>
+        private IEnumerable<Type> ConstructTypes(HandlerInfo toConstructFrom, IList<HandlerInfo> handlersList)
+        {
+            IEnumerable<Type> constructedTypes = null;
+
+            PerformCheck.IsTrue(() => !TryConstructTypes(toConstructFrom, handlersList, out constructedTypes)).Throw<HandlerCannotBeConstructedException>(() => new HandlerCannotBeConstructedException("The handler of type " + toConstructFrom.Type.FullName + " cannot be constructed"));
+            PerformCheck.IsTrue(() => !constructedTypes.Any()).Throw<HandlerCannotBeConstructedException>(() => new HandlerCannotBeConstructedException("The handler of type " + toConstructFrom.Type.FullName + " cannot be constructed"));
+
+            return constructedTypes;
+        }
+
+        private bool TryConstructTypes(HandlerInfo constructFrom, IList<HandlerInfo> handlers, out IEnumerable<Type> constructedTypes)
+        {
+            constructedTypes = _typeConstructor.Create(constructFrom, handlers);
+            return constructedTypes != null;
         }
 
         private bool TryInvoke<THandler>(THandler[] handlers, Action<THandler> trigger)
@@ -128,6 +219,11 @@ namespace Handsey
             }
 
             return invoked;
+        }
+
+        private static class Lock<T>
+        {
+            public static readonly object SyncLock = new object();
         }
 
         #endregion Methods
