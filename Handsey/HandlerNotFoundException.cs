@@ -8,9 +8,6 @@ namespace Handsey
 {
     public class HandlerNotFoundException : Exception
     {
-        public HandlerNotFoundException()
-        { }
-
         public HandlerNotFoundException(string message)
             : base(message)
         { }

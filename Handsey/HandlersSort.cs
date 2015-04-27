@@ -149,35 +149,6 @@ namespace Handsey
             return result;
         }
 
-        //public static int Compare(HandlerInfo a, HandlerInfo b)
-        //{
-        //    if (a.ExecutionOrder == ExecutionOrder.First)
-        //        return -1;
-
-        //    if (b.ExecutionOrder == ExecutionOrder.First)
-        //        return 1;
-
-        //    if (a.ExecutionOrder == ExecutionOrder.Last)
-        //        return 1;
-
-        //    if (b.ExecutionOrder == ExecutionOrder.Last)
-        //        return -1;
-
-        //    if (a.ExecutionOrder == ExecutionOrder.NotSet)
-        //        return 1;
-
-        //    if (b.ExecutionOrder == ExecutionOrder.NotSet)
-        //        return -1;
-
-        //    if (a.ExecutionOrder == ExecutionOrder.InSequence)
-        //        return CompareSequence(a, b);
-
-        //    if (b.ExecutionOrder == ExecutionOrder.InSequence)
-        //        return CompareSequence(b, a);
-
-        //    return 0;
-        //}
-
         private static int CompareSequence(HandlerInfo a, HandlerInfo b)
         {
             if (a.ExecutesAfter != null && a.ExecutesAfter.Any(t => t == b.Type))

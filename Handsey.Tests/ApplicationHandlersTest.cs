@@ -42,56 +42,5 @@ namespace Handsey.Tests
 
             handlerSearch.Verify(h => h.Execute(It.IsAny<HandlerInfo>(), It.IsAny<ConcurrentQueue<HandlerInfo>>()), Times.Once(), "Excute not called on handler search");
         }
-
-        [Test]
-        public void PreviouslyAttemptedToFind_HandlerInfo_SearchHasBeenAttemptedBEforeSoReturnTrue()
-        {
-            List<HandlerInfo> handles = new List<HandlerInfo>();
-            Mock<IHandlerSearch> handlerSearch = new Mock<IHandlerSearch>();
-            ApplicationHandlers applicationHandles = new ApplicationHandlers(handles);
-
-            applicationHandles.Find(new HandlerInfo() { Type = this.GetType() }, handlerSearch.Object);
-
-            handlerSearch.Verify(h => h.Execute(It.IsAny<HandlerInfo>(), It.IsAny<ConcurrentQueue<HandlerInfo>>()), Times.Once(), "Excute not called on handler search");
-        }
-
-        [Test]
-        public void PreviouslyAttemptedToFind_HandlerInfo_ToSearhForDoesNotHaveATypeSoThrowException()
-        {
-            List<HandlerInfo> handles = new List<HandlerInfo>();
-            Mock<IHandlerSearch> handlerSearch = new Mock<IHandlerSearch>();
-            ApplicationHandlers applicationHandles = new ApplicationHandlers(handles);
-
-            Assert.That(() => applicationHandles.PreviouslyAttemptedToFind(null), Throws.Exception.TypeOf<ArgumentNullException>(), "Must provide a type info with a type");
-            Assert.That(() => applicationHandles.PreviouslyAttemptedToFind(new HandlerInfo()), Throws.Exception.TypeOf<ArgumentNullException>(), "Must provide a type info with a type");
-        }
-
-        [Test]
-        public void PreviouslyAttemptedToFind_HandlerInfo_SearchHasNotBeenAttemptedBEforeSoReturnFalse()
-        {
-            List<HandlerInfo> handles = new List<HandlerInfo>();
-            Mock<IHandlerSearch> handlerSearch = new Mock<IHandlerSearch>();
-            ApplicationHandlers applicationHandles = new ApplicationHandlers(handles);
-
-            applicationHandles.Find(new HandlerInfo() { Type = typeof(string) }, handlerSearch.Object);
-
-            Assert.That(applicationHandles.PreviouslyAttemptedToFind(new HandlerInfo() { Type = typeof(int) }), Is.False);
-        }
-
-        [Test]
-        public void ClearPreviousFindAttemptsCache_NoParams_CacheIsClearedCorrectly()
-        {
-            List<HandlerInfo> handles = new List<HandlerInfo>();
-            Mock<IHandlerSearch> handlerSearch = new Mock<IHandlerSearch>();
-            ApplicationHandlers applicationHandles = new ApplicationHandlers(handles);
-
-            applicationHandles.Find(new HandlerInfo() { Type = typeof(int) }, handlerSearch.Object);
-
-            Assert.That(applicationHandles.PreviouslyAttemptedToFind(new HandlerInfo() { Type = typeof(int) }), Is.True);
-
-            applicationHandles.ClearPreviousFindAttemptsCache();
-
-            Assert.That(applicationHandles.PreviouslyAttemptedToFind(new HandlerInfo() { Type = typeof(int) }), Is.False);
-        }
     }
 }

@@ -132,7 +132,7 @@ namespace Handsey.Tests
 
             _application.Initialise();
 
-            Assert.That(() => _application.Invoke<Mock<IHandler>>(trigger.Object), Throws.Exception.TypeOf<RequestedHandlerNotValid>());
+            Assert.That(() => _application.Invoke<Mock<IHandler>>(trigger.Object), Throws.Exception.TypeOf<RequestedHandlerNotValidException>());
             trigger.Verify(t => t(It.IsAny<Mock<IHandler>>()), Times.Never);
             _handlerFactory.Verify(h => h.Create(It.IsAny<Type>(), It.Is<Type>(t => t == typeof(Mock<IHandler>))), Times.Once(), "All call create handler once");
             _applicationHandlers.Verify(a => a.Find(It.IsAny<HandlerInfo>(), It.IsAny<IHandlerSearch>()), Times.Never());
@@ -297,13 +297,57 @@ namespace Handsey.Tests
         }
 
         [Test]
-        public void Invoke_Action_HandlerNotRegisteredFoundHandlersAndOrderAndConstructAndRegister()
+        public void Invoke_Action_HandlerNotRegisteredFoundMultipleHandlersAndOrderAndConstructAndRegister()
         {
-        }
+            Mock<Action<Mock<IHandler>>> trigger = new Mock<Action<Mock<IHandler>>>();
+            int resolveAllCount = 0;
 
-        [Test]
-        public void Invoke_Action_HandlerNotRegisteredHandlerFindOnlyAttemptedOnce()
-        {
+            _handlerFactory.Setup(h => h.Create(It.IsAny<Type>(), It.IsAny<Type>()))
+                .Returns(() => new HandlerInfo() { Type = typeof(Mock<IHandler>) });
+
+            _applicationHandlers.Setup(a => a.Find(It.IsAny<HandlerInfo>(), It.IsAny<IHandlerSearch>()))
+                .Returns(new List<HandlerInfo>()
+                {
+                    new HandlerInfo(),
+                    new HandlerInfo(),
+                    new HandlerInfo()
+                });
+
+            _handlerSort.Setup(h => h.Sort(It.IsAny<IList<HandlerInfo>>()))
+                .Returns(new List<HandlerInfo>()
+                {
+                    new HandlerInfo(),
+                    new HandlerInfo(),
+                    new HandlerInfo()
+                });
+
+            _typeConstructor.Setup(t => t.Create(It.IsAny<HandlerInfo>(), It.IsAny<IList<HandlerInfo>>()))
+                .Returns(new List<Type>()
+                {
+                    typeof(IHandler),
+                    typeof(IHandler),
+                    typeof(IHandler)
+                });
+
+            _iocContainer.Setup(i => i.ResolveAll<Mock<IHandler>>())
+                .Callback(() => resolveAllCount++)
+                .Returns(() =>
+                {
+                    if (resolveAllCount == 3)
+                        return new Mock<IHandler>[3] { new Mock<IHandler>(), new Mock<IHandler>(), new Mock<IHandler>() };
+                    return new Mock<IHandler>[0];
+                });
+
+            _application.Initialise();
+            _application.Invoke<Mock<IHandler>>(trigger.Object);
+
+            _handlerFactory.Verify(h => h.Create(It.IsAny<Type>(), It.Is<Type>(t => t == typeof(Mock<IHandler>))), Times.Once(), "All call create handler once");
+            _applicationHandlers.Verify(a => a.Find(It.IsAny<HandlerInfo>(), It.IsAny<IHandlerSearch>()), Times.Once(), "Should only try to find handlers once");
+            _handlerSort.Verify(h => h.Sort(It.IsAny<IEnumerable<HandlerInfo>>()), Times.Once(), "Multiple handlers so requires sort");
+            _typeConstructor.Verify(t => t.Create(It.IsAny<HandlerInfo>(), It.IsAny<IList<HandlerInfo>>()), Times.Once(), "Type should be constructed once");
+            _iocContainer.Verify(i => i.Register(It.IsAny<Type>(), It.IsAny<Type>()), Times.Exactly(3), "TYpe should have been registered");
+            _iocContainer.Verify(i => i.ResolveAll<Mock<IHandler>>(), Times.Exactly(3), "TYpe should have been registered");
+            trigger.Verify(t => t(It.IsAny<Mock<IHandler>>()), Times.Exactly(3));
         }
     }
 }

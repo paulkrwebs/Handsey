@@ -6,12 +6,9 @@ using System.Threading.Tasks;
 
 namespace Handsey
 {
-    public class RequestedHandlerNotValid : Exception
+    public class RequestedHandlerNotValidException : Exception
     {
-        public RequestedHandlerNotValid()
-        { }
-
-        public RequestedHandlerNotValid(string message)
+        public RequestedHandlerNotValidException(string message)
             : base(message)
         { }
     }

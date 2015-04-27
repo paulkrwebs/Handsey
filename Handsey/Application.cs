@@ -78,9 +78,6 @@ namespace Handsey
             if (TryInvoke(ApplicationConfiguration.IocConatainer.ResolveAll<THandler>(), trigger))
                 return;
 
-            // check if tried to find before
-            // TODO
-
             // create handler
             HandlerInfo toSearchFor = CreateHandler<THandler>();
 
@@ -97,44 +94,30 @@ namespace Handsey
             RegisterTypes<THandler>(constructedTypes, trigger);
         }
 
-        private void RegisterTypes<THandler>(IEnumerable<Type> constructedTypes, Action<THandler> trigger)
+        private bool TryInvoke<THandler>(THandler[] handlers, Action<THandler> trigger)
         {
-            // TODO NEED To TEST THE FIRST TRY INVOKE!
+            bool invoked = false;
 
-            lock (Lock<THandler>.SyncLock)
+            foreach (THandler handle in handlers)
             {
-                // Make sure the handlers haven't been registered in another thread.
-                // If it has been registered then invoke
-                if (TryInvoke(ApplicationConfiguration.IocConatainer.ResolveAll<THandler>(), trigger))
-                    return;
-
-                // If it hasn't then register
-                RegisterTypes<THandler>(constructedTypes);
+                trigger(handle);
+                invoked = true;
             }
 
-            // Construct from the IocContainer to inject dependencies.
-            TryInvoke(ApplicationConfiguration.IocConatainer.ResolveAll<THandler>(), trigger);
-        }
-
-        private void RegisterTypes<THandler>(IEnumerable<Type> constructedTypes)
-        {
-            foreach (Type type in constructedTypes)
-            {
-                ApplicationConfiguration.IocConatainer.Register(typeof(THandler), type);
-            }
+            return invoked;
         }
 
         /// <summary>
         ///
         /// </summary>
         /// <typeparam name="THandler"></typeparam>
-        /// <exception cref="RequestedHandlerNotValid"></exception>
+        /// <exception cref="RequestedHandlerNotValidException"></exception>
         /// <returns></returns>
         private HandlerInfo CreateHandler<THandler>()
         {
             HandlerInfo toSearchFor = null;
 
-            PerformCheck.IsTrue(() => !TryCreateHandler<THandler>(ApplicationConfiguration.BaseType, out toSearchFor)).Throw<RequestedHandlerNotValid>(() => new RequestedHandlerNotValid("Requested handler " + typeof(THandler).FullName + " cannot be converted to a handler."));
+            PerformCheck.IsTrue(() => !TryCreateHandler<THandler>(ApplicationConfiguration.BaseType, out toSearchFor)).Throw<RequestedHandlerNotValidException>(() => new RequestedHandlerNotValidException("Requested handler " + typeof(THandler).FullName + " cannot be converted to a handler."));
 
             return toSearchFor;
         }
@@ -182,7 +165,7 @@ namespace Handsey
             if (handlersList.Count == 1)
                 return handlersList;
 
-            throw new NotImplementedException("Implement order by");
+            return _handlerSort.Sort(handlersList);
         }
 
         /// <summary>
@@ -208,22 +191,36 @@ namespace Handsey
             return constructedTypes != null;
         }
 
-        private bool TryInvoke<THandler>(THandler[] handlers, Action<THandler> trigger)
+        private void RegisterTypes<THandler>(IEnumerable<Type> constructedTypes, Action<THandler> trigger)
         {
-            bool invoked = false;
+            // TODO NEED To TEST THE FIRST TRY INVOKE!
 
-            foreach (THandler handle in handlers)
+            lock (Lock<THandler>.Semaphore)
             {
-                trigger(handle);
-                invoked = true;
+                // Make sure the handlers haven't been registered in another thread.
+                // If it has been registered then invoke
+                if (TryInvoke(ApplicationConfiguration.IocConatainer.ResolveAll<THandler>(), trigger))
+                    return;
+
+                // If it hasn't then register
+                RegisterTypes<THandler>(constructedTypes);
             }
 
-            return invoked;
+            // Construct from the IocContainer to inject dependencies.
+            TryInvoke(ApplicationConfiguration.IocConatainer.ResolveAll<THandler>(), trigger);
+        }
+
+        private void RegisterTypes<THandler>(IEnumerable<Type> constructedTypes)
+        {
+            foreach (Type type in constructedTypes)
+            {
+                ApplicationConfiguration.IocConatainer.Register(typeof(THandler), type);
+            }
         }
 
         private static class Lock<T>
         {
-            public static readonly object SyncLock = new object();
+            public static readonly object Semaphore = new object();
         }
 
         #endregion Methods

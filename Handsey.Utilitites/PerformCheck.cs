@@ -30,7 +30,7 @@ namespace Handsey.Utilities
         /// <typeparam name="TException"></typeparam>
         /// <param name="factory"></param>
         public void Throw<TException>(Func<TException> factory)
-            where TException : Exception, new()
+            where TException : Exception
         {
             if (this._check())
                 throw factory();

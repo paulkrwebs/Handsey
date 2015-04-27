@@ -8,9 +8,6 @@ namespace Handsey
 {
     public class HandlerCannotBeConstructedException : Exception
     {
-        public HandlerCannotBeConstructedException()
-        { }
-
         public HandlerCannotBeConstructedException(string message)
             : base(message)
         { }
