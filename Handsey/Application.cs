@@ -193,8 +193,6 @@ namespace Handsey
 
         private void RegisterTypes<THandler>(IEnumerable<Type> constructedTypes, Action<THandler> trigger)
         {
-            // TODO NEED To TEST THE FIRST TRY INVOKE!
-
             lock (Lock<THandler>.Semaphore)
             {
                 // Make sure the handlers haven't been registered in another thread.
