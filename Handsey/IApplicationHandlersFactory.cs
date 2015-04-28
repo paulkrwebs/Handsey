@@ -8,6 +8,6 @@ namespace Handsey
 {
     public interface IApplicationHandlersFactory
     {
-        IApplicationHandlers Create(IList<HandlerInfo> handlers);
+        IApplicationHandlers Create(IApplicationConfiguration applicationConfiguration);
     }
 }

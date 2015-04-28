@@ -43,6 +43,9 @@ namespace Handsey.Utilities
 
         public static PerformCheck IsNull(params object[] objs)
         {
+            if (objs == null)
+                return IsNull(objs as object);
+
             return new PerformCheck(() => objs.Any(o => o == null));
         }
 

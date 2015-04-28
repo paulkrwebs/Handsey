@@ -17,6 +17,9 @@ namespace Handsey
             {
                 throw new NotImplementedException("Need to make sure thead safe");
 
+                // need to call to IApplicationHandlersFactory to make the handlers to inject into
+                // the Application object
+
                 // taken from https://msdn.microsoft.com/en-gb/library/ff650316.aspx
                 //if (_instance == null)
                 //{

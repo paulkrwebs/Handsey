@@ -12,86 +12,43 @@ namespace Handsey
     {
         #region // Fields
 
-        private static object _initialising = new object();
-
-        #region // These need to be in read / write locks
-
-        // https://msdn.microsoft.com/en-us/library/system.threading.readerwriterlockslim(v=vs.110).aspx
-        private bool _isInitialised;
-
-        private IApplicationConfiguration _applicationConfiguration;
-
-        public IApplicationHandlers ApplicationHandlers { get; private set; }
-
-        #endregion // These need to be in read / write locks
-
-        private readonly IAssemblyWalker _assemblyWalker;
         private readonly IHandlerFactory _handlerFactory;
         private readonly IHandlerSearch _handlerSearch;
         private readonly IHandlersSort _handlerSort;
         private readonly ITypeConstructor _typeConstructor;
-        private readonly IApplicationHandlersFactory _applicationHandlersFactory;
+        private readonly IApplicationHandlers _applicationHandlers;
+        private readonly IIocContainer _iocContainer;
+        private readonly IApplicationConfiguration _applicationConfiguration;
 
         #endregion // Fields
 
         #region // Constructors
 
-        public Application(IAssemblyWalker assemblyWalker
-            , IHandlerFactory handlerFactory
+        public Application(IHandlerFactory handlerFactory
             , IHandlerSearch handlerSearch
             , IHandlersSort handlerSort
-            , ITypeConstructor typeConstructor,
-             IApplicationHandlersFactory applicationHandlersFactory)
+            , ITypeConstructor typeConstructor
+            , IIocContainer iocContainer
+            , IApplicationHandlers applicationHandlers
+            , IApplicationConfiguration applicationConfiguration)
         {
-            _assemblyWalker = assemblyWalker;
             _handlerFactory = handlerFactory;
             _handlerSearch = handlerSearch;
             _handlerSort = handlerSort;
             _typeConstructor = typeConstructor;
-            _applicationHandlersFactory = applicationHandlersFactory;
+            _iocContainer = iocContainer;
+            _applicationHandlers = applicationHandlers;
+            _applicationConfiguration = applicationConfiguration;
         }
 
         #endregion // Constructors
 
         #region Methods
 
-        /// <summary>
-        /// Initilaises the current application object. This method can only be called once on an object and is thread safe
-        /// </summary>
-        public void Initialise(IApplicationConfiguration applicationConfiguration)
-        {
-            lock (_initialising)
-            {
-                PerformCheck.IsTrue(() => _isInitialised).Throw<InvalidOperationException>(() => new InvalidOperationException("An Application object can only be initialised once."));
-                PerformCheck.IsNull(applicationConfiguration).Throw<ArgumentNullException>(() => new ArgumentNullException("Please set an application configuration before trying to initialise"));
-                PerformCheck.IsNull(applicationConfiguration.IocConatainer).Throw<ArgumentNullException>(() => new ArgumentNullException("Please set an ioc container in the application configuration before trying to initialise"));
-                PerformCheck.IsTrue(() => CheckFilterConfiguration(applicationConfiguration)).Throw<ArgumentException>(() => new ArgumentException("Please set a handler base type to filter by and a list of assembly name prefixes to filter by."));
-
-                // set the application configuration
-                _applicationConfiguration = applicationConfiguration;
-
-                Type[] types = _assemblyWalker.ListAllTypes(_applicationConfiguration.BaseType, _applicationConfiguration.AssemblyNamePrefixes);
-                IList<HandlerInfo> handlers = _handlerFactory.Create(_applicationConfiguration.BaseType, types);
-
-                ApplicationHandlers = _applicationHandlersFactory.Create(handlers);
-                _isInitialised = true;
-            }
-        }
-
-        private bool CheckFilterConfiguration(IApplicationConfiguration applicationConfiguration)
-        {
-            return applicationConfiguration.AssemblyNamePrefixes == null
-                || applicationConfiguration.AssemblyNamePrefixes.Count() == 0
-                || applicationConfiguration.BaseType == null;
-        }
-
         public void Invoke<THandler>(Action<THandler> trigger)
         {
-            // make sure the application is initialised
-            PerformCheck.IsTrue(() => !_isInitialised).Throw<InvalidOperationException>(() => new InvalidOperationException("Application must be initialised before calling Invoke"));
-
             // try to resolve
-            if (TryInvoke(_applicationConfiguration.IocConatainer.ResolveAll<THandler>(), trigger))
+            if (TryInvoke(_iocContainer.ResolveAll<THandler>(), trigger))
                 return;
 
             // create handler
@@ -172,7 +129,7 @@ namespace Handsey
         private bool TryFindHandlers<THandler>(HandlerInfo toSearchFor, out IEnumerable<HandlerInfo> handlersFound)
         {
             // try to find
-            handlersFound = ApplicationHandlers.Find(toSearchFor, _handlerSearch);
+            handlersFound = _applicationHandlers.Find(toSearchFor, _handlerSearch);
             return handlersFound != null;
         }
 
@@ -214,7 +171,7 @@ namespace Handsey
                 // This second check is a form of "Double-Check Locking" idiom
                 // Make sure the handlers haven't been registered in another thread.
                 // If it has been registered then invoke
-                if (TryInvoke(_applicationConfiguration.IocConatainer.ResolveAll<THandler>(), trigger))
+                if (TryInvoke(_iocContainer.ResolveAll<THandler>(), trigger))
                     return;
 
                 // If it hasn't then register
@@ -222,14 +179,14 @@ namespace Handsey
             }
 
             // Construct from the IocContainer to inject dependencies.
-            TryInvoke(_applicationConfiguration.IocConatainer.ResolveAll<THandler>(), trigger);
+            TryInvoke(_iocContainer.ResolveAll<THandler>(), trigger);
         }
 
         private void RegisterTypes<THandler>(IEnumerable<Type> constructedTypes)
         {
             foreach (Type type in constructedTypes)
             {
-                _applicationConfiguration.IocConatainer.Register(typeof(THandler), type);
+                _iocContainer.Register(typeof(THandler), type);
             }
         }
 

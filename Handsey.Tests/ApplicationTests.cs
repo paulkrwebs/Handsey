@@ -12,104 +12,36 @@ namespace Handsey.Tests
     [TestFixture]
     public class ApplicationTests
     {
-        private Mock<IAssemblyWalker> _assemblyWalker;
         private Mock<IHandlerFactory> _handlerFactory;
         private Mock<IHandlerSearch> _handlerSearch;
         private Mock<IHandlersSort> _handlerSort;
         private Mock<ITypeConstructor> _typeConstructor;
         private Mock<IApplicationConfiguration> _applicationConfiguration;
         private Mock<IIocContainer> _iocContainer;
-        private Mock<IApplicationHandlersFactory> _applicationHandlersFactory;
         private Mock<IApplicationHandlers> _applicationHandlers;
         private IApplicaton _application;
 
         [SetUp]
         public void Setup()
         {
-            _assemblyWalker = new Mock<IAssemblyWalker>();
             _handlerFactory = new Mock<IHandlerFactory>();
             _handlerSearch = new Mock<IHandlerSearch>();
             _handlerSort = new Mock<IHandlersSort>();
             _typeConstructor = new Mock<ITypeConstructor>();
             _applicationConfiguration = new Mock<IApplicationConfiguration>();
             _iocContainer = new Mock<IIocContainer>();
-            _applicationHandlersFactory = new Mock<IApplicationHandlersFactory>();
             _applicationHandlers = new Mock<IApplicationHandlers>();
 
-            _application = new Application(_assemblyWalker.Object
-                , _handlerFactory.Object
+            _application = new Application(_handlerFactory.Object
                 , _handlerSearch.Object
                 , _handlerSort.Object
                 , _typeConstructor.Object
-                , _applicationHandlersFactory.Object);
+                , _iocContainer.Object
+                , _applicationHandlers.Object
+                , _applicationConfiguration.Object);
 
             _applicationConfiguration.SetupAllProperties();
-            _applicationConfiguration.SetupGet(a => a.IocConatainer).Returns(_iocContainer.Object);
             _applicationConfiguration.SetupGet(a => a.BaseType).Returns(typeof(object));
-            _applicationConfiguration.SetupGet(a => a.AssemblyNamePrefixes).Returns(new string[1] { "handsey." });
-
-            _applicationHandlersFactory.Setup(a => a.Create(It.IsAny<IList<HandlerInfo>>()))
-                .Returns(_applicationHandlers.Object);
-        }
-
-        [Test]
-        public void Initialise_NoParams_ConfigurationNotSetSoExceptionThrown()
-        {
-            Assert.That(() => _application.Initialise(null), Throws.Exception.TypeOf<ArgumentNullException>());
-        }
-
-        [Test]
-        public void Initialise_NoParams_IocContainerOnConfigurationNotSetSoExceptionThrown()
-        {
-            _applicationConfiguration.SetupGet(a => a.IocConatainer).Returns(null as IIocContainer);
-
-            Assert.That(() => _application.Initialise(_applicationConfiguration.Object), Throws.Exception.TypeOf<ArgumentNullException>());
-        }
-
-        [Test]
-        public void Initialise_NoParams_AssemblyPrefixOrBaseTypeNotBeenSetSoExceptionThrown()
-        {
-            _applicationConfiguration.SetupGet(a => a.BaseType).Returns(null as Type);
-            _applicationConfiguration.SetupGet(a => a.AssemblyNamePrefixes).Returns(null as string[]);
-
-            Assert.That(() => _application.Initialise(_applicationConfiguration.Object), Throws.Exception.TypeOf<ArgumentException>());
-
-            _applicationConfiguration.SetupGet(a => a.BaseType).Returns(typeof(string));
-            _applicationConfiguration.SetupGet(a => a.AssemblyNamePrefixes).Returns(null as string[]);
-
-            Assert.That(() => _application.Initialise(_applicationConfiguration.Object), Throws.Exception.TypeOf<ArgumentException>());
-
-            _applicationConfiguration.SetupGet(a => a.BaseType).Returns(null as Type);
-            _applicationConfiguration.SetupGet(a => a.AssemblyNamePrefixes).Returns(new string[1] { "test" });
-
-            Assert.That(() => _application.Initialise(_applicationConfiguration.Object), Throws.Exception.TypeOf<ArgumentException>());
-        }
-
-        [Test]
-        public void Initialise_NoParams_ApplicationInitialisedCorrectly()
-        {
-            _application.Initialise(_applicationConfiguration.Object);
-
-            _handlerFactory.Setup(h => h.Create(It.IsAny<Type>(), It.IsAny<Type[]>()))
-                .Returns(new List<HandlerInfo>() { new HandlerInfo() });
-
-            _assemblyWalker.Verify(a => a.ListAllTypes(It.IsAny<Type>(), It.IsAny<string[]>()), Times.Once());
-            _handlerFactory.Verify(h => h.Create(It.IsAny<Type>(), It.IsAny<Type[]>()), Times.Once());
-            Assert.That(_application.ApplicationHandlers, Is.Not.Null);
-        }
-
-        [Test]
-        public void Initialise_NoParams_InitialiseCanOnlyBeCalledOnce()
-        {
-            _application.Initialise(_applicationConfiguration.Object);
-
-            Assert.That(() => _application.Initialise(_applicationConfiguration.Object), Throws.Exception.TypeOf<InvalidOperationException>());
-        }
-
-        [Test]
-        public void Invoke_Action_InitialisedNotCalledOnObjectSoThrowException()
-        {
-            Assert.That(() => _application.Invoke<String>((s) => s.ToString()), Throws.Exception.TypeOf<InvalidOperationException>());
         }
 
         [Test]
@@ -120,7 +52,6 @@ namespace Handsey.Tests
             _iocContainer.Setup(i => i.ResolveAll<Mock<IHandler>>()).
                 Returns(new Mock<IHandler>[2] { new Mock<IHandler>(), new Mock<IHandler>() });
 
-            _application.Initialise(_applicationConfiguration.Object);
             _application.Invoke<Mock<IHandler>>(trigger.Object);
 
             trigger.Verify(t => t(It.IsAny<Mock<IHandler>>()), Times.Exactly(2));
@@ -133,8 +64,6 @@ namespace Handsey.Tests
 
             _handlerFactory.Setup(h => h.Create(It.IsAny<Type>(), It.IsAny<Type>()))
                 .Returns<HandlerInfo>(null);
-
-            _application.Initialise(_applicationConfiguration.Object);
 
             Assert.That(() => _application.Invoke<Mock<IHandler>>(trigger.Object), Throws.Exception.TypeOf<RequestedHandlerNotValidException>());
             trigger.Verify(t => t(It.IsAny<Mock<IHandler>>()), Times.Never);
@@ -153,8 +82,6 @@ namespace Handsey.Tests
             _applicationHandlers.Setup(a => a.Find(It.IsAny<HandlerInfo>(), It.IsAny<IHandlerSearch>()))
                 .Returns<IEnumerable<HandlerInfo>>(null);
 
-            _application.Initialise(_applicationConfiguration.Object);
-
             Assert.That(() => _application.Invoke<Mock<IHandler>>(trigger.Object), Throws.Exception.TypeOf<HandlerNotFoundException>());
             trigger.Verify(t => t(It.IsAny<Mock<IHandler>>()), Times.Never);
             _handlerFactory.Verify(h => h.Create(It.IsAny<Type>(), It.Is<Type>(t => t == typeof(Mock<IHandler>))), Times.Once(), "All call create handler once");
@@ -171,8 +98,6 @@ namespace Handsey.Tests
 
             _applicationHandlers.Setup(a => a.Find(It.IsAny<HandlerInfo>(), It.IsAny<IHandlerSearch>()))
                 .Returns(Enumerable.Empty<HandlerInfo>());
-
-            _application.Initialise(_applicationConfiguration.Object);
 
             Assert.That(() => _application.Invoke<Mock<IHandler>>(trigger.Object), Throws.Exception.TypeOf<HandlerNotFoundException>());
             trigger.Verify(t => t(It.IsAny<Mock<IHandler>>()), Times.Never);
@@ -193,8 +118,6 @@ namespace Handsey.Tests
 
             _typeConstructor.Setup(t => t.Create(It.IsAny<HandlerInfo>(), It.IsAny<IList<HandlerInfo>>()))
                 .Returns<IList<Type>>(null);
-
-            _application.Initialise(_applicationConfiguration.Object);
 
             Assert.That(() => _application.Invoke<Mock<IHandler>>(trigger.Object), Throws.Exception.TypeOf<HandlerCannotBeConstructedException>());
             trigger.Verify(t => t(It.IsAny<Mock<IHandler>>()), Times.Never);
@@ -217,8 +140,6 @@ namespace Handsey.Tests
 
             _typeConstructor.Setup(t => t.Create(It.IsAny<HandlerInfo>(), It.IsAny<IList<HandlerInfo>>()))
                 .Returns(new List<Type>());
-
-            _application.Initialise(_applicationConfiguration.Object);
 
             Assert.That(() => _application.Invoke<Mock<IHandler>>(trigger.Object), Throws.Exception.TypeOf<HandlerCannotBeConstructedException>());
             trigger.Verify(t => t(It.IsAny<Mock<IHandler>>()), Times.Never);
@@ -252,7 +173,6 @@ namespace Handsey.Tests
                     return new Mock<IHandler>[0];
                 });
 
-            _application.Initialise(_applicationConfiguration.Object);
             _application.Invoke<Mock<IHandler>>(trigger.Object);
 
             _handlerFactory.Verify(h => h.Create(It.IsAny<Type>(), It.Is<Type>(t => t == typeof(Mock<IHandler>))), Times.Once(), "All call create handler once");
@@ -288,7 +208,6 @@ namespace Handsey.Tests
                     return new Mock<IHandler>[0];
                 });
 
-            _application.Initialise(_applicationConfiguration.Object);
             _application.Invoke<Mock<IHandler>>(trigger.Object);
 
             _handlerFactory.Verify(h => h.Create(It.IsAny<Type>(), It.Is<Type>(t => t == typeof(Mock<IHandler>))), Times.Once(), "All call create handler once");
@@ -342,7 +261,6 @@ namespace Handsey.Tests
                     return new Mock<IHandler>[0];
                 });
 
-            _application.Initialise(_applicationConfiguration.Object);
             _application.Invoke<Mock<IHandler>>(trigger.Object);
 
             _handlerFactory.Verify(h => h.Create(It.IsAny<Type>(), It.Is<Type>(t => t == typeof(Mock<IHandler>))), Times.Once(), "All call create handler once");
