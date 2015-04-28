@@ -14,13 +14,16 @@ namespace Handsey
 
         private static object _initialising = new object();
 
-        private volatile bool _isInitialised;
+        #region // These need to be in read / write locks
 
-        private volatile IApplicationConfiguration _applicationConfiguration;
+        // https://msdn.microsoft.com/en-us/library/system.threading.readerwriterlockslim(v=vs.110).aspx
+        private bool _isInitialised;
 
-        private volatile IApplicationHandlers _applicationHandlers;
+        private IApplicationConfiguration _applicationConfiguration;
 
-        public IApplicationHandlers ApplicationHandlers { get { return _applicationHandlers; } }
+        public IApplicationHandlers ApplicationHandlers { get; private set; }
+
+        #endregion // These need to be in read / write locks
 
         private readonly IAssemblyWalker _assemblyWalker;
         private readonly IHandlerFactory _handlerFactory;
@@ -70,7 +73,7 @@ namespace Handsey
                 Type[] types = _assemblyWalker.ListAllTypes(_applicationConfiguration.BaseType, _applicationConfiguration.AssemblyNamePrefixes);
                 IList<HandlerInfo> handlers = _handlerFactory.Create(_applicationConfiguration.BaseType, types);
 
-                _applicationHandlers = _applicationHandlersFactory.Create(handlers);
+                ApplicationHandlers = _applicationHandlersFactory.Create(handlers);
                 _isInitialised = true;
             }
         }
@@ -169,7 +172,7 @@ namespace Handsey
         private bool TryFindHandlers<THandler>(HandlerInfo toSearchFor, out IEnumerable<HandlerInfo> handlersFound)
         {
             // try to find
-            handlersFound = _applicationHandlers.Find(toSearchFor, _handlerSearch);
+            handlersFound = ApplicationHandlers.Find(toSearchFor, _handlerSearch);
             return handlersFound != null;
         }
 
