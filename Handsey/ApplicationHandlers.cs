@@ -28,7 +28,8 @@ namespace Handsey
             PerformCheck.IsNull(search, toSearchFor).Throw<ArgumentNullException>(() => new ArgumentNullException("Search parameter cannot be null"));
             PerformCheck.IsNull(() => toSearchFor.Type).Throw<ArgumentNullException>(() => new ArgumentNullException("Search parameter cannot be null"));
 
-            // this is going to be a double dispatch method :)
+            // Double dispatch
+            // The search should return a new list so is thread safe
             return search.Execute(toSearchFor, _handles);
         }
     }

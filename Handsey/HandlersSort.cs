@@ -31,6 +31,7 @@ namespace Handsey
         {
             PerformCheck.IsNull(toSort).Throw<ArgumentNullException>(() => new ArgumentNullException("List to sort cannot be null"));
 
+            // Making a copy makes it immutable
             List<HandlerInfo> toSortAsList = toSort.ToList();
 
             PerformCheck.IsTrue(() => toSortAsList.Any(h => h.Type == null)).Throw<ArgumentException>(() => new ArgumentException("One or more handler does not have a Type property set"));

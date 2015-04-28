@@ -6,12 +6,21 @@ using System.Threading.Tasks;
 
 namespace Handsey
 {
+    // interface needs to be immutable
     public interface IApplicationConfiguration
     {
-        IIocContainer IocConatainer { get; set; }
+        IIocContainer IocConatainer { get; }
 
-        Type BaseType { get; set; }
+        Type BaseType { get; }
 
-        string[] AssemblyNamePrefixes { get; set; }
+        string[] AssemblyNamePrefixes { get; }
+
+        /// <summary>
+        /// Populates the immutable object
+        /// </summary>
+        /// <param name="iocContainer"></param>
+        /// <param name="baseType"></param>
+        /// <param name="assemblyNamePrefixes"></param>
+        void Populate(IIocContainer iocContainer, Type baseType, string[] assemblyNamePrefixes);
     }
 }
