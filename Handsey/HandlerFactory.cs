@@ -13,6 +13,13 @@ namespace Handsey
     {
         private Type _handlerBaseType;
 
+        // to make thread safe
+        // private readonly Type _handlerBaseType;
+        //public HandlerFactory(Type handlerBaseType)
+        //{
+        //    _handlerBaseType = handlerBaseType;
+        //}
+
         public IList<HandlerInfo> Create(Type handlerBaseType, Type[] types)
         {
             _handlerBaseType = handlerBaseType;
