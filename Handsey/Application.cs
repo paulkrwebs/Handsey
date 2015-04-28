@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Handsey
 {
-    public class Application : IApplicaton
+    public sealed class Application : IApplicaton
     {
         #region // Fields
 
