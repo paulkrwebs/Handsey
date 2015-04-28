@@ -12,19 +12,18 @@ namespace Handsey
     {
         #region // Fields
 
+        private static object _initialising = new object();
+        private bool _isInitialised;
         private readonly IAssemblyWalker _assemblyWalker;
         private readonly IHandlerFactory _handlerFactory;
         private readonly IHandlerSearch _handlerSearch;
         private readonly IHandlersSort _handlerSort;
         private readonly ITypeConstructor _typeConstructor;
         private readonly IApplicationHandlersFactory _applicationHandlersFactory;
-        private bool _isInitialised;
 
         public IApplicationConfiguration ApplicationConfiguration { get; set; }
 
         public IApplicationHandlers ApplicationHandlers { get; private set; }
-
-        public static IApplicaton Instance { get { throw new NotImplementedException("Need to implement a singleton"); } }
 
         #endregion // Fields
 
@@ -49,17 +48,25 @@ namespace Handsey
 
         #region Methods
 
+        /// <summary>
+        /// Initilaises the current application object. This method can only be called once on an object and is thread safe
+        /// </summary>
         public void Initialise()
         {
-            PerformCheck.IsNull(ApplicationConfiguration).Throw<ArgumentNullException>(() => new ArgumentNullException("Please set an application configuration before trying to initialise"));
-            PerformCheck.IsNull(ApplicationConfiguration.IocConatainer).Throw<ArgumentNullException>(() => new ArgumentNullException("Please set an ioc container in the application configuration before trying to initialise"));
-            PerformCheck.IsTrue(() => CheckFilterConfiguration()).Throw<ArgumentException>(() => new ArgumentException("Please set a handler base type to filter by and a list of assembly name prefixes to filter by."));
+            lock (_initialising)
+            {
+                PerformCheck.IsTrue(() => _isInitialised).Throw<InvalidOperationException>(() => new InvalidOperationException("An Application object can only be initialised once."));
+                PerformCheck.IsNull(ApplicationConfiguration).Throw<ArgumentNullException>(() => new ArgumentNullException("Please set an application configuration before trying to initialise"));
+                PerformCheck.IsNull(ApplicationConfiguration.IocConatainer).Throw<ArgumentNullException>(() => new ArgumentNullException("Please set an ioc container in the application configuration before trying to initialise"));
+                PerformCheck.IsTrue(() => CheckFilterConfiguration()).Throw<ArgumentException>(() => new ArgumentException("Please set a handler base type to filter by and a list of assembly name prefixes to filter by."));
 
-            Type[] types = _assemblyWalker.ListAllTypes(ApplicationConfiguration.BaseType, ApplicationConfiguration.AssemblyNamePrefixes);
-            IList<HandlerInfo> handlers = _handlerFactory.Create(ApplicationConfiguration.BaseType, types);
+                Type[] types = _assemblyWalker.ListAllTypes(ApplicationConfiguration.BaseType, ApplicationConfiguration.AssemblyNamePrefixes);
+                IList<HandlerInfo> handlers = _handlerFactory.Create(ApplicationConfiguration.BaseType, types);
 
-            ApplicationHandlers = _applicationHandlersFactory.Create(handlers);
-            _isInitialised = true;
+                ApplicationHandlers = _applicationHandlersFactory.Create(handlers);
+
+                _isInitialised = true;
+            }
         }
 
         private bool CheckFilterConfiguration()

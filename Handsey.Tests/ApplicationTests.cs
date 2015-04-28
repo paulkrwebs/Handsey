@@ -103,6 +103,14 @@ namespace Handsey.Tests
         }
 
         [Test]
+        public void Initialise_NoParams_InitialiseCanOnlyBeCalledOnce()
+        {
+            _application.Initialise();
+
+            Assert.That(() => _application.Initialise(), Throws.Exception.TypeOf<InvalidOperationException>());
+        }
+
+        [Test]
         public void Invoke_Action_InitialisedNotCalledOnObjectSoThrowException()
         {
             Assert.That(() => _application.Invoke<String>((s) => s.ToString()), Throws.Exception.TypeOf<InvalidOperationException>());
