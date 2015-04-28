@@ -11,8 +11,6 @@ namespace Handsey
         private static volatile IApplicaton _instance;
         private static object syncRoot = new Object();
 
-        public static IApplicationConfiguration ApplicationConfiguration { get; set; }
-
         public static IApplicaton Instance
         {
             get
