@@ -39,6 +39,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ApplicationConfiguration.cs" />
+    <Compile Include="ApplicationConfigurationNotSetException.cs" />
     <Compile Include="ApplicationHandlers.cs" />
     <Compile Include="ApplicationHandlersFactory.cs" />
     <Compile Include="HandlerCannotBeConstructedException.cs" />

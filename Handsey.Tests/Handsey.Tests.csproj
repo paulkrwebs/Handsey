@@ -47,6 +47,7 @@
   <ItemGroup>
     <Compile Include="ApplicationHandlersFactoryTests.cs" />
     <Compile Include="ApplicationHandlersTest.cs" />
+    <Compile Include="ApplicationLocatorTests.cs" />
     <Compile Include="ApplicationTests.cs" />
     <Compile Include="AssemblyWalkerTests.cs" />
     <Compile Include="HandlersSortTests.cs" />
