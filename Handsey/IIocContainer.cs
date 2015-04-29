@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace Handsey
 {
+    /// <summary>
+    /// Methods on implementing containers need to be thread safe.
+    /// e.g. Unity Register is not threadsafe
+    /// </summary>
     public interface IIocContainer
     {
         void Register(Type from, Type to);
