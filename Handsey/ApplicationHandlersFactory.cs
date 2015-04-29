@@ -28,7 +28,7 @@ namespace Handsey
             PerformCheck.IsNull(types).Throw<HandlerNotFoundException>(() => new HandlerNotFoundException("No types that implement the base handler in the application configuration were found"));
             PerformCheck.IsTrue(() => !types.Any()).Throw<HandlerNotFoundException>(() => new HandlerNotFoundException("No types that implement the base handler in the application configuration were found"));
 
-            IList<HandlerInfo> handlers = _handlerFactory.Create(applicationConfiguration.BaseType, types);
+            IList<HandlerInfo> handlers = _handlerFactory.Create(types);
 
             PerformCheck.IsNull(handlers).Throw<HandlerNotFoundException>(() => new HandlerNotFoundException("No handlers were found matching the application configuration"));
             PerformCheck.IsTrue(() => !handlers.Any()).Throw<HandlerNotFoundException>(() => new HandlerNotFoundException("No handlers were found matching the application configuration"));

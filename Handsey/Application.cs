@@ -148,7 +148,7 @@ namespace Handsey
 
         private bool TryCreateHandler<THandler>(Type baseType, out HandlerInfo handlerInfo)
         {
-            handlerInfo = _handlerFactory.Create(_applicationConfiguration.BaseType, typeof(THandler));
+            handlerInfo = _handlerFactory.Create(typeof(THandler));
             return handlerInfo != null;
         }
 

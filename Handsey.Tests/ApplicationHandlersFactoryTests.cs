@@ -64,7 +64,7 @@ namespace Handsey.Tests
             Assert.That(() => _applicationHandlersFactory.Create(_applicationConfiguration.Object), Throws.Exception.TypeOf<HandlerNotFoundException>());
 
             _assemblyWalker.Verify(a => a.ListAllTypes(It.IsAny<Type>(), It.IsAny<string[]>()), Times.Once());
-            _handlerFactory.Verify(h => h.Create(It.IsAny<Type>(), It.IsAny<Type[]>()), Times.Never());
+            _handlerFactory.Verify(h => h.Create(It.IsAny<Type[]>()), Times.Never());
         }
 
         [Test]
@@ -75,44 +75,44 @@ namespace Handsey.Tests
             Assert.That(() => _applicationHandlersFactory.Create(_applicationConfiguration.Object), Throws.Exception.TypeOf<HandlerNotFoundException>());
 
             _assemblyWalker.Verify(a => a.ListAllTypes(It.IsAny<Type>(), It.IsAny<string[]>()), Times.Once());
-            _handlerFactory.Verify(h => h.Create(It.IsAny<Type>(), It.IsAny<Type[]>()), Times.Never());
+            _handlerFactory.Verify(h => h.Create(It.IsAny<Type[]>()), Times.Never());
         }
 
         [Test]
         public void Create_IApplicationConfiguration_HandlerFactoryReturnsNullSoHandlersNotFoundExceptionThrown()
         {
             _assemblyWalker.Setup(a => a.ListAllTypes(It.IsAny<Type>(), It.IsAny<string[]>())).Returns(new Type[1] { typeof(IHandler) });
-            _handlerFactory.Setup(h => h.Create(It.IsAny<Type>(), It.IsAny<Type[]>())).Returns<List<HandlerInfo>>(null);
+            _handlerFactory.Setup(h => h.Create(It.IsAny<Type[]>())).Returns<List<HandlerInfo>>(null);
 
             Assert.That(() => _applicationHandlersFactory.Create(_applicationConfiguration.Object), Throws.Exception.TypeOf<HandlerNotFoundException>());
 
             _assemblyWalker.Verify(a => a.ListAllTypes(It.IsAny<Type>(), It.IsAny<string[]>()), Times.Once());
-            _handlerFactory.Verify(h => h.Create(It.IsAny<Type>(), It.IsAny<Type[]>()), Times.Once());
+            _handlerFactory.Verify(h => h.Create(It.IsAny<Type[]>()), Times.Once());
         }
 
         [Test]
         public void Create_IApplicationConfiguration_HandlerFactoryReturnsEmptyListSoHandlersNotFoundExceptionThrown()
         {
             _assemblyWalker.Setup(a => a.ListAllTypes(It.IsAny<Type>(), It.IsAny<string[]>())).Returns(new Type[1] { typeof(IHandler) });
-            _handlerFactory.Setup(h => h.Create(It.IsAny<Type>(), It.IsAny<Type[]>())).Returns(new List<HandlerInfo>());
+            _handlerFactory.Setup(h => h.Create(It.IsAny<Type[]>())).Returns(new List<HandlerInfo>());
 
             Assert.That(() => _applicationHandlersFactory.Create(_applicationConfiguration.Object), Throws.Exception.TypeOf<HandlerNotFoundException>());
 
             _assemblyWalker.Verify(a => a.ListAllTypes(It.IsAny<Type>(), It.IsAny<string[]>()), Times.Once());
-            _handlerFactory.Verify(h => h.Create(It.IsAny<Type>(), It.IsAny<Type[]>()), Times.Once());
+            _handlerFactory.Verify(h => h.Create(It.IsAny<Type[]>()), Times.Once());
         }
 
         [Test]
         public void Create_IApplicationConfiguration_ApplicationHandlersCreatedCorrectly()
         {
             _assemblyWalker.Setup(a => a.ListAllTypes(It.IsAny<Type>(), It.IsAny<string[]>())).Returns(new Type[1] { typeof(IHandler) });
-            _handlerFactory.Setup(h => h.Create(It.IsAny<Type>(), It.IsAny<Type[]>())).Returns(new List<HandlerInfo>() { new HandlerInfo() });
+            _handlerFactory.Setup(h => h.Create(It.IsAny<Type[]>())).Returns(new List<HandlerInfo>() { new HandlerInfo() });
 
             IApplicationHandlers applicationHandlers = _applicationHandlersFactory.Create(_applicationConfiguration.Object);
 
             Assert.That(applicationHandlers, Is.Not.Null);
             _assemblyWalker.Verify(a => a.ListAllTypes(It.IsAny<Type>(), It.IsAny<string[]>()), Times.Once());
-            _handlerFactory.Verify(h => h.Create(It.IsAny<Type>(), It.IsAny<Type[]>()), Times.Once());
+            _handlerFactory.Verify(h => h.Create(It.IsAny<Type[]>()), Times.Once());
         }
     }
 }

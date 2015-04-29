@@ -11,19 +11,15 @@ namespace Handsey
 {
     public class HandlerFactory : IHandlerFactory
     {
-        private Type _handlerBaseType;
+        private readonly Type _handlerBaseType;
 
-        // to make thread safe
-        // private readonly Type _handlerBaseType;
-        //public HandlerFactory(Type handlerBaseType)
-        //{
-        //    _handlerBaseType = handlerBaseType;
-        //}
-
-        public IList<HandlerInfo> Create(Type handlerBaseType, Type[] types)
+        public HandlerFactory(Type handlerBaseType)
         {
             _handlerBaseType = handlerBaseType;
+        }
 
+        public IList<HandlerInfo> Create(Type[] types)
+        {
             if (types == null)
                 return new List<HandlerInfo>();
 
@@ -33,15 +29,8 @@ namespace Handsey
             return types.Select(t => Create(t)).ToList();
         }
 
-        private HandlerInfo Create(Type type)
+        public HandlerInfo Create(Type type)
         {
-            return Create(_handlerBaseType, type);
-        }
-
-        public HandlerInfo Create(Type handlerBaseType, Type type)
-        {
-            _handlerBaseType = handlerBaseType;
-
             if (type == null)
                 return null;
 
@@ -131,7 +120,7 @@ namespace Handsey
 
         private TypeInfo[] CreateTypeInfo(Type[] types)
         {
-            return Create(_handlerBaseType, types).ToArray();
+            return Create(types).ToArray();
         }
 
         private static bool IsConstructed(Type type)
