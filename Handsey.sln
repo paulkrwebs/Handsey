@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Handsey.Practices", "Handse
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Handsey.Utilitites", "Handsey.Utilitites\Handsey.Utilitites.csproj", "{1C0513D9-4DA5-46C1-A98B-ED89C260C01A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Handsey.Tests.Integration", "Handsey.Tests.Integration\Handsey.Tests.Integration.csproj", "{8A454B59-863F-42FB-BC35-26049F4B5668}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +33,10 @@ Global
 		{1C0513D9-4DA5-46C1-A98B-ED89C260C01A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1C0513D9-4DA5-46C1-A98B-ED89C260C01A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1C0513D9-4DA5-46C1-A98B-ED89C260C01A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8A454B59-863F-42FB-BC35-26049F4B5668}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A454B59-863F-42FB-BC35-26049F4B5668}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8A454B59-863F-42FB-BC35-26049F4B5668}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8A454B59-863F-42FB-BC35-26049F4B5668}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
