@@ -6,12 +6,8 @@ using System.Threading.Tasks;
 
 namespace Handsey.Tests.Integration.ViewModels
 {
-    public class EmployeeViewModel
+    public class TechnicalEmployeeViewModel : EmployeeViewModel
     {
-        public int Id { get; set; }
-
-        public string FirstName { get; set; }
-
-        public string LastName { get; set; }
+        public string[] ProgrammingLanguages { get; set; }
     }
 }

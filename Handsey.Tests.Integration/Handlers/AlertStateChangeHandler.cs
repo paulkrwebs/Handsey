@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Handsey.Tests.Integration.Handlers
 {
-    public class AlertStateChangeHandler<TVersionable> : IHandlesChange<TVersionable>
+    public class AlertStateChangeHandler<TVersionable> : IChangeHandler<TVersionable>
         where TVersionable : IVersionable
     {
         public void Handle(IVersionable arg1)

@@ -44,18 +44,29 @@
   <ItemGroup>
     <Compile Include="Class1.cs" />
     <Compile Include="Handlers\AlertStateChangeHandler.cs" />
-    <Compile Include="Handlers\IHandlesChange.cs" />
-    <Compile Include="Handlers\IModelMapperHandler.cs" />
+    <Compile Include="Handlers\IChangeHandler.cs" />
+    <Compile Include="Handlers\IOneToOneHandler.cs" />
     <Compile Include="Handlers\SaveStateChangeHandler.cs" />
+    <Compile Include="Handlers\UpdateRequestHandler.cs" />
     <Compile Include="Models\Change.cs" />
+    <Compile Include="Models\Project.cs" />
+    <Compile Include="Models\SupportTicketPriority.cs" />
+    <Compile Include="Models\Developer.cs" />
     <Compile Include="Models\Employee.cs" />
     <Compile Include="Models\IVersionable.cs" />
     <Compile Include="Models\Manager.cs" />
     <Compile Include="Models\SupportTicket.cs" />
+    <Compile Include="Models\SupportTicketResolution.cs" />
+    <Compile Include="Models\SupportTicketStatus.cs" />
+    <Compile Include="Models\TechnicalArchitect.cs" />
     <Compile Include="Models\TechnicalEmployee.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Utilities\ExpressionReflection.cs" />
+    <Compile Include="ViewModels\UpdateEmployeeResponse.cs" />
+    <Compile Include="ViewModels\DeveloperViewModel.cs" />
     <Compile Include="ViewModels\EmployeeViewModel.cs" />
+    <Compile Include="ViewModels\UpdateEmployeeRequest.cs" />
+    <Compile Include="ViewModels\TechnicalArchitectViewModel.cs" />
+    <Compile Include="ViewModels\TechnicalEmployeeViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -66,7 +77,9 @@
       <Name>Handsey</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Utilities\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -1,4 +1,5 @@
 ﻿using Handsey.Handlers;
+using Handsey.Tests.Integration.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Handsey.Tests.Integration.Handlers
 {
-    public interface IModelMapperHandler<TFrom, TTo> : IHandler<TFrom, TTo>
-    {
-    }
+    public interface IChangeHandler<TVersionable> : IHandler<IVersionable>
+        where TVersionable : IVersionable
+    { }
 }

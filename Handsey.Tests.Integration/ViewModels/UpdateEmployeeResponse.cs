@@ -6,12 +6,11 @@ using System.Threading.Tasks;
 
 namespace Handsey.Tests.Integration.ViewModels
 {
-    public class EmployeeViewModel
+    public class UpdateEmployeeResponse<TEmployee>
+        where TEmployee : EmployeeViewModel
     {
-        public int Id { get; set; }
+        public TEmployee Employee { get; set; }
 
-        public string FirstName { get; set; }
-
-        public string LastName { get; set; }
+        public int Status { get; set; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Handsey.Tests.Integration.Handlers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,23 +12,52 @@ namespace Handsey.Tests.Integration.Models
     /// <remarks>need to think this through</remarks>
     public class Employee : IVersionable
     {
+        private readonly IApplicaton _application;
+
+        protected IApplicaton Application { get { return _application; } }
+
         protected List<Change> ChangeLog { get; set; }
 
         public string FirstName { get; private set; }
 
-        public virtual void Change(string firstname)
+        public string LastName { get; private set; }
+
+        public Employee()
+            : this(ApplicationLocator.Instance)
+        { }
+
+        public Employee(IApplicaton application)
         {
-            // fire changed
+            _application = application;
+        }
+
+        public virtual void Change(string firstname, string lastName)
+        {
+            LogChange("FirstName", FirstName, firstname);
+            FirstName = firstname;
+
+            LogChange("LastName", LastName, lastName);
+            FirstName = firstname;
+
+            // Fire change!!!
+            Application.Invoke<IChangeHandler<IVersionable>>(h => h.Handle(this));
         }
 
         public Change[] Changes()
         {
-            throw new NotImplementedException();
+            return ChangeLog.ToArray();
         }
 
         public void ClearHistory()
         {
-            throw new NotImplementedException();
+            ChangeLog.Clear();
         }
+
+        protected void LogChange(string propertyName, string before, string after)
+        {
+            ChangeLog.Add(new Change(propertyName, before, after));
+        }
+
+        public object IHandlesChange { get; set; }
     }
 }

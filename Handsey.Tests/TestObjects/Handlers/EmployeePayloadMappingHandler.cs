@@ -28,4 +28,14 @@ namespace Handsey.Tests.TestObjects.Handlers
             throw new NotImplementedException();
         }
     }
+
+    public class EmployeePayloadMappingHandler<TFrom, TTo> : IHandler<MapperPayload<TFrom, TTo>>
+        where TFrom : Employee
+        where TTo : EmployeeViewModel
+    {
+        public void Handle(MapperPayload<TFrom, TTo> arg1)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

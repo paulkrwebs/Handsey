@@ -10,12 +10,12 @@ namespace Handsey.Tests.Integration.Models
     {
         public int TeamSize { get; private set; }
 
-        public void Change(string firstname, int teamSize)
+        public void Change(string firstName, string lastName, int teamSize)
         {
+            LogChange("TeamSize", TeamSize.ToString(), teamSize.ToString());
             TeamSize = teamSize;
-            // log change
 
-            base.Change(firstname);
+            base.Change(firstName, lastName);
         }
     }
 }

@@ -8,14 +8,14 @@ namespace Handsey.Tests.Integration.Models
 {
     public class TechnicalEmployee : Employee
     {
-        public string[] Languages { get; private set; }
+        public string[] ProgrammingLanguages { get; private set; }
 
-        public void Change(string firstname, string[] languages)
+        public void Change(string firstName, string lastName, string[] programminglanguages)
         {
-            Languages = languages;
-            // log change
+            LogChange("TeamSize", String.Join(",", ProgrammingLanguages), String.Join(",", programminglanguages));
+            ProgrammingLanguages = programminglanguages;
 
-            base.Change(firstname);
+            base.Change(firstName, lastName);
         }
     }
 }
