@@ -107,7 +107,8 @@ namespace Handsey
             if (!SpecialConstraintsMatched(aGenericParameterInfo, bGenericParameterInfo))
                 return false;
 
-            return bGenericParameterInfo.FilteredContraints.Any(fc => FilteredConstraintMatched(aGenericParameterInfo, fc));
+            // aGenericParameterType must fullfill ALL contraints for the handler bGenericParameterInfo
+            return bGenericParameterInfo.FilteredContraints.All(fc => FilteredConstraintMatched(aGenericParameterInfo, fc));
         }
 
         private static bool SpecialConstraintsMatched(GenericParameterInfo aGenericParameterInfo, GenericParameterInfo bGenericParameterInfo)

@@ -257,6 +257,46 @@ namespace Handsey.Tests
         }
 
         [Test]
+        public void Compare_HandlerInfoAndHandlerInfo_GenericParameterMultipleConstraintAssingableMatch()
+        {
+            HandlerInfo a = new HandlerInfo()
+            {
+                GenericParametersInfo = CreateGenericParameter<VersionableFooModel>(),
+                Type = typeof(VersionableFooHandler<VersionableFooModel>)
+            };
+
+            HandlerInfo b = new HandlerInfo()
+            {
+                GenericParametersInfo = CreateGenericParameterWithConstraints<IVersionable, IFooModel>(),
+                Type = typeof(VersionableFooHandler<>)
+            };
+
+            IHandlerSearch search = new HandlerSearch();
+
+            Assert.That(search.Compare(a, b), Is.True);
+        }
+
+        [Test]
+        public void Compare_HandlerInfoAndHandlerInfo_GenericParameterMultipleConstraintAssingableNoMatch()
+        {
+            HandlerInfo a = new HandlerInfo()
+            {
+                GenericParametersInfo = CreateGenericParameter<VersionableFooModel>(),
+                Type = typeof(VersionableFooHandler<VersionableFooModel>)
+            };
+
+            HandlerInfo b = new HandlerInfo()
+            {
+                GenericParametersInfo = CreateGenericParameterWithConstraints<IVersionable, Employee>(),
+                Type = typeof(VersionableFooHandler<>)
+            };
+
+            IHandlerSearch search = new HandlerSearch();
+
+            Assert.That(search.Compare(a, b), Is.False);
+        }
+
+        [Test]
         public void Compare_HandlerInfoAndHandlerInfo_GenericParameterSpecialConstraintRequiresReferenceTypeMatch()
         {
             HandlerInfo a = new HandlerInfo()
@@ -355,7 +395,7 @@ namespace Handsey.Tests
 
             HandlerInfo b = new HandlerInfo()
             {
-                GenericParametersInfo = CreateGenericParameterWithConstraints<MapperPayload<Employee, EmployeeViewModel>>(),
+                GenericParametersInfo = CreateGenericParameterWithConstraint<MapperPayload<Employee, EmployeeViewModel>>(),
                 Type = typeof(EmployeePayloadMappingHandler<>)
             };
 
@@ -375,7 +415,7 @@ namespace Handsey.Tests
 
             HandlerInfo b = new HandlerInfo()
             {
-                GenericParametersInfo = CreateGenericParameterWithConstraints<MapperPayload<Developer, DeveloperViewModel>>(),
+                GenericParametersInfo = CreateGenericParameterWithConstraint<MapperPayload<Developer, DeveloperViewModel>>(),
                 Type = typeof(EmployeePayloadMappingHandler<>)
             };
 
@@ -426,11 +466,11 @@ namespace Handsey.Tests
 
         #region // Helpers MOVE TO UTILITIES
 
-        private IList<GenericParameterInfo> CreateGenericParameterWithConstraints<TParam1>()
+        private IList<GenericParameterInfo> CreateGenericParameterWithConstraint<TParam1>()
         {
             return new List<GenericParameterInfo>()
             {
-                new GenericParameterInfo() { FilteredContraints = CreateTypesInfo<TParam1>() }
+                new GenericParameterInfo() { FilteredContraints = CreateTypeInfo<TParam1>() }
             };
         }
 
@@ -479,7 +519,7 @@ namespace Handsey.Tests
         {
             return new List<GenericParameterInfo>()
             {
-                new GenericParameterInfo() { FilteredContraints = CreateTypesInfo<TParam1>(), Type = typeof(TParam1), SpecialConstraint = specialAttributes}
+                new GenericParameterInfo() { FilteredContraints = CreateTypeInfo<TParam1>(), Type = typeof(TParam1), SpecialConstraint = specialAttributes}
             };
         }
 
@@ -487,8 +527,16 @@ namespace Handsey.Tests
         {
             return new List<GenericParameterInfo>()
             {
-                new GenericParameterInfo() { FilteredContraints = CreateTypesInfo<TParam1>(), Type = typeof(TParam1) },
-                new GenericParameterInfo() { FilteredContraints = CreateTypesInfo<TParam2>(), Type = typeof(TParam2) }
+                new GenericParameterInfo() { FilteredContraints = CreateTypeInfo<TParam1>(), Type = typeof(TParam1) },
+                new GenericParameterInfo() { FilteredContraints = CreateTypeInfo<TParam2>(), Type = typeof(TParam2) }
+            };
+        }
+
+        private IList<GenericParameterInfo> CreateGenericParameterWithConstraints<TParam1, TParam2>()
+        {
+            return new List<GenericParameterInfo>()
+            {
+                new GenericParameterInfo() { FilteredContraints = CreateTypesInfo<TParam1, TParam2>(), Type = typeof(TParam1) },
             };
         }
 
@@ -496,9 +544,9 @@ namespace Handsey.Tests
         {
             return new List<GenericParameterInfo>()
             {
-                new GenericParameterInfo() { FilteredContraints = CreateTypesInfo<TParam1>(), Type = typeof(TParam1) },
-                new GenericParameterInfo() { FilteredContraints = CreateTypesInfo<TParam2>(), Type = typeof(TParam2) },
-                new GenericParameterInfo() { FilteredContraints = CreateTypesInfo<TParam3>(), Type = typeof(TParam3) }
+                new GenericParameterInfo() { FilteredContraints = CreateTypeInfo<TParam1>(), Type = typeof(TParam1) },
+                new GenericParameterInfo() { FilteredContraints = CreateTypeInfo<TParam2>(), Type = typeof(TParam2) },
+                new GenericParameterInfo() { FilteredContraints = CreateTypeInfo<TParam3>(), Type = typeof(TParam3) }
             };
         }
 
@@ -516,14 +564,19 @@ namespace Handsey.Tests
             return toReturn;
         }
 
-        private IList<TypeInfo> CreateTypesInfo<TParam1>()
+        private IList<TypeInfo> CreateTypeInfo<TParam1>()
         {
             return CreateTypesInfo(typeof(TParam1));
         }
 
-        private IList<TypeInfo> CreateTypesInfo(Type type)
+        private IList<TypeInfo> CreateTypesInfo<TParam1, TParam2>()
         {
-            return new List<TypeInfo>() { CreateHandlerInfo(type) };
+            return CreateTypesInfo(typeof(TParam1), typeof(TParam2));
+        }
+
+        private IList<TypeInfo> CreateTypesInfo(params Type[] type)
+        {
+            return type.Select(t => CreateHandlerInfo(t)).ToList();
         }
 
         private TypeInfo CreateHandlerInfo(Type type)

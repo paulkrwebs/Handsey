@@ -51,8 +51,11 @@
     <Compile Include="ApplicationTests.cs" />
     <Compile Include="AssemblyWalkerTests.cs" />
     <Compile Include="HandlersSortTests.cs" />
+    <Compile Include="TestObjects\Handlers\VersionableFooHandler.cs" />
     <Compile Include="TestObjects\Handlers\VersionableHandler.cs" />
+    <Compile Include="TestObjects\Models\IFooModel.cs" />
     <Compile Include="TestObjects\Models\IVersionable.cs" />
+    <Compile Include="TestObjects\Models\VersionableFooModel.cs" />
     <Compile Include="TypeConstructorTests.cs" />
     <Compile Include="HandlerSearchTests.cs" />
     <Compile Include="TestObjects\Handlers\DeveloperMappingHandler.cs" />
@@ -67,7 +70,7 @@
     <Compile Include="TestObjects\Models\Payload.cs" />
     <Compile Include="TestObjects\Models\Developer.cs" />
     <Compile Include="TestObjects\Models\Employee.cs" />
-    <Compile Include="TestObjects\Models\IFoo.cs" />
+    <Compile Include="TestObjects\Handlers\IFooHandler.cs" />
     <Compile Include="TestObjects\Models\MapperPayload.cs" />
     <Compile Include="TestObjects\Models\ProjectManager.cs" />
     <Compile Include="TestObjects\Models\TechnicalArchitect.cs" />
