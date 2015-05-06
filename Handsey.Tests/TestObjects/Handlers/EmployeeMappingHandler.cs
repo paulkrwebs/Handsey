@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace Handsey.Tests.TestObjects.Handlers
 {
     [HandlesFirst]
-    public class EmployeeMappingHandler<TFrom, TTo> : IOneToOneDataPopulation<TFrom, TTo>, IFoo
+    public class EmployeeMappingHandler<TFrom, TTo> : IOneToOneDataPopulation<TFrom, TTo>, IFooHandler
         where TFrom : Employee
         where TTo : EmployeeViewModel
     {

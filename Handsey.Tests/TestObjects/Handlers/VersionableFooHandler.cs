@@ -1,6 +1,5 @@
 ﻿using Handsey.Handlers;
 using Handsey.Tests.TestObjects.Models;
-using Handsey.Tests.TestObjects.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,13 +8,10 @@ using System.Threading.Tasks;
 
 namespace Handsey.Tests.TestObjects.Handlers
 {
-    public class EmployeeHandler : IHandler, IFooHandler
+    public class VersionableFooHandler<TType> : IHandler<IVersionable>
+        where TType : class, IVersionable, IFooModel, new()
     {
-    }
-
-    public class EmployeeHandler<TEmployee> : IHandler<TEmployee>
-    {
-        public void Handle(TEmployee arg1)
+        public void Handle(IVersionable arg1)
         {
             throw new NotImplementedException();
         }
