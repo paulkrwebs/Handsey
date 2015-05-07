@@ -169,6 +169,10 @@ namespace Handsey.Tests
             Assert.That(classInfo.ConcreteNestedGenericParametersInfo["TFrom"].Position, Is.EqualTo(0));
             Assert.That(classInfo.ConcreteNestedGenericParametersInfo.ContainsKey("TTo"), Is.True);
             Assert.That(classInfo.ConcreteNestedGenericParametersInfo["TTo"].Position, Is.EqualTo(1));
+            Assert.That(classInfo.FilteredInterfaces.Count(), Is.EqualTo(1));
+            Assert.That(classInfo.FilteredInterfaces[0].GenericTypeDefinition, Is.EqualTo(typeof(IHandler<>)));
+            Assert.That(classInfo.FilteredInterfaces[0].ConcreteNestedGenericParametersInfo.ContainsKey("TFrom"), Is.True);
+            Assert.That(classInfo.FilteredInterfaces[0].ConcreteNestedGenericParametersInfo.ContainsKey("TTo"), Is.True);
 
             type = typeof(EmployeePayloadMappingHandler<Employee, EmployeeViewModel>);
 

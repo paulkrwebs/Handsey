@@ -540,6 +540,53 @@ namespace Handsey.Tests
             Assert.That(search.Compare(a, b), Is.False);
         }
 
+        [Test]
+        public void Compare_HandlerInfoAndHandlerInfo_HandlerIsInterfaceAndHasDifferentNumberOfGenericParametersNoMatch()
+        {
+            HandlerInfo a = new HandlerInfo()
+            {
+                GenericParametersInfo = CreateGenericParameter<Employee>(),
+                Type = typeof(IHandler<Developer>),
+                ConcreteNestedGenericParametersInfo = new Dictionary<string, GenericParameterInfo>()
+                {
+                    { "Developer" , new GenericParameterInfo() { Type = typeof(Developer) , Position = 0} },
+                },
+                IsInterface = true,
+                IsGenericType = true,
+                GenericTypeDefinition = typeof(IHandler<>)
+            };
+            a.GenericParametersInfo[0].GenericParametersInfo = CreateGenericParameters<Employee, EmployeeViewModel>();
+
+            HandlerInfo b = new HandlerInfo()
+            {
+                GenericParametersInfo = CreateGenericParametersWithConstraints(typeof(TechnicalArchitect), typeof(TechnicalArchitectViewModel)),
+                Type = typeof(EmployeePayloadMappingHandler<,>),
+                ConcreteNestedGenericParametersInfo = new Dictionary<string, GenericParameterInfo>()
+                {
+                    { "TFrom" , new GenericParameterInfo() { FilteredContraints = CreateTypeInfo<TechnicalArchitect>(), Position = 0 } },
+                    { "TTo" , new GenericParameterInfo() { FilteredContraints = CreateTypeInfo<TechnicalArchitectViewModel>(), Position = 1 } }
+                },
+                FilteredInterfaces = new HandlerInfo[1]
+                {
+                    new HandlerInfo()
+                    {
+                        Type = typeof(IHandler<>),
+                        IsGenericType = true,
+                        GenericTypeDefinition = typeof(IHandler<>),
+                        ConcreteNestedGenericParametersInfo = new Dictionary<string, GenericParameterInfo>()
+                        {
+                            { "TTo" , new GenericParameterInfo() { Position = 0 } },
+                            { "TFrom" , new GenericParameterInfo() {Position = 1 } },
+                        }
+                    }
+                }
+            };
+
+            IHandlerSearch search = new HandlerSearch();
+
+            Assert.That(search.Compare(a, b), Is.False);
+        }
+
         #region // Helpers MOVE TO UTILITIES
 
         private IList<GenericParameterInfo> CreateGenericParameterWithConstraint<TParam1>()

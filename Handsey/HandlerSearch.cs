@@ -86,32 +86,51 @@ namespace Handsey
             if (!a.IsGenericType)
                 return false;
 
-            HandlerInfo[] foundInterfaces = FindMatchingInterface(a, b);
+            HandlerInfo[] foundInterfaces = FindMatchingInterfaces(a, b);
             if (!foundInterfaces.Any())
                 return false;
 
             return HandlerConstructableFromInterfaceParameters(a, b, foundInterfaces);
         }
 
-        private static bool HandlerConstructableFromInterfaceParameters(HandlerInfo a, HandlerInfo b, HandlerInfo[] foundInterfaces)
+        private static bool HandlerConstructableFromInterfaceParameters(HandlerInfo sourceHandler, HandlerInfo toConstruct, HandlerInfo[] mcatchedInterfaces)
         {
-            foreach (HandlerInfo handlerInterface in foundInterfaces)
+            foreach (HandlerInfo handlerInterface in mcatchedInterfaces)
             {
-                foreach (string key in handlerInterface.ConcreteNestedGenericParametersInfo.Keys)
-                {
-                    GenericParameterInfo genericParameterInfo = null;
-                    if (!b.ConcreteNestedGenericParametersInfo.TryGetValue(key, out genericParameterInfo))
-                        continue;
-
-                    if (GenericParameterAssignable(a.ConcreteNestedGenericParametersInfo.ElementAt(genericParameterInfo.Position).Value, genericParameterInfo))
-                        return true;
-                }
+                if (HandlerCanBeConstructedByConcreteNestedGenericParameters(sourceHandler, toConstruct, handlerInterface))
+                    return true;
             }
 
             return false;
         }
 
-        private static HandlerInfo[] FindMatchingInterface(HandlerInfo a, HandlerInfo b)
+        private static bool HandlerCanBeConstructedByConcreteNestedGenericParameters(HandlerInfo sourceHandler, HandlerInfo toConstruct, HandlerInfo matchedInterface)
+        {
+            foreach (string key in matchedInterface.ConcreteNestedGenericParametersInfo.Keys)
+            {
+                GenericParameterInfo compareToGenericParameterInfo = null;
+                if (!toConstruct.ConcreteNestedGenericParametersInfo.TryGetValue(key, out compareToGenericParameterInfo))
+                    continue;
+
+                if (!ConcreteNestedGenericParameterMatches(sourceHandler, compareToGenericParameterInfo))
+                    return false;
+            }
+
+            return true;
+        }
+
+        private static bool ConcreteNestedGenericParameterMatches(HandlerInfo sourceHandler, GenericParameterInfo compareToGenericParameterInfo)
+        {
+            if (sourceHandler.ConcreteNestedGenericParametersInfo.Count() <= compareToGenericParameterInfo.Position)
+                return false;
+
+            if (GenericParameterAssignable(sourceHandler.ConcreteNestedGenericParametersInfo.ElementAt(compareToGenericParameterInfo.Position).Value, compareToGenericParameterInfo))
+                return true;
+
+            return false;
+        }
+
+        private static HandlerInfo[] FindMatchingInterfaces(HandlerInfo a, HandlerInfo b)
         {
             return b.FilteredInterfaces
                             .Where(i => i.IsGenericType && i.GenericTypeDefinition == a.GenericTypeDefinition)

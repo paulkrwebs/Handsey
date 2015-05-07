@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace Handsey.Tests.TestObjects.Models
 {
-    public class MapperPayload<TFrom, TTo>
-        where TFrom : Employee
-        where TTo : EmployeeViewModel
+    public class MapperPayload<TMapFrom, TMapTo>
+        where TMapFrom : Employee
+        where TMapTo : EmployeeViewModel
     {
-        public TFrom From { get; set; }
+        public TMapFrom From { get; set; }
 
-        public TTo To { get; set; }
+        public TMapTo To { get; set; }
     }
 }
