@@ -11,5 +11,7 @@ namespace Handsey
         public ExecutionOrder ExecutionOrder { get; set; }
 
         public Type[] ExecutesAfter { get; set; }
+
+        public IDictionary<string, GenericParameterInfo> ConcreteNestedGenericParametersInfo { get; set; }
     }
 }

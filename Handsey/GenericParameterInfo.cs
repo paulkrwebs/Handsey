@@ -20,5 +20,7 @@ namespace Handsey
         public bool IsValueType { get; set; }
 
         public bool HasDefaultConstuctor { get; set; }
+
+        public int Position { get; set; }
     }
 }

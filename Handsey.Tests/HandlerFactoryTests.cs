@@ -64,6 +64,7 @@ namespace Handsey.Tests
             Assert.That(classInfo, Is.Not.Null);
             Assert.That(classInfo.IsConstructed, Is.True);
             Assert.That(classInfo.IsGenericType, Is.False);
+            Assert.That(classInfo.IsInterface, Is.False);
             Assert.That(classInfo.Type.FullName, Is.EqualTo(type.FullName));
             Assert.That(classInfo.GenericParametersInfo, Is.Empty);
             Assert.That(classInfo.FilteredInterfaces.Count(), Is.EqualTo(1));
@@ -79,6 +80,7 @@ namespace Handsey.Tests
             Assert.That(classInfo, Is.Not.Null);
             Assert.That(classInfo.IsConstructed, Is.True);
             Assert.That(classInfo.IsGenericType, Is.True);
+            Assert.That(classInfo.IsInterface, Is.True);
             Assert.That(classInfo.Type.FullName, Is.EqualTo(type.FullName));
             Assert.That(classInfo.GenericTypeDefinition.FullName, Is.EqualTo(type.GetGenericTypeDefinition().FullName));
             Assert.That(classInfo.GenericParametersInfo.Count(), Is.EqualTo(1));
@@ -134,6 +136,49 @@ namespace Handsey.Tests
             Assert.That(classInfo.GenericTypeDefinition.FullName, Is.EqualTo(type.GetGenericTypeDefinition().FullName));
             Assert.That(classInfo.GenericParametersInfo.Count(), Is.EqualTo(1));
             Assert.That(classInfo.FilteredInterfaces.Count(), Is.EqualTo(1));
+        }
+
+        [Test]
+        public void Create_TypeAndType_ClassInfoForGenericTypeWithGenericWithNestedGenericParameters()
+        {
+            Type type = typeof(IHandler<MapperPayload<Employee, EmployeeViewModel>>);
+
+            HandlerInfo classInfo = _handlerFactory.Create(type);
+
+            Assert.That(classInfo, Is.Not.Null);
+            Assert.That(classInfo.IsInterface, Is.True);
+            Assert.That(classInfo.GenericParametersInfo.Count(), Is.EqualTo(1));
+            Assert.That(classInfo.ConcreteNestedGenericParametersInfo.Count(), Is.EqualTo(2));
+            Assert.That(classInfo.GenericParametersInfo[0].IsGenericType, Is.True);
+            Assert.That(classInfo.GenericParametersInfo[0].IsConstructed, Is.True);
+            Assert.That(classInfo.GenericParametersInfo[0].Position, Is.EqualTo(0));
+            Assert.That(classInfo.GenericParametersInfo[0].GenericParametersInfo.Count, Is.EqualTo(2));
+            Assert.That(classInfo.GenericParametersInfo[0].GenericParametersInfo[0].IsGenericType, Is.False);
+            Assert.That(classInfo.GenericParametersInfo[0].GenericParametersInfo[0].IsConstructed, Is.True);
+            Assert.That(classInfo.GenericParametersInfo[0].GenericParametersInfo[0].Position, Is.EqualTo(0));
+            Assert.That(classInfo.GenericParametersInfo[0].GenericParametersInfo[0].Position, Is.EqualTo(0), "Only gets position for a generic parameter not a generic parameter of a constructed type");
+
+            type = typeof(EmployeePayloadMappingHandler<,>);
+
+            classInfo = _handlerFactory.Create(type);
+
+            Assert.That(classInfo, Is.Not.Null);
+            Assert.That(classInfo.GenericParametersInfo.Count(), Is.EqualTo(2));
+            Assert.That(classInfo.ConcreteNestedGenericParametersInfo.Count(), Is.EqualTo(2));
+            Assert.That(classInfo.ConcreteNestedGenericParametersInfo.ContainsKey("TFrom"), Is.True);
+            Assert.That(classInfo.ConcreteNestedGenericParametersInfo["TFrom"].Position, Is.EqualTo(0));
+            Assert.That(classInfo.ConcreteNestedGenericParametersInfo.ContainsKey("TTo"), Is.True);
+            Assert.That(classInfo.ConcreteNestedGenericParametersInfo["TTo"].Position, Is.EqualTo(1));
+
+            type = typeof(EmployeePayloadMappingHandler<Employee, EmployeeViewModel>);
+
+            classInfo = _handlerFactory.Create(type);
+
+            Assert.That(classInfo, Is.Not.Null);
+            Assert.That(classInfo.GenericParametersInfo.Count(), Is.EqualTo(2));
+            Assert.That(classInfo.ConcreteNestedGenericParametersInfo.Count(), Is.EqualTo(2));
+            Assert.That(classInfo.ConcreteNestedGenericParametersInfo.ContainsKey("Employee"), Is.True);
+            Assert.That(classInfo.ConcreteNestedGenericParametersInfo.ContainsKey("EmployeeViewModel"), Is.True);
         }
 
         [Test]

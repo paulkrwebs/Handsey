@@ -43,7 +43,26 @@ namespace Handsey
 
             PopulateAttributeInfo(type, handlerInfo);
 
+            handlerInfo.ConcreteNestedGenericParametersInfo = new Dictionary<string, GenericParameterInfo>();
+            PopulateNestedGenericParameters(handlerInfo, handlerInfo.GenericParametersInfo);
+
             return handlerInfo;
+        }
+
+        private void PopulateNestedGenericParameters(HandlerInfo handlerInfo, IList<GenericParameterInfo> genericParameterInfo)
+        {
+            if (genericParameterInfo == null)
+                return;
+
+            foreach (GenericParameterInfo param in genericParameterInfo)
+            {
+                if (!param.IsGenericType)
+                {
+                    handlerInfo.ConcreteNestedGenericParametersInfo.Add(param.Name, param);
+                }
+
+                PopulateNestedGenericParameters(handlerInfo, param.GenericParametersInfo);
+            }
         }
 
         private TTypeInfo CreateTypeInfo<TTypeInfo>(Type type)
@@ -53,10 +72,11 @@ namespace Handsey
             {
                 IsGenericType = type.IsGenericType,
                 IsConstructed = IsConstructed(type),
+                IsInterface = type.IsInterface,
                 Type = type,
                 GenericTypeDefinition = CreateGenericTypeDefinition(type),
                 GenericParametersInfo = CreateGenericParameters(type),
-                FilteredInterfaces = CreateTypeInfo(ListFilteredInterfaces(type))
+                FilteredInterfaces = CreateHandlerInfo(ListFilteredInterfaces(type))
             };
 
             return typeInfo;
@@ -97,12 +117,21 @@ namespace Handsey
         {
             GenericParameterInfo genericParameterInfo = CreateTypeInfo<GenericParameterInfo>(type);
             genericParameterInfo.Name = type.Name;
+            genericParameterInfo.Position = CreateGenericParameterPosition(type, genericParameterInfo);
             genericParameterInfo.FilteredContraints = CreateTypeInfo(ListFilteredContraints(type));
             genericParameterInfo.SpecialConstraint = CreateSpecialConstraints(type);
             genericParameterInfo.IsValueType = type.IsValueType;
             genericParameterInfo.HasDefaultConstuctor = HasDefaultConstructor(type);
 
             return genericParameterInfo;
+        }
+
+        private static int CreateGenericParameterPosition(Type type, GenericParameterInfo genericParameterInfo)
+        {
+            if (!type.IsGenericParameter)
+                return 0;
+
+            return type.GenericParameterPosition;
         }
 
         private bool HasDefaultConstructor(Type type)
@@ -119,6 +148,11 @@ namespace Handsey
         }
 
         private TypeInfo[] CreateTypeInfo(Type[] types)
+        {
+            return Create(types).ToArray();
+        }
+
+        private HandlerInfo[] CreateHandlerInfo(Type[] types)
         {
             return Create(types).ToArray();
         }

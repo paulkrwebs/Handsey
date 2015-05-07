@@ -13,7 +13,7 @@ namespace Handsey
     {
         private static readonly ConcurrentQueue<ValidMatch> _validMAtches;
 
-        private delegate bool ValidMatch(TypeInfo a, TypeInfo b);
+        private delegate bool ValidMatch(HandlerInfo a, HandlerInfo b);
 
         static HandlerSearch()
         {
@@ -21,6 +21,7 @@ namespace Handsey
             _validMAtches.Enqueue(ExactMatch);
             _validMAtches.Enqueue(Assignable);
             _validMAtches.Enqueue(GenericParamtersAssignable);
+            _validMAtches.Enqueue(InterfaceMatch);
         }
 
         public IEnumerable<HandlerInfo> Execute(HandlerInfo toMatch, IEnumerable<HandlerInfo> listToSearch)
@@ -43,7 +44,7 @@ namespace Handsey
             return MatchedAgainstRules(a, b);
         }
 
-        private static bool MatchedAgainstRules(TypeInfo a, TypeInfo b)
+        private static bool MatchedAgainstRules(HandlerInfo a, HandlerInfo b)
         {
             foreach (ValidMatch validMatch in _validMAtches)
             {
@@ -54,9 +55,14 @@ namespace Handsey
             return false;
         }
 
-        private static bool ExactMatch(TypeInfo a, TypeInfo b)
+        private static bool ExactMatch(HandlerInfo a, HandlerInfo b)
         {
             return a.Type == b.Type;
+        }
+
+        private static bool Assignable(HandlerInfo a, HandlerInfo b)
+        {
+            return Assignable(a as TypeInfo, b as TypeInfo);
         }
 
         private static bool Assignable(TypeInfo a, TypeInfo b)
@@ -64,7 +70,50 @@ namespace Handsey
             return a.Type.IsAssignableFrom(b.Type);
         }
 
-        private static bool GenericParamtersAssignable(TypeInfo a, TypeInfo b)
+        private static bool InterfaceMatch(HandlerInfo a, HandlerInfo b)
+        {
+            if (!a.IsInterface)
+                return false;
+
+            if (!DoesImplementGenericInterface(a, b))
+                return false;
+
+            return true;
+        }
+
+        private static bool DoesImplementGenericInterface(HandlerInfo a, HandlerInfo b)
+        {
+            if (!a.IsGenericType)
+                return false;
+
+            HandlerInfo[] foundInterfaces = FindMatchingInterface(a, b);
+            if (!foundInterfaces.Any())
+                return false;
+
+            foreach (HandlerInfo handlerInterface in foundInterfaces)
+            {
+                foreach (string key in handlerInterface.ConcreteNestedGenericParametersInfo.Keys)
+                {
+                    GenericParameterInfo genericParameterInfo = null;
+                    if (!b.ConcreteNestedGenericParametersInfo.TryGetValue(key, out genericParameterInfo))
+                        continue;
+
+                    if (GenericParameterAssignable(a.ConcreteNestedGenericParametersInfo.ElementAt(genericParameterInfo.Position).Value, genericParameterInfo))
+                        return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static HandlerInfo[] FindMatchingInterface(HandlerInfo a, HandlerInfo b)
+        {
+            return b.FilteredInterfaces
+                            .Where(i => i.IsGenericType && i.GenericTypeDefinition == a.GenericTypeDefinition)
+                            .ToArray();
+        }
+
+        private static bool GenericParamtersAssignable(HandlerInfo a, HandlerInfo b)
         {
             if (!DoesHaveEnoughtGenericParametersToConstruct(a, b))
                 return false;

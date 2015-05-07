@@ -19,7 +19,7 @@ namespace Handsey.Tests
             // this should really search for another interface so the names don't keep changing in the assert
             Type[] types = assemblyWalker.ListAllTypes(typeof(IHandler), new[] { "Handsey.Tests" });
 
-            Assert.That(types.Count(), Is.EqualTo(13));
+            Assert.That(types.Count(), Is.EqualTo(14));
         }
 
         public void ListAllTypes_TypeAndStringArray_NoImplementingTypesToArrayEmpty()
