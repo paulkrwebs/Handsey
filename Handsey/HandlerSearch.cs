@@ -90,6 +90,11 @@ namespace Handsey
             if (!foundInterfaces.Any())
                 return false;
 
+            return HandlerConstructableFromInterfaceParameters(a, b, foundInterfaces);
+        }
+
+        private static bool HandlerConstructableFromInterfaceParameters(HandlerInfo a, HandlerInfo b, HandlerInfo[] foundInterfaces)
+        {
             foreach (HandlerInfo handlerInterface in foundInterfaces)
             {
                 foreach (string key in handlerInterface.ConcreteNestedGenericParametersInfo.Keys)
