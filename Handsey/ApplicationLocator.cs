@@ -48,11 +48,13 @@ namespace Handsey
             IHandlerFactory handlerFactory = new HandlerFactory(_applicationConfiguration.BaseType);
             IApplicationHandlersFactory applicationHandlersFactory = new ApplicationHandlersFactory(assemblyWalker, handlerFactory);
             IApplicationHandlers applicationHandlers = applicationHandlersFactory.Create(_applicationConfiguration);
+            IHandlerSearch handlerSearch = new HandlerSearch();
+            ITypeConstructor typeConstructor = new TypeConstructor(handlerSearch);
 
             return new Application(handlerFactory
-                    , new HandlerSearch()
+                    , handlerSearch
                     , new HandlersSort()
-                    , new TypeConstructor()
+                    , typeConstructor
                     , _iocContainer
                     , applicationHandlers
                     , _applicationConfiguration);

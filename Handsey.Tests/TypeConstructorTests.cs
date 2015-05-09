@@ -1,6 +1,8 @@
-﻿using Handsey.Tests.TestObjects.Handlers;
+﻿using Handsey.Handlers;
+using Handsey.Tests.TestObjects.Handlers;
 using Handsey.Tests.TestObjects.Models;
 using Handsey.Tests.TestObjects.ViewModels;
+using Moq;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -13,14 +15,22 @@ namespace Handsey.Tests
     [TestFixture]
     public class TypeConstructorTests
     {
+        private Mock<IHandlerSearch> _handlerSearch;
+        private ITypeConstructor _typeConstructor;
+
+        [SetUp]
+        public void SetUp()
+        {
+            _handlerSearch = new Mock<IHandlerSearch>();
+            _typeConstructor = new TypeConstructor(_handlerSearch.Object);
+        }
+
         [Test]
         public void Create_TypeInfoAndTypeInfoAsList_NullPassedInSoArgumentExceptionThrown()
         {
-            ITypeConstructor factory = new TypeConstructor();
-
-            Assert.That(() => factory.Create(new HandlerInfo(), null as IList<HandlerInfo>).ToList(), Throws.Exception.TypeOf<ArgumentNullException>());
-            Assert.That(() => factory.Create(null, new List<HandlerInfo>()).ToList(), Throws.Exception.TypeOf<ArgumentNullException>());
-            Assert.That(() => factory.Create(new HandlerInfo(), new List<HandlerInfo>() { new HandlerInfo() }).ToList(), Throws.Exception.TypeOf<ArgumentNullException>());
+            Assert.That(() => _typeConstructor.Create(new HandlerInfo(), null as IList<HandlerInfo>).ToList(), Throws.Exception.TypeOf<ArgumentNullException>());
+            Assert.That(() => _typeConstructor.Create(null, new List<HandlerInfo>()).ToList(), Throws.Exception.TypeOf<ArgumentNullException>());
+            Assert.That(() => _typeConstructor.Create(new HandlerInfo(), new List<HandlerInfo>() { new HandlerInfo() }).ToList(), Throws.Exception.TypeOf<ArgumentNullException>());
         }
 
         [Test]
@@ -47,8 +57,7 @@ namespace Handsey.Tests
                 GenericParametersInfo = CreateGenericParametersWithConstraints<Developer, DeveloperViewModel>()
             };
 
-            ITypeConstructor factory = new TypeConstructor();
-            IList<Type> constructedTypes = factory.Create(constructedFrom, new List<HandlerInfo>() { typeToBeConstructed1, typeToBeConstructed2 }).ToList();
+            IList<Type> constructedTypes = _typeConstructor.Create(constructedFrom, new List<HandlerInfo>() { typeToBeConstructed1, typeToBeConstructed2 }).ToList();
 
             Assert.That(constructedTypes[0], Is.EqualTo(typeof(EmployeeMappingHandler<Developer, DeveloperViewModel>)));
             Assert.That(constructedTypes[1], Is.EqualTo(typeof(DeveloperMappingHandler<Developer, DeveloperViewModel>)));
@@ -57,11 +66,9 @@ namespace Handsey.Tests
         [Test]
         public void Create_HandlerInfoAndHandlerInfo_NullPassedInSoArgumentExceptionThrown()
         {
-            ITypeConstructor factory = new TypeConstructor();
-
-            Assert.That(() => factory.Create(new HandlerInfo(), null as HandlerInfo), Throws.Exception.TypeOf<ArgumentNullException>());
-            Assert.That(() => factory.Create(null, new HandlerInfo()), Throws.Exception.TypeOf<ArgumentNullException>());
-            Assert.That(() => factory.Create(new HandlerInfo(), new HandlerInfo()), Throws.Exception.TypeOf<ArgumentNullException>());
+            Assert.That(() => _typeConstructor.Create(new HandlerInfo(), null as HandlerInfo), Throws.Exception.TypeOf<ArgumentNullException>());
+            Assert.That(() => _typeConstructor.Create(null, new HandlerInfo()), Throws.Exception.TypeOf<ArgumentNullException>());
+            Assert.That(() => _typeConstructor.Create(new HandlerInfo(), new HandlerInfo()), Throws.Exception.TypeOf<ArgumentNullException>());
         }
 
         [Test]
@@ -74,13 +81,11 @@ namespace Handsey.Tests
                 Type = typeof(TechnicalArchitectMappingHandler)
             };
 
-            ITypeConstructor factory = new TypeConstructor();
-
-            Assert.That(factory.Create(new HandlerInfo(), typeToBeConstructed), Is.EqualTo(typeToBeConstructed.Type));
+            Assert.That(_typeConstructor.Create(new HandlerInfo(), typeToBeConstructed), Is.EqualTo(typeToBeConstructed.Type));
         }
 
         [Test]
-        public void Create_HandlerInfoAndHandlerInfo_GenericTypeButConstructedFromDoesNotHAveGenericParametersSoExceptionThrown()
+        public void Create_HandlerInfoAndHandlerInfo_GenericTypeButConstructedFromDoesNotHaveGenericParametersSoExceptionThrown()
         {
             HandlerInfo typeToBeConstructed = new HandlerInfo()
             {
@@ -89,9 +94,7 @@ namespace Handsey.Tests
                 Type = typeof(TechnicalArchitectMappingHandler)
             };
 
-            ITypeConstructor factory = new TypeConstructor();
-
-            Assert.That(() => factory.Create(new HandlerInfo(), typeToBeConstructed), Throws.Exception.TypeOf<ArgumentException>());
+            Assert.That(() => _typeConstructor.Create(new HandlerInfo(), typeToBeConstructed), Throws.Exception.TypeOf<ArgumentException>());
         }
 
         [Test]
@@ -110,9 +113,7 @@ namespace Handsey.Tests
                 GenericParametersInfo = new GenericParameterInfo[0],
             };
 
-            ITypeConstructor factory = new TypeConstructor();
-
-            Assert.That(() => factory.Create(constructedFrom, typeToBeConstructed), Throws.Exception.TypeOf<ArgumentException>());
+            Assert.That(() => _typeConstructor.Create(constructedFrom, typeToBeConstructed), Throws.Exception.TypeOf<ArgumentException>());
         }
 
         [Test]
@@ -131,9 +132,141 @@ namespace Handsey.Tests
                 GenericParametersInfo = CreateGenericParametersWithConstraints(typeof(Payload<,>), typeof(Developer), typeof(DeveloperViewModel))
             };
 
-            ITypeConstructor factory = new TypeConstructor();
+            Assert.That(_typeConstructor.Create(constructedFrom, typeToBeConstructed), Is.EqualTo(typeof(EmployeePayloadHandler<Payload<Developer, DeveloperViewModel>, Developer, DeveloperViewModel>)));
+        }
 
-            Assert.That(factory.Create(constructedFrom, typeToBeConstructed), Is.EqualTo(typeof(EmployeePayloadHandler<Payload<Developer, DeveloperViewModel>, Developer, DeveloperViewModel>)));
+        [Test]
+        public void Create_HandlerInfoAndHandlerInfo_GenericInterfaceRequestedWithNestedGenericTypeConstructed()
+        {
+            HandlerInfo constructedFrom = new HandlerInfo()
+            {
+                GenericParametersInfo = CreateGenericParameter<MapperPayload<Employee, EmployeeViewModel>>(),
+                Type = typeof(IHandler<MapperPayload<Developer, DeveloperViewModel>>),
+                ConcreteNestedGenericParametersInfo = new Dictionary<string, GenericParameterInfo>()
+                {
+                    { "Developer" , new GenericParameterInfo() { Type = typeof(Developer) , Position = 0} },
+                    { "DeveloperViewModel" , new GenericParameterInfo() { Type = typeof(DeveloperViewModel), Position = 1  } }
+                },
+                IsInterface = true,
+                IsGenericType = true,
+                GenericTypeDefinition = typeof(IHandler<>)
+            };
+            constructedFrom.GenericParametersInfo[0].GenericParametersInfo = CreateGenericParameters<Employee, EmployeeViewModel>();
+
+            HandlerInfo typeToBeConstructed = new HandlerInfo()
+            {
+                GenericParametersInfo = new List<GenericParameterInfo>()
+                {
+                     new GenericParameterInfo() { FilteredContraints = CreateTypeInfo<Employee>(), Position = 0, Name = "TTo" } ,
+                     new GenericParameterInfo() { FilteredContraints = CreateTypeInfo<EmployeeViewModel>(), Position = 1, Name = "TFrom" }
+                },
+                Type = typeof(EmployeePayloadMappingHandler<,>)
+            };
+
+            _handlerSearch.Setup(s => s.FindMatchingGenericInterface(It.IsAny<HandlerInfo>(), It.IsAny<HandlerInfo>()))
+                .Returns(new HandlerInfo()
+                    {
+                        Type = typeof(IHandler<>),
+                        IsGenericType = true,
+                        GenericParametersInfo = CreateGenericParameters(typeof(MapperPayload<,>)),
+                        GenericTypeDefinition = typeof(IHandler<>),
+                        ConcreteNestedGenericParametersInfo = new Dictionary<string, GenericParameterInfo>()
+                        {
+                            { "TTo" , new GenericParameterInfo() { Position = 0 } },
+                            { "TFrom" , new GenericParameterInfo() {Position = 1 } },
+                        }
+                    });
+
+            Assert.That(_typeConstructor.Create(constructedFrom, typeToBeConstructed), Is.EqualTo(typeof(EmployeePayloadMappingHandler<Developer, DeveloperViewModel>)));
+        }
+
+        [Test]
+        public void Create_HandlerInfoAndHandlerInfoGenericInterfaceRequestedNestedGenericTypeMissMatchingParameterNamesSoExceptionThrown()
+        {
+            HandlerInfo constructedFrom = new HandlerInfo()
+            {
+                GenericParametersInfo = CreateGenericParameter<MapperPayload<Employee, EmployeeViewModel>>(),
+                Type = typeof(IHandler<MapperPayload<Developer, DeveloperViewModel>>),
+                ConcreteNestedGenericParametersInfo = new Dictionary<string, GenericParameterInfo>()
+                {
+                    { "Developer" , new GenericParameterInfo() { Type = typeof(Developer) , Position = 0} },
+                    { "DeveloperViewModel" , new GenericParameterInfo() { Type = typeof(DeveloperViewModel), Position = 1  } }
+                },
+                IsInterface = true,
+                IsGenericType = true,
+                GenericTypeDefinition = typeof(IHandler<>)
+            };
+            constructedFrom.GenericParametersInfo[0].GenericParametersInfo = CreateGenericParameters<Employee, EmployeeViewModel>();
+
+            HandlerInfo typeToBeConstructed = new HandlerInfo()
+            {
+                GenericParametersInfo = new List<GenericParameterInfo>()
+                {
+                     new GenericParameterInfo() { FilteredContraints = CreateTypeInfo<Employee>(), Position = 0, Name = "TTo" } ,
+                     new GenericParameterInfo() { FilteredContraints = CreateTypeInfo<EmployeeViewModel>(), Position = 1, Name = "TFrom" }
+                },
+                Type = typeof(EmployeePayloadMappingHandler<,>)
+            };
+
+            _handlerSearch.Setup(s => s.FindMatchingGenericInterface(It.IsAny<HandlerInfo>(), It.IsAny<HandlerInfo>()))
+                .Returns(new HandlerInfo()
+                {
+                    Type = typeof(IHandler<>),
+                    IsGenericType = true,
+                    GenericParametersInfo = CreateGenericParameters(typeof(MapperPayload<,>)),
+                    GenericTypeDefinition = typeof(IHandler<>),
+                    ConcreteNestedGenericParametersInfo = new Dictionary<string, GenericParameterInfo>()
+                        {
+                            { "TMapTo" , new GenericParameterInfo() { Position = 0 } },
+                            { "TMapFrom" , new GenericParameterInfo() {Position = 1 } },
+                        }
+                });
+
+            Assert.That(() => _typeConstructor.Create(constructedFrom, typeToBeConstructed), Throws.Exception.TypeOf<KeyNotFoundException>());
+        }
+
+        [Test]
+        public void Create_HandlerInfoAndHandlerInfo_GenericInterfaceRequestedWithNestedTypeConstructedFromHasTooFewParamtersSoExceptionThrown()
+        {
+            HandlerInfo constructedFrom = new HandlerInfo()
+            {
+                GenericParametersInfo = CreateGenericParameter<MapperPayload<Employee, EmployeeViewModel>>(),
+                Type = typeof(IHandler<MapperPayload<Developer, DeveloperViewModel>>),
+                ConcreteNestedGenericParametersInfo = new Dictionary<string, GenericParameterInfo>()
+                {
+                    { "Developer" , new GenericParameterInfo() { Type = typeof(Developer) , Position = 0} },
+                },
+                IsInterface = true,
+                IsGenericType = true,
+                GenericTypeDefinition = typeof(IHandler<>)
+            };
+            constructedFrom.GenericParametersInfo[0].GenericParametersInfo = CreateGenericParameters<Employee, EmployeeViewModel>();
+
+            HandlerInfo typeToBeConstructed = new HandlerInfo()
+            {
+                GenericParametersInfo = new List<GenericParameterInfo>()
+                {
+                     new GenericParameterInfo() { FilteredContraints = CreateTypeInfo<Employee>(), Position = 0, Name = "TTo" } ,
+                     new GenericParameterInfo() { FilteredContraints = CreateTypeInfo<EmployeeViewModel>(), Position = 1, Name = "TFrom" }
+                },
+                Type = typeof(EmployeePayloadMappingHandler<,>)
+            };
+
+            _handlerSearch.Setup(s => s.FindMatchingGenericInterface(It.IsAny<HandlerInfo>(), It.IsAny<HandlerInfo>()))
+                .Returns(new HandlerInfo()
+                {
+                    Type = typeof(IHandler<>),
+                    IsGenericType = true,
+                    GenericParametersInfo = CreateGenericParameters(typeof(MapperPayload<,>)),
+                    GenericTypeDefinition = typeof(IHandler<>),
+                    ConcreteNestedGenericParametersInfo = new Dictionary<string, GenericParameterInfo>()
+                        {
+                            { "TTo" , new GenericParameterInfo() { Position = 0 } },
+                            { "TFrom" , new GenericParameterInfo() {Position = 1 } },
+                        }
+                });
+
+            Assert.That(() => _typeConstructor.Create(constructedFrom, typeToBeConstructed), Throws.Exception.TypeOf<IndexOutOfRangeException>());
         }
 
         #region // Helpers MOVE TO UTILITIES
@@ -173,7 +306,7 @@ namespace Handsey.Tests
             };
         }
 
-        private IList<GenericParameterInfo> CreateGenericParameters(Type type1, Type type2, Type type3)
+        private IList<GenericParameterInfo> CreateGenericParameters(Type type1, Type type2 = null, Type type3 = null)
         {
             List<GenericParameterInfo> toReturn = new List<GenericParameterInfo>();
 
@@ -206,7 +339,7 @@ namespace Handsey.Tests
             };
         }
 
-        private IList<GenericParameterInfo> CreateGenericParametersWithConstraints(Type type1, Type type2, Type type3)
+        private IList<GenericParameterInfo> CreateGenericParametersWithConstraints(Type type1, Type type2 = null, Type type3 = null)
         {
             List<GenericParameterInfo> toReturn = new List<GenericParameterInfo>();
 
@@ -233,6 +366,11 @@ namespace Handsey.Tests
         private TypeInfo CreateTypeInfo(Type type)
         {
             return CreateTypeInfo<TypeInfo>(type);
+        }
+
+        private IList<TypeInfo> CreateTypeInfo<TParam1>()
+        {
+            return CreateTypesInfo(typeof(TParam1));
         }
 
         private TTypeInfo CreateTypeInfo<TTypeInfo>(Type type)

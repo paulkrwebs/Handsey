@@ -9,6 +9,13 @@ namespace Handsey
 {
     public class TypeConstructor : ITypeConstructor
     {
+        private readonly IHandlerSearch _handlerSearch;
+
+        public TypeConstructor(IHandlerSearch handlerSearch)
+        {
+            _handlerSearch = handlerSearch;
+        }
+
         public IEnumerable<Type> Create(HandlerInfo constructedFrom, IList<HandlerInfo> toBeConstructued)
         {
             PerformCheck.IsNull(constructedFrom).Throw<ArgumentNullException>(() => new ArgumentNullException("constructedFrom parameter cannot be null"));
@@ -33,17 +40,53 @@ namespace Handsey
             return ConstructType(constructedFrom, toBeConstructued);
         }
 
-        private Type ConstructType(HandlerInfo constructedFrom, HandlerInfo typeInfo)
+        private Type ConstructType(HandlerInfo constructedFrom, HandlerInfo toBeConstructued)
         {
             PerformCheck.IsNull(constructedFrom.GenericParametersInfo).Throw<ArgumentException>(() => new ArgumentException("GenericParametersInfo cannot be null"));
-            CheckGenericParameterCountMatches(constructedFrom.GenericParametersInfo, typeInfo.GenericParametersInfo);
+            PerformCheck.IsNull(toBeConstructued.GenericParametersInfo).Throw<ArgumentException>(() => new ArgumentException("GenericParametersInfo cannot be null"));
 
-            return typeInfo.Type.MakeGenericType(CreateTypeArray(constructedFrom));
+            if (!constructedFrom.IsInterface)
+            {
+                PerformCheck.IsTrue(() => constructedFrom.GenericParametersInfo.Count != toBeConstructued.GenericParametersInfo.Count).Throw<ArgumentException>(() => new ArgumentException("Constructed Type cannot be created, the number of generic parameters do not match."));
+                return ConstructWithTypes(toBeConstructued, CreateTypeArray(constructedFrom));
+            }
+
+            return ConstructFromInterface(constructedFrom, toBeConstructued);
         }
 
-        private void CheckGenericParameterCountMatches(IList<GenericParameterInfo> listA, IList<GenericParameterInfo> listB)
+        private Type ConstructFromInterface(HandlerInfo constructedFrom, HandlerInfo toBeConstructued)
         {
-            PerformCheck.IsTrue(() => listA.Count != listB.Count).Throw<ArgumentException>(() => new ArgumentException("Constructed Type cannot be created, the number of generic parameters do not match."));
+            // find interface
+            HandlerInfo matchingInteface = _handlerSearch.FindMatchingGenericInterface(constructedFrom, toBeConstructued);
+
+            // match interface paramas to type to be constructed parameters
+            return ConstructGenericType(constructedFrom, toBeConstructued, matchingInteface);
+        }
+
+        private Type ConstructGenericType(HandlerInfo constructedFrom, TypeInfo toBeConstructued, HandlerInfo matchingInteface)
+        {
+            List<Type> constructedParamerterTypes = new List<Type>();
+
+            foreach (GenericParameterInfo genericParameterInfo in toBeConstructued.GenericParametersInfo)
+            {
+                // In a real system this will not occur but including for completeness
+                PerformCheck.IsTrue(() => !matchingInteface.ConcreteNestedGenericParametersInfo.ContainsKey(genericParameterInfo.Name))
+                    .Throw<KeyNotFoundException>(() => new KeyNotFoundException("Handler parameters and its own interface parameter names do not match."));
+
+                GenericParameterInfo matchingInterfaceParameter = matchingInteface.ConcreteNestedGenericParametersInfo[genericParameterInfo.Name];
+
+                PerformCheck.IsTrue(() => constructedFrom.ConcreteNestedGenericParametersInfo.Count() <= matchingInterfaceParameter.Position)
+                    .Throw<IndexOutOfRangeException>(() => new IndexOutOfRangeException("Requested handler and its matched interface on found handler have incorrect number of generic parameters"));
+
+                constructedParamerterTypes.Add(constructedFrom.ConcreteNestedGenericParametersInfo.ElementAt(matchingInterfaceParameter.Position).Value.Type);
+            }
+
+            return ConstructWithTypes(toBeConstructued, constructedParamerterTypes.ToArray());
+        }
+
+        private static Type ConstructWithTypes(TypeInfo typeInfo, Type[] types)
+        {
+            return typeInfo.Type.MakeGenericType(types);
         }
 
         private static Type[] CreateTypeArray(HandlerInfo constructedFrom)
