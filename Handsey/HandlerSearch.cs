@@ -20,8 +20,8 @@ namespace Handsey
             _validMAtches = new ConcurrentQueue<ValidMatch>();
             _validMAtches.Enqueue(ExactMatch);
             _validMAtches.Enqueue(Assignable);
+            _validMAtches.Enqueue(GenericInterfaceMatch);
             _validMAtches.Enqueue(GenericParamtersAssignable);
-            _validMAtches.Enqueue(InterfaceMatch);
         }
 
         public IEnumerable<HandlerInfo> Execute(HandlerInfo toMatch, IEnumerable<HandlerInfo> listToSearch)
@@ -70,7 +70,7 @@ namespace Handsey
             return a.Type.IsAssignableFrom(b.Type);
         }
 
-        private static bool InterfaceMatch(HandlerInfo a, HandlerInfo b)
+        private static bool GenericInterfaceMatch(HandlerInfo a, HandlerInfo b)
         {
             if (!a.IsInterface)
                 return false;
@@ -106,11 +106,16 @@ namespace Handsey
 
         private static bool HandlerCanBeConstructedByConcreteNestedGenericParameters(HandlerInfo sourceHandler, HandlerInfo toConstruct, HandlerInfo matchedInterface)
         {
+            // Find the matching generic parameter on the object for this interface
+            // once we have that generic parameter we will have all the generic contraints needed to workout
+            // if this handler is a match
             foreach (string key in matchedInterface.ConcreteNestedGenericParametersInfo.Keys)
             {
+                // This check is for completeness but will probably never occur in a real system as
+                // a developer cannot implement an interface on a type without the generic parameters being present
                 GenericParameterInfo compareToGenericParameterInfo = null;
                 if (!toConstruct.ConcreteNestedGenericParametersInfo.TryGetValue(key, out compareToGenericParameterInfo))
-                    continue;
+                    return false;
 
                 if (!ConcreteNestedGenericParameterMatches(sourceHandler, compareToGenericParameterInfo))
                     return false;
