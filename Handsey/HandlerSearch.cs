@@ -44,7 +44,7 @@ namespace Handsey
             return MatchedAgainstRules(a, b);
         }
 
-        private static bool MatchedAgainstRules(HandlerInfo a, HandlerInfo b)
+        private bool MatchedAgainstRules(HandlerInfo a, HandlerInfo b)
         {
             foreach (ValidMatch validMatch in _validMAtches)
             {
@@ -72,36 +72,50 @@ namespace Handsey
 
         private static bool GenericInterfaceMatch(HandlerInfo a, HandlerInfo b)
         {
-            if (!a.IsInterface)
-                return false;
-
-            if (!DoesImplementGenericInterface(a, b))
+            // rework to find an exactly matching interface... If return is null then it doesn't match
+            // then expose another method that returns exactly matching interface so I can call from TypeConstructor
+            if (FindMatchingGenericInterface(a, b) == null)
                 return false;
 
             return true;
         }
 
-        private static bool DoesImplementGenericInterface(HandlerInfo a, HandlerInfo b)
+        HandlerInfo IHandlerSearch.FindMatchingGenericInterface(HandlerInfo interfaceHandler, HandlerInfo handlerToSearch)
         {
-            if (!a.IsGenericType)
-                return false;
-
-            HandlerInfo[] foundInterfaces = FindMatchingInterfaces(a, b);
-            if (!foundInterfaces.Any())
-                return false;
-
-            return HandlerConstructableFromInterfaceParameters(a, b, foundInterfaces);
+            return FindMatchingGenericInterface(interfaceHandler, handlerToSearch);
         }
 
-        private static bool HandlerConstructableFromInterfaceParameters(HandlerInfo sourceHandler, HandlerInfo toConstruct, HandlerInfo[] mcatchedInterfaces)
+        /// <summary>
+        /// Returns the matching handler interface from the handlerToSearch that matches the sourceHandler
+        /// </summary>
+        /// <param name="handlerInterface"></param>
+        /// <param name="handlerToSearch"></param>
+        /// <returns></returns>
+        private static HandlerInfo FindMatchingGenericInterface(HandlerInfo interfaceHandler, HandlerInfo handlerToSearch)
         {
-            foreach (HandlerInfo handlerInterface in mcatchedInterfaces)
-            {
-                if (HandlerCanBeConstructedByConcreteNestedGenericParameters(sourceHandler, toConstruct, handlerInterface))
-                    return true;
-            }
+            if (PerformCheck.IsNull(handlerToSearch.FilteredInterfaces).Eval())
+                return null;
 
-            return false;
+            if (!IsGenericInterface(interfaceHandler))
+                return null;
+
+            // There can only be one interface of any given type on a class so its safe to find the first (as it will be the only one)
+            return handlerToSearch.FilteredInterfaces
+                            .FirstOrDefault(i => i.IsGenericType
+                                && i.GenericTypeDefinition == interfaceHandler.GenericTypeDefinition
+                                && HandlerCanBeConstructedByConcreteNestedGenericParameters(interfaceHandler, handlerToSearch, i)
+                                );
+        }
+
+        private static bool IsGenericInterface(HandlerInfo sourceHandler)
+        {
+            if (!sourceHandler.IsInterface)
+                return false;
+
+            if (!sourceHandler.IsGenericType)
+                return false;
+
+            return true;
         }
 
         private static bool HandlerCanBeConstructedByConcreteNestedGenericParameters(HandlerInfo sourceHandler, HandlerInfo toConstruct, HandlerInfo matchedInterface)
@@ -133,13 +147,6 @@ namespace Handsey
                 return true;
 
             return false;
-        }
-
-        private static HandlerInfo[] FindMatchingInterfaces(HandlerInfo a, HandlerInfo b)
-        {
-            return b.FilteredInterfaces
-                            .Where(i => i.IsGenericType && i.GenericTypeDefinition == a.GenericTypeDefinition)
-                            .ToArray();
         }
 
         private static bool GenericParamtersAssignable(HandlerInfo a, HandlerInfo b)

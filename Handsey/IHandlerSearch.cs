@@ -12,5 +12,7 @@ namespace Handsey
         IEnumerable<HandlerInfo> Execute(HandlerInfo toMatch, IEnumerable<HandlerInfo> listToSearch);
 
         bool Compare(HandlerInfo a, HandlerInfo b);
+
+        HandlerInfo FindMatchingGenericInterface(HandlerInfo interfaceHandler, HandlerInfo handlerToSearch);
     }
 }
