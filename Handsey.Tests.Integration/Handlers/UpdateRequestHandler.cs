@@ -7,13 +7,6 @@ using System.Threading.Tasks;
 
 namespace Handsey.Tests.Integration.Handlers
 {
-    /// <summary>
-    /// This won't work in Handsey :( need to thing about
-    /// </summary>
-    /// <typeparam name="TFromRequest"></typeparam>
-    /// <typeparam name="TToRequest"></typeparam>
-    /// <typeparam name="TFromViewModel"></typeparam>
-    /// <typeparam name="TToViewModel"></typeparam>
     public class UpdateRequestHandler<TFromViewModel, TToViewModel>
         : IOneToOneHandler<UpdateEmployeeRequest<TFromViewModel>, UpdateEmployeeRequest<TToViewModel>>
         where TFromViewModel : EmployeeViewModel

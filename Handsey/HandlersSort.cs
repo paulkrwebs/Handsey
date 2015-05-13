@@ -152,13 +152,24 @@ namespace Handsey
 
         private static int CompareSequence(HandlerInfo a, HandlerInfo b)
         {
-            if (a.ExecutesAfter != null && a.ExecutesAfter.Any(t => t == b.Type))
+            if (ExecutesAfter(b, a))
                 return 1;
 
-            if (b.ExecutesAfter != null && b.ExecutesAfter.Any(t => t == a.Type))
+            if (ExecutesAfter(a, b))
                 return -1;
 
             return 0;
+        }
+
+        private static bool ExecutesAfter(HandlerInfo executesFirst, HandlerInfo executesSecond)
+        {
+            if (executesSecond == null)
+                return false;
+
+            if (executesSecond.ExecutesAfter == null)
+                return false;
+
+            return executesSecond.ExecutesAfter.Any(t => t == executesFirst.Type);
         }
     }
 }
