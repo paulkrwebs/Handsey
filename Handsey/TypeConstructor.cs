@@ -76,7 +76,11 @@ namespace Handsey
 
             if (!constructedFrom.IsInterface)
             {
-                PerformCheck.IsTrue(() => constructedFrom.GenericParametersInfo.Count != toBeConstructued.GenericParametersInfo.Count).Throw<ArgumentException>(() => new ArgumentException("Constructed Type cannot be created, the number of generic parameters do not match."));
+                PerformCheck.IsTrue(() => constructedFrom.GenericParametersInfo.Count != toBeConstructued.GenericParametersInfo.Count)
+                    .Throw<ArgumentException>(() =>
+                        new ArgumentException("Constructed Type cannot be created, the number of generic parameters do not match.")
+                        );
+
                 return ConstructWithTypes(toBeConstructued, CreateTypeArray(constructedFrom));
             }
 
