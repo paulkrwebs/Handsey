@@ -18,15 +18,24 @@ namespace Handsey
 
         public ApplicationHandlers(IList<HandlerInfo> handles)
         {
-            PerformCheck.IsNull(handles).Throw<ArgumentNullException>(() => new ArgumentNullException("Handles parameter cannot be null"));
+            PerformCheck.IsNull(handles)
+                .Throw<ArgumentNullException>(() =>
+                    new ArgumentNullException("Handles parameter cannot be null")
+                    );
 
             _handles = new ConcurrentQueue<HandlerInfo>(handles);
         }
 
         public virtual IEnumerable<HandlerInfo> Find(HandlerInfo toSearchFor, IHandlerSearch search)
         {
-            PerformCheck.IsNull(search, toSearchFor).Throw<ArgumentNullException>(() => new ArgumentNullException("Search parameter cannot be null"));
-            PerformCheck.IsNull(() => toSearchFor.Type).Throw<ArgumentNullException>(() => new ArgumentNullException("Search parameter cannot be null"));
+            PerformCheck.IsNull(search, toSearchFor)
+                .Throw<ArgumentNullException>(() =>
+                    new ArgumentNullException("Search parameter cannot be null")
+                    );
+            PerformCheck.IsNull(() => toSearchFor.Type)
+                .Throw<ArgumentNullException>(() =>
+                    new ArgumentNullException("Search parameter cannot be null")
+                    );
 
             // Double dispatch
             // The search should return a new list so is thread safe

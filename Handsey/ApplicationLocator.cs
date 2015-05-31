@@ -32,7 +32,10 @@ namespace Handsey
                 {
                     lock (_instanceSyncLock)
                     {
-                        PerformCheck.IsNull(_applicationConfiguration).Throw<ApplicationConfigurationNotSetException>(() => new ApplicationConfigurationNotSetException("Please call the Configure methods before trying to resolve an instance"));
+                        PerformCheck.IsNull(_applicationConfiguration)
+                            .Throw<ApplicationConfigurationNotSetException>(() =>
+                                new ApplicationConfigurationNotSetException("Please call the Configure methods before trying to resolve an instance")
+                                );
 
                         if (_instance == null)
                             _instance = BuildInstance();

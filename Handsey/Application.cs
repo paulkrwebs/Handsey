@@ -141,7 +141,10 @@ namespace Handsey
         {
             HandlerInfo toSearchFor = null;
 
-            PerformCheck.IsTrue(() => !TryCreateHandler<THandler>(_applicationConfiguration.BaseType, out toSearchFor)).Throw<RequestedHandlerNotValidException>(() => new RequestedHandlerNotValidException("Requested handler " + typeof(THandler).FullName + " cannot be converted to a handler."));
+            PerformCheck.IsTrue(() => !TryCreateHandler<THandler>(_applicationConfiguration.BaseType, out toSearchFor))
+                .Throw<RequestedHandlerNotValidException>(() =>
+                    new RequestedHandlerNotValidException("Requested handler " + typeof(THandler).FullName + " cannot be converted to a handler.")
+                    );
 
             return toSearchFor;
         }
@@ -163,11 +166,17 @@ namespace Handsey
         private IList<HandlerInfo> FindHandlers<THandler>(HandlerInfo toSearchFor)
         {
             IEnumerable<HandlerInfo> handlersFound = null;
-            PerformCheck.IsTrue(() => !TryFindHandlers<THandler>(toSearchFor, out handlersFound)).Throw<HandlerNotFoundException>(() => new HandlerNotFoundException("The handler of type " + typeof(THandler).FullName + " could not be found"));
+            PerformCheck.IsTrue(() => !TryFindHandlers<THandler>(toSearchFor, out handlersFound)).
+                Throw<HandlerNotFoundException>(() =>
+                    new HandlerNotFoundException("The handler of type " + typeof(THandler).FullName + " could not be found")
+                    );
 
             // check some are returned
             IList<HandlerInfo> handlersList = handlersFound.ToList();
-            PerformCheck.IsTrue(() => !handlersList.Any()).Throw<HandlerNotFoundException>(() => new HandlerNotFoundException("The handler of type " + typeof(THandler).FullName + " could not be found"));
+            PerformCheck.IsTrue(() => !handlersList.Any())
+                .Throw<HandlerNotFoundException>(() =>
+                    new HandlerNotFoundException("The handler of type " + typeof(THandler).FullName + " could not be found")
+                    );
 
             return handlersList;
         }
@@ -203,8 +212,14 @@ namespace Handsey
         {
             IEnumerable<Type> constructedTypes = null;
 
-            PerformCheck.IsTrue(() => !TryConstructTypes(toConstructFrom, handlersList, out constructedTypes)).Throw<HandlerCannotBeConstructedException>(() => new HandlerCannotBeConstructedException("The handler of type " + toConstructFrom.Type.FullName + " cannot be constructed"));
-            PerformCheck.IsTrue(() => !constructedTypes.Any()).Throw<HandlerCannotBeConstructedException>(() => new HandlerCannotBeConstructedException("The handler of type " + toConstructFrom.Type.FullName + " cannot be constructed"));
+            PerformCheck.IsTrue(() => !TryConstructTypes(toConstructFrom, handlersList, out constructedTypes))
+                .Throw<HandlerCannotBeConstructedException>(() =>
+                    new HandlerCannotBeConstructedException("The handler of type " + toConstructFrom.Type.FullName + " cannot be constructed")
+                    );
+            PerformCheck.IsTrue(() => !constructedTypes.Any())
+                .Throw<HandlerCannotBeConstructedException>(() =>
+                    new HandlerCannotBeConstructedException("The handler of type " + toConstructFrom.Type.FullName + " cannot be constructed")
+                    );
 
             return constructedTypes;
         }

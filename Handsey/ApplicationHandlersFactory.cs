@@ -20,18 +20,39 @@ namespace Handsey
 
         public IApplicationHandlers Create(IApplicationConfiguration applicationConfiguration)
         {
-            PerformCheck.IsNull(applicationConfiguration).Throw<ArgumentNullException>(() => new ArgumentNullException("Application Configuration cannot be null"));
-            PerformCheck.IsTrue(() => CheckFilterConfiguration(applicationConfiguration)).Throw<ArgumentException>(() => new ArgumentException("Please set a handler base type to filter by and a list of assembly name prefixes to filter by."));
+            PerformCheck.IsNull(applicationConfiguration)
+                .Throw<ArgumentNullException>(() =>
+                    new ArgumentNullException("Application Configuration cannot be null")
+                    );
+
+            PerformCheck.IsTrue(() => CheckFilterConfiguration(applicationConfiguration))
+                .Throw<ArgumentException>(() =>
+                    new ArgumentException("Please set a handler base type to filter by and a list of assembly name prefixes to filter by.")
+                    );
 
             Type[] types = _assemblyWalker.ListAllTypes(applicationConfiguration.BaseType, applicationConfiguration.AssemblyNamePrefixes);
 
-            PerformCheck.IsNull(types).Throw<HandlerNotFoundException>(() => new HandlerNotFoundException("No types that implement the base handler in the application configuration were found"));
-            PerformCheck.IsTrue(() => !types.Any()).Throw<HandlerNotFoundException>(() => new HandlerNotFoundException("No types that implement the base handler in the application configuration were found"));
+            PerformCheck.IsNull(types)
+                .Throw<HandlerNotFoundException>(() =>
+                    new HandlerNotFoundException("No types that implement the base handler in the application configuration were found")
+                    );
+
+            PerformCheck.IsTrue(() => !types.Any())
+                .Throw<HandlerNotFoundException>(() =>
+                    new HandlerNotFoundException("No types that implement the base handler in the application configuration were found")
+                    );
 
             IList<HandlerInfo> handlers = _handlerFactory.Create(types);
 
-            PerformCheck.IsNull(handlers).Throw<HandlerNotFoundException>(() => new HandlerNotFoundException("No handlers were found matching the application configuration"));
-            PerformCheck.IsTrue(() => !handlers.Any()).Throw<HandlerNotFoundException>(() => new HandlerNotFoundException("No handlers were found matching the application configuration"));
+            PerformCheck.IsNull(handlers)
+                .Throw<HandlerNotFoundException>(() =>
+                    new HandlerNotFoundException("No handlers were found matching the application configuration")
+                    );
+
+            PerformCheck.IsTrue(() => !handlers.Any())
+                .Throw<HandlerNotFoundException>(() =>
+                    new HandlerNotFoundException("No handlers were found matching the application configuration")
+                    );
 
             return new ApplicationHandlers(handlers);
         }

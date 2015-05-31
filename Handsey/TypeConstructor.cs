@@ -18,9 +18,20 @@ namespace Handsey
 
         public IEnumerable<Type> Create(HandlerInfo constructedFrom, IList<HandlerInfo> toBeConstructued)
         {
-            PerformCheck.IsNull(constructedFrom).Throw<ArgumentNullException>(() => new ArgumentNullException("constructedFrom parameter cannot be null"));
-            PerformCheck.IsNull(toBeConstructued).Throw<ArgumentNullException>(() => new ArgumentNullException("toBeConstructued parameter cannot be null"));
-            PerformCheck.IsNull(toBeConstructued.Select(x => x.Type).ToArray()).Throw<ArgumentNullException>(() => new ArgumentNullException("toBeConstructued must have a type"));
+            PerformCheck.IsNull(constructedFrom)
+                .Throw<ArgumentNullException>(() =>
+                    new ArgumentNullException("constructedFrom parameter cannot be null")
+                    );
+
+            PerformCheck.IsNull(toBeConstructued)
+                .Throw<ArgumentNullException>(() =>
+                    new ArgumentNullException("toBeConstructued parameter cannot be null")
+                    );
+
+            PerformCheck.IsNull(toBeConstructued.Select(x => x.Type).ToArray())
+                .Throw<ArgumentNullException>(() =>
+                    new ArgumentNullException("toBeConstructued must have a type")
+                    );
 
             foreach (HandlerInfo typeInfo in toBeConstructued)
             {
@@ -30,9 +41,20 @@ namespace Handsey
 
         public Type Create(HandlerInfo constructedFrom, HandlerInfo toBeConstructued)
         {
-            PerformCheck.IsNull(constructedFrom).Throw<ArgumentNullException>(() => new ArgumentNullException("constructedFrom parameter cannot be null"));
-            PerformCheck.IsNull(toBeConstructued).Throw<ArgumentNullException>(() => new ArgumentNullException("toBeConstructued parameter cannot be null"));
-            PerformCheck.IsNull(toBeConstructued.Type).Throw<ArgumentNullException>(() => new ArgumentNullException("toBeConstructued must have a type"));
+            PerformCheck.IsNull(constructedFrom)
+                .Throw<ArgumentNullException>(() =>
+                    new ArgumentNullException("constructedFrom parameter cannot be null")
+                    );
+
+            PerformCheck.IsNull(toBeConstructued)
+                .Throw<ArgumentNullException>(() =>
+                    new ArgumentNullException("toBeConstructued parameter cannot be null")
+                    );
+
+            PerformCheck.IsNull(toBeConstructued.Type)
+                .Throw<ArgumentNullException>(() =>
+                    new ArgumentNullException("toBeConstructued must have a type")
+                    );
 
             if (toBeConstructued.IsConstructed)
                 return toBeConstructued.Type;
@@ -42,8 +64,15 @@ namespace Handsey
 
         private Type ConstructType(HandlerInfo constructedFrom, HandlerInfo toBeConstructued)
         {
-            PerformCheck.IsNull(constructedFrom.GenericParametersInfo).Throw<ArgumentException>(() => new ArgumentException("GenericParametersInfo cannot be null"));
-            PerformCheck.IsNull(toBeConstructued.GenericParametersInfo).Throw<ArgumentException>(() => new ArgumentException("GenericParametersInfo cannot be null"));
+            PerformCheck.IsNull(constructedFrom.GenericParametersInfo)
+                .Throw<ArgumentException>(() =>
+                    new ArgumentException("GenericParametersInfo cannot be null")
+                    );
+
+            PerformCheck.IsNull(toBeConstructued.GenericParametersInfo)
+                .Throw<ArgumentException>(() =>
+                    new ArgumentException("GenericParametersInfo cannot be null")
+                    );
 
             if (!constructedFrom.IsInterface)
             {
@@ -71,12 +100,16 @@ namespace Handsey
             {
                 // In a real system this will not occur but including for completeness
                 PerformCheck.IsTrue(() => !matchingInteface.ConcreteNestedGenericParametersInfo.ContainsKey(genericParameterInfo.Name))
-                    .Throw<KeyNotFoundException>(() => new KeyNotFoundException("Handler parameters and its own interface parameter names do not match."));
+                    .Throw<KeyNotFoundException>(() =>
+                        new KeyNotFoundException("Handler parameters and its own interface parameter names do not match.")
+                        );
 
                 GenericParameterInfo matchingInterfaceParameter = matchingInteface.ConcreteNestedGenericParametersInfo[genericParameterInfo.Name];
 
                 PerformCheck.IsTrue(() => constructedFrom.ConcreteNestedGenericParametersInfo.Count() <= matchingInterfaceParameter.Position)
-                    .Throw<IndexOutOfRangeException>(() => new IndexOutOfRangeException("Requested handler and its matched interface on found handler have incorrect number of generic parameters"));
+                    .Throw<IndexOutOfRangeException>(() =>
+                        new IndexOutOfRangeException("Requested handler and its matched interface on found handler have incorrect number of generic parameters")
+                        );
 
                 constructedParamerterTypes.Add(constructedFrom.ConcreteNestedGenericParametersInfo.ElementAt(matchingInterfaceParameter.Position).Value.Type);
             }

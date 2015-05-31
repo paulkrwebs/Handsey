@@ -9,6 +9,5 @@ namespace Handsey.Tests.TestObjects.Handlers
 {
     public interface IOneToOneDataPopulation<TFrom, TTo> : IHandler<TFrom, TTo>
     {
-        void Handle(TFrom arg1, TTo args2);
     }
 }
