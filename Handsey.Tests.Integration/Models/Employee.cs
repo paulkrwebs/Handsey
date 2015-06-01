@@ -16,7 +16,9 @@ namespace Handsey.Tests.Integration.Models
 
         protected IApplicaton Application { get { return _application; } }
 
-        protected List<Change> ChangeLog { get; set; }
+        protected List<Change> ChangeLog { get; private set; }
+
+        public Guid Id { get; private set; }
 
         public string FirstName { get; private set; }
 
@@ -29,6 +31,7 @@ namespace Handsey.Tests.Integration.Models
         public Employee(IApplicaton application)
         {
             _application = application;
+            Id = Guid.NewGuid();
         }
 
         public virtual void Change(string firstname, string lastName)

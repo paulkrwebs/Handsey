@@ -3,16 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Handsey.Tests.Integration.Handlers;
 
 namespace Handsey.Tests.Integration.Models
 {
     public class SupportTicket : IVersionable
     {
-        protected List<Change> ChangeLog { get; set; }
+        #region // Fields
+        private readonly IApplicaton _application;
+
+        protected List<Change> ChangeLog { get; private set; }
 
         public Project Project { get; private set; }
 
-        public int Id { get; private set; }
+        public Guid Id { get; private set; }
 
         public string Name { get; private set; }
 
@@ -30,7 +34,100 @@ namespace Handsey.Tests.Integration.Models
 
         public Employee Assignee { get; private set; }
 
-        public Employee Reporter { get; private set; }
+        public Employee Reporter { get; private set; } 
+        #endregion
+
+        #region Constructors
+        public SupportTicket(Project project
+            , string name
+            , SupportTicketPriority priority
+            , SupportTicketStatus status
+            , SupportTicketResolution resolution
+            , string description
+            , Employee assignee
+            , Employee reporter)
+            : this(ApplicationLocator.Instance
+                    , project
+                    , name
+                    , priority
+                    , status
+                    , resolution
+                    , description
+                    , assignee
+                    , reporter)
+        { }
+
+        public SupportTicket(
+            IApplicaton application
+            , Project project
+            , string name
+            , SupportTicketPriority priority
+            , SupportTicketStatus status
+            , SupportTicketResolution resolution
+            , string description
+            , Employee assignee
+            , Employee reporter)
+        {
+            _application = application;
+
+            Project = project;
+            Name = name;
+            Priority = priority;
+            Status = status;
+            Resolution = resolution;
+            Description = description;
+            Assignee = assignee;
+            Reporter = reporter;
+
+            Created = DateTime.Now;
+            Id = Guid.NewGuid();
+        } 
+        #endregion
+
+        public void AssignTo(Employee assignee)
+        {
+            LogChange("Assignee", Assignee.Id.ToString(), assignee.Id.ToString());
+            Assignee = assignee;
+
+            Updated = DateTime.Now;
+
+            // Fire change!!!
+            _application.Invoke<IChangeHandler<IVersionable>>(h => h.Handle(this));
+        }
+
+        public void ChangeDetails(string name
+            , SupportTicketPriority priority
+            , SupportTicketStatus status
+            , string description)
+        {
+            LogChange("Name", Name, name);
+            Name = name;
+
+            LogChange("Priority", Priority.ToString(), priority.ToString());
+            Priority = priority;
+
+            LogChange("Status", Status.ToString(), status.ToString());
+            Status = status;
+
+            LogChange("Description", Description, description);
+            Description = description;
+
+            Updated = DateTime.Now;
+
+            // Fire change!!!
+            _application.Invoke<IChangeHandler<IVersionable>>(h => h.Handle(this));
+        }
+
+        public void Resolve(SupportTicketResolution resolution)
+        {
+            LogChange("Resolution", Resolution.ToString(), resolution.ToString());
+            Resolution = resolution;
+
+            Updated = DateTime.Now;
+
+            // Fire change!!!
+            _application.Invoke<IChangeHandler<IVersionable>>(h => h.Handle(this));
+        }
 
         public Change[] Changes()
         {
