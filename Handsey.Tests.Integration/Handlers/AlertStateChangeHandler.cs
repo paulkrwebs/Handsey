@@ -10,9 +10,17 @@ namespace Handsey.Tests.Integration.Handlers
     public class AlertStateChangeHandler<TVersionable> : IChangeHandler<TVersionable>
         where TVersionable : IVersionable
     {
-        public void Handle(IVersionable arg1)
+        private readonly IHandlerCallLog _handlerCallLog;
+
+        public AlertStateChangeHandler(IHandlerCallLog handlerCallLog)
         {
-            throw new NotImplementedException("Send email to dumy thing");
+            _handlerCallLog = handlerCallLog;
+        }
+
+        public void Handle(TVersionable arg1)
+        {
+            // Send an alert to inform the administrator a versionable object has changed
+            _handlerCallLog.Log.Add(this.GetType());
         }
     }
 }

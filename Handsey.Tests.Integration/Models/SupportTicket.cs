@@ -1,15 +1,16 @@
-﻿using System;
+﻿using Handsey.Tests.Integration.Handlers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Handsey.Tests.Integration.Handlers;
 
 namespace Handsey.Tests.Integration.Models
 {
     public class SupportTicket : IVersionable
     {
         #region // Fields
+
         private readonly IApplicaton _application;
 
         protected List<Change> ChangeLog { get; private set; }
@@ -34,10 +35,12 @@ namespace Handsey.Tests.Integration.Models
 
         public Employee Assignee { get; private set; }
 
-        public Employee Reporter { get; private set; } 
-        #endregion
+        public Employee Reporter { get; private set; }
+
+        #endregion // Fields
 
         #region Constructors
+
         public SupportTicket(Project project
             , string name
             , SupportTicketPriority priority
@@ -81,8 +84,10 @@ namespace Handsey.Tests.Integration.Models
 
             Created = DateTime.Now;
             Id = Guid.NewGuid();
-        } 
-        #endregion
+            ChangeLog = new List<Change>();
+        }
+
+        #endregion Constructors
 
         public void AssignTo(Employee assignee)
         {
@@ -92,7 +97,7 @@ namespace Handsey.Tests.Integration.Models
             Updated = DateTime.Now;
 
             // Fire change!!!
-            _application.Invoke<IChangeHandler<IVersionable>>(h => h.Handle(this));
+            _application.Invoke<IChangeHandler<SupportTicket>>(h => h.Handle(this));
         }
 
         public void ChangeDetails(string name
@@ -115,7 +120,7 @@ namespace Handsey.Tests.Integration.Models
             Updated = DateTime.Now;
 
             // Fire change!!!
-            _application.Invoke<IChangeHandler<IVersionable>>(h => h.Handle(this));
+            _application.Invoke<IChangeHandler<SupportTicket>>(h => h.Handle(this));
         }
 
         public void Resolve(SupportTicketResolution resolution)
@@ -126,7 +131,7 @@ namespace Handsey.Tests.Integration.Models
             Updated = DateTime.Now;
 
             // Fire change!!!
-            _application.Invoke<IChangeHandler<IVersionable>>(h => h.Handle(this));
+            _application.Invoke<IChangeHandler<SupportTicket>>(h => h.Handle(this));
         }
 
         public Change[] Changes()

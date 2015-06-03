@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Handsey.Tests.Integration.Handlers
 {
-    public interface IChangeHandler<TVersionable> : IHandler<IVersionable>
+    public interface IChangeHandler<TVersionable> : IHandler<TVersionable>
         where TVersionable : IVersionable
     { }
 }

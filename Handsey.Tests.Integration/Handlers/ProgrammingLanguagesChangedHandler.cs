@@ -7,19 +7,19 @@ using System.Threading.Tasks;
 
 namespace Handsey.Tests.Integration.Handlers
 {
-    public class SaveStateChangeHandler<TVersionable> : IChangeHandler<TVersionable>
-        where TVersionable : IVersionable
+    public class ProgrammingLanguagesChangedHandler<TTechnicalEmployee> : IChangeHandler<TTechnicalEmployee>
+        where TTechnicalEmployee : TechnicalEmployee, IVersionable
     {
         private readonly IHandlerCallLog _handlerCallLog;
 
-        public SaveStateChangeHandler(IHandlerCallLog handlerCallLog)
+        public ProgrammingLanguagesChangedHandler(IHandlerCallLog handlerCallLog)
         {
             _handlerCallLog = handlerCallLog;
         }
 
-        public void Handle(TVersionable arg1)
+        public void Handle(TTechnicalEmployee arg1)
         {
-            // saves the changed made to a persisted storage area
+            // Inform the business a programmer has new skillz! arg1.ProgrammingLanguages
             _handlerCallLog.Log.Add(this.GetType());
         }
     }

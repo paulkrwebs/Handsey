@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Handsey.Tests.Integration.Handlers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,12 +11,22 @@ namespace Handsey.Tests.Integration.Models
     {
         public int TeamSize { get; private set; }
 
+        public Manager(string firstName
+            , string lastName)
+            : base(firstName, lastName)
+        { }
+
         public void Change(string firstName, string lastName, int teamSize)
         {
             LogChange("TeamSize", TeamSize.ToString(), teamSize.ToString());
             TeamSize = teamSize;
 
             base.Change(firstName, lastName);
+        }
+
+        protected override void FireChange()
+        {
+            Application.Invoke<IChangeHandler<Manager>>(h => h.Handle(this));
         }
     }
 }

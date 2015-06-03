@@ -42,12 +42,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
+    <Compile Include="HandlerCallLog.cs" />
+    <Compile Include="Handlers\ProgrammingLanguagesChangedHandler.cs" />
+    <Compile Include="IHandlerCallLog.cs" />
+    <Compile Include="MainTest.cs" />
     <Compile Include="Handlers\AlertStateChangeHandler.cs" />
     <Compile Include="Handlers\IChangeHandler.cs" />
     <Compile Include="Handlers\IOneToOneHandler.cs" />
     <Compile Include="Handlers\SaveStateChangeHandler.cs" />
     <Compile Include="Handlers\UpdateRequestHandler.cs" />
+    <Compile Include="IocContainers\IntegrationContainer.cs" />
     <Compile Include="Models\Change.cs" />
     <Compile Include="Models\Project.cs" />
     <Compile Include="Models\SupportTicketPriority.cs" />
@@ -77,9 +81,7 @@
       <Name>Handsey</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Utilities\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

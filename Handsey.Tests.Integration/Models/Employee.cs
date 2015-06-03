@@ -24,14 +24,24 @@ namespace Handsey.Tests.Integration.Models
 
         public string LastName { get; private set; }
 
-        public Employee()
-            : this(ApplicationLocator.Instance)
+        public Employee(string firstName
+            , string lastName)
+            : this(ApplicationLocator.Instance
+                    , firstName
+                    , lastName)
         { }
 
-        public Employee(IApplicaton application)
+        public Employee(IApplicaton application
+            , string firstName
+            , string lastName)
         {
             _application = application;
+
+            FirstName = firstName;
+            LastName = lastName;
+
             Id = Guid.NewGuid();
+            ChangeLog = new List<Change>();
         }
 
         public virtual void Change(string firstname, string lastName)
@@ -42,8 +52,13 @@ namespace Handsey.Tests.Integration.Models
             LogChange("LastName", LastName, lastName);
             FirstName = firstname;
 
+            FireChange();
+        }
+
+        protected virtual void FireChange()
+        {
             // Fire change!!!
-            Application.Invoke<IChangeHandler<IVersionable>>(h => h.Handle(this));
+            Application.Invoke<IChangeHandler<Employee>>(h => h.Handle(this));
         }
 
         public Change[] Changes()
