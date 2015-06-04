@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Handlers\ModelMapperHandler.cs" />
     <Compile Include="Handlers\ProgrammingLanguagesChangedHandler.cs" />
     <Compile Include="IVerifiable.cs" />
     <Compile Include="MainTest.cs" />
