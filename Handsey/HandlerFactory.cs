@@ -43,7 +43,7 @@ namespace Handsey
 
             PopulateAttributeInfo(type, handlerInfo);
 
-            handlerInfo.ConcreteNestedGenericParametersInfo = new Dictionary<string, GenericParameterInfo>();
+            handlerInfo.ConcreteNestedGenericParametersInfo = new List<GenericParameterInfo>();
             PopulateNestedGenericParameters(handlerInfo, handlerInfo.GenericParametersInfo);
 
             return handlerInfo;
@@ -58,7 +58,7 @@ namespace Handsey
             {
                 if (!param.IsGenericType)
                 {
-                    handlerInfo.ConcreteNestedGenericParametersInfo.Add(param.Name, param);
+                    handlerInfo.ConcreteNestedGenericParametersInfo.Add(param);
                 }
 
                 PopulateNestedGenericParameters(handlerInfo, param.GenericParametersInfo);

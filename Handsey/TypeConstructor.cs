@@ -103,19 +103,19 @@ namespace Handsey
             foreach (GenericParameterInfo genericParameterInfo in toBeConstructued.GenericParametersInfo)
             {
                 // In a real system this will not occur but including for completeness
-                PerformCheck.IsTrue(() => !matchingInteface.ConcreteNestedGenericParametersInfo.ContainsKey(genericParameterInfo.Name))
+                PerformCheck.IsTrue(() => !matchingInteface.ConcreteNestedGenericParametersInfo.Any(c => c.Name == genericParameterInfo.Name))
                     .Throw<KeyNotFoundException>(() =>
                         new KeyNotFoundException("Handler parameters and its own interface parameter names do not match.")
                         );
 
-                GenericParameterInfo matchingInterfaceParameter = matchingInteface.ConcreteNestedGenericParametersInfo[genericParameterInfo.Name];
+                GenericParameterInfo matchingInterfaceParameter = matchingInteface.ConcreteNestedGenericParametersInfo.FirstOrDefault(c => c.Name == genericParameterInfo.Name);
 
                 PerformCheck.IsTrue(() => constructedFrom.ConcreteNestedGenericParametersInfo.Count() <= matchingInterfaceParameter.Position)
                     .Throw<IndexOutOfRangeException>(() =>
                         new IndexOutOfRangeException("Requested handler and its matched interface on found handler have incorrect number of generic parameters")
                         );
 
-                constructedParamerterTypes.Add(constructedFrom.ConcreteNestedGenericParametersInfo.ElementAt(matchingInterfaceParameter.Position).Value.Type);
+                constructedParamerterTypes.Add(constructedFrom.ConcreteNestedGenericParametersInfo[matchingInterfaceParameter.Position].Type);
             }
 
             return ConstructWithTypes(toBeConstructued, constructedParamerterTypes.ToArray());

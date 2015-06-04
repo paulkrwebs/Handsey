@@ -12,6 +12,6 @@ namespace Handsey
 
         public Type[] ExecutesAfter { get; set; }
 
-        public IDictionary<string, GenericParameterInfo> ConcreteNestedGenericParametersInfo { get; set; }
+        public IList<GenericParameterInfo> ConcreteNestedGenericParametersInfo { get; set; }
     }
 }

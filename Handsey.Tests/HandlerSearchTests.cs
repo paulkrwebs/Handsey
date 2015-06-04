@@ -512,10 +512,10 @@ namespace Handsey.Tests
             {
                 GenericParametersInfo = CreateGenericParameters<Employee, EmployeeViewModel>(),
                 Type = typeof(IHandler<Developer, DeveloperViewModel>),
-                ConcreteNestedGenericParametersInfo = new Dictionary<string, GenericParameterInfo>()
+                ConcreteNestedGenericParametersInfo = new List<GenericParameterInfo>()
                 {
-                    { "Developer" , new GenericParameterInfo() { Type = typeof(Developer) , Position = 0} },
-                    { "DeveloperViewModel" , new GenericParameterInfo() { Type = typeof(DeveloperViewModel), Position = 1  } }
+                    new GenericParameterInfo() { Type = typeof(Developer) , Position = 0, Name = "Developer" },
+                    new GenericParameterInfo() { Type = typeof(DeveloperViewModel), Position = 1, Name = "DeveloperViewModel"  }
                 },
                 IsInterface = true,
                 IsGenericType = true,
@@ -527,10 +527,10 @@ namespace Handsey.Tests
             {
                 GenericParametersInfo = CreateGenericParametersWithConstraints(typeof(Developer), typeof(DeveloperViewModel)),
                 Type = typeof(EmployeePayloadMappingHandler<,>),
-                ConcreteNestedGenericParametersInfo = new Dictionary<string, GenericParameterInfo>()
+                ConcreteNestedGenericParametersInfo = new List<GenericParameterInfo>()
                 {
-                    { "TFrom" , new GenericParameterInfo() { FilteredContraints = CreateTypeInfo<Developer>(), Position = 0 } },
-                    { "TTo" , new GenericParameterInfo() { FilteredContraints = CreateTypeInfo<DeveloperViewModel>(), Position = 1 } }
+                    { new GenericParameterInfo() { FilteredContraints = CreateTypeInfo<Developer>(), Position = 0, Name = "TFrom" } },
+                    { new GenericParameterInfo() { FilteredContraints = CreateTypeInfo<DeveloperViewModel>(), Position = 1, Name = "TTo" } }
                 },
                 FilteredInterfaces = new HandlerInfo[1]
                 {
@@ -539,10 +539,10 @@ namespace Handsey.Tests
                         Type = typeof(IHandler<>),
                         IsGenericType = true,
                         GenericTypeDefinition = typeof(IHandler<>),
-                        ConcreteNestedGenericParametersInfo = new Dictionary<string, GenericParameterInfo>()
+                        ConcreteNestedGenericParametersInfo = new List<GenericParameterInfo>()
                         {
-                            { "TMapTo" , new GenericParameterInfo() { Position = 0 } },
-                            { "TMapFrom" , new GenericParameterInfo() {Position = 1 } },
+                            { new GenericParameterInfo() { Position = 0, Name = "TMapTo" } },
+                            { new GenericParameterInfo() {Position = 1, Name = "TMapFrom" } },
                         }
                     }
                 }
@@ -560,10 +560,10 @@ namespace Handsey.Tests
             {
                 GenericParametersInfo = CreateGenericParameter<MapperPayload<Employee, EmployeeViewModel>>(),
                 Type = typeof(IHandler<MapperPayload<Developer, DeveloperViewModel>>),
-                ConcreteNestedGenericParametersInfo = new Dictionary<string, GenericParameterInfo>()
+                ConcreteNestedGenericParametersInfo = new List<GenericParameterInfo>()
                 {
-                    { "Developer" , new GenericParameterInfo() { Type = typeof(Developer) , Position = 0} },
-                    { "DeveloperViewModel" , new GenericParameterInfo() { Type = typeof(DeveloperViewModel), Position = 1  } }
+                    new GenericParameterInfo() { Type = typeof(Developer) , Position = 0 , Name = "Developer"} ,
+                    new GenericParameterInfo() { Type = typeof(DeveloperViewModel), Position = 1, Name = "DeveloperViewModel"   }
                 },
                 IsInterface = true,
                 IsGenericType = true,
@@ -575,10 +575,10 @@ namespace Handsey.Tests
             {
                 GenericParametersInfo = CreateGenericParametersWithConstraints(typeof(Employee), typeof(EmployeeViewModel)),
                 Type = typeof(EmployeePayloadMappingHandler<,>),
-                ConcreteNestedGenericParametersInfo = new Dictionary<string, GenericParameterInfo>()
+                ConcreteNestedGenericParametersInfo = new List<GenericParameterInfo>()
                 {
-                    { "TFrom" , new GenericParameterInfo() { FilteredContraints = CreateTypeInfo<Employee>(), Position = 0 } },
-                    { "TTo" , new GenericParameterInfo() { FilteredContraints = CreateTypeInfo<EmployeeViewModel>(), Position = 1 } }
+                    new GenericParameterInfo() { FilteredContraints = CreateTypeInfo<Employee>(), Position = 0, Name = "TFrom"},
+                    new GenericParameterInfo() { FilteredContraints = CreateTypeInfo<EmployeeViewModel>(), Position = 1, Name =  "TTo" }
                 },
                 FilteredInterfaces = new HandlerInfo[1]
                 {
@@ -588,10 +588,10 @@ namespace Handsey.Tests
                         IsGenericType = true,
                         GenericParametersInfo = CreateGenericParameters(typeof(MapperPayload<,>)),
                         GenericTypeDefinition = typeof(IHandler<>),
-                        ConcreteNestedGenericParametersInfo = new Dictionary<string, GenericParameterInfo>()
+                        ConcreteNestedGenericParametersInfo = new List<GenericParameterInfo>()
                         {
-                            { "TTo" , new GenericParameterInfo() { Position = 0 } },
-                            { "TFrom" , new GenericParameterInfo() {Position = 1 } },
+                            new GenericParameterInfo() { Position = 0 , Name = "TTo"},
+                            new GenericParameterInfo() {Position = 1 , Name = "TFrom"},
                         }
                     }
                 }
@@ -609,10 +609,10 @@ namespace Handsey.Tests
             {
                 GenericParametersInfo = CreateGenericParameter<MapperPayload<Employee, EmployeeViewModel>>(),
                 Type = typeof(IHandler<MapperPayload<Developer, DeveloperViewModel>>),
-                ConcreteNestedGenericParametersInfo = new Dictionary<string, GenericParameterInfo>()
+                ConcreteNestedGenericParametersInfo = new List<GenericParameterInfo>()
                 {
-                    { "Developer" , new GenericParameterInfo() { Type = typeof(Developer) , Position = 0} },
-                    { "DeveloperViewModel" , new GenericParameterInfo() { Type = typeof(DeveloperViewModel), Position = 1  } }
+                    new GenericParameterInfo() { Type = typeof(Developer) , Position = 0, Name = "Developer"} ,
+                    new GenericParameterInfo() { Type = typeof(DeveloperViewModel), Position = 1 , Name =  "DeveloperViewModel" }
                 },
                 IsInterface = true,
                 IsGenericType = true,
@@ -624,10 +624,10 @@ namespace Handsey.Tests
             {
                 GenericParametersInfo = CreateGenericParametersWithConstraints(typeof(TechnicalArchitect), typeof(TechnicalArchitectViewModel)),
                 Type = typeof(EmployeePayloadMappingHandler<,>),
-                ConcreteNestedGenericParametersInfo = new Dictionary<string, GenericParameterInfo>()
+                ConcreteNestedGenericParametersInfo = new List<GenericParameterInfo>()
                 {
-                    { "TFrom" , new GenericParameterInfo() { FilteredContraints = CreateTypeInfo<TechnicalArchitect>(), Position = 0 } },
-                    { "TTo" , new GenericParameterInfo() { FilteredContraints = CreateTypeInfo<TechnicalArchitectViewModel>(), Position = 1 } }
+                    new GenericParameterInfo() { FilteredContraints = CreateTypeInfo<TechnicalArchitect>(), Position = 0, Name =  "TFrom" } ,
+                    new GenericParameterInfo() { FilteredContraints = CreateTypeInfo<TechnicalArchitectViewModel>(), Position = 1, Name =  "TTo" }
                 },
                 FilteredInterfaces = new HandlerInfo[1]
                 {
@@ -637,10 +637,10 @@ namespace Handsey.Tests
                         GenericParametersInfo = CreateGenericParameters(typeof(MapperPayload<,>)),
                         IsGenericType = true,
                         GenericTypeDefinition = typeof(IHandler<>),
-                        ConcreteNestedGenericParametersInfo = new Dictionary<string, GenericParameterInfo>()
+                        ConcreteNestedGenericParametersInfo = new List<GenericParameterInfo>()
                         {
-                            { "TTo" , new GenericParameterInfo() { Position = 0 } },
-                            { "TFrom" , new GenericParameterInfo() {Position = 1 } },
+                            new GenericParameterInfo() { Position = 0, Name = "TTo" },
+                            new GenericParameterInfo() {Position = 1, Name = "TFrom" },
                         }
                     }
                 }
@@ -658,9 +658,9 @@ namespace Handsey.Tests
             {
                 GenericParametersInfo = CreateGenericParameter<Employee>(),
                 Type = typeof(IHandler<Developer>),
-                ConcreteNestedGenericParametersInfo = new Dictionary<string, GenericParameterInfo>()
+                ConcreteNestedGenericParametersInfo = new List<GenericParameterInfo>()
                 {
-                    { "Developer" , new GenericParameterInfo() { Type = typeof(Developer) , Position = 0} },
+                    new GenericParameterInfo() { Type = typeof(Developer) , Position = 0 , Name = "Developer"} ,
                 },
                 IsInterface = true,
                 IsGenericType = true,
@@ -672,10 +672,10 @@ namespace Handsey.Tests
             {
                 GenericParametersInfo = CreateGenericParametersWithConstraints(typeof(TechnicalArchitect), typeof(TechnicalArchitectViewModel)),
                 Type = typeof(EmployeePayloadMappingHandler<,>),
-                ConcreteNestedGenericParametersInfo = new Dictionary<string, GenericParameterInfo>()
+                ConcreteNestedGenericParametersInfo = new List<GenericParameterInfo>()
                 {
-                    { "TFrom" , new GenericParameterInfo() { FilteredContraints = CreateTypeInfo<TechnicalArchitect>(), Position = 0 } },
-                    { "TTo" , new GenericParameterInfo() { FilteredContraints = CreateTypeInfo<TechnicalArchitectViewModel>(), Position = 1 } }
+                    new GenericParameterInfo() { FilteredContraints = CreateTypeInfo<TechnicalArchitect>(), Position = 0 , Name = "TFrom" },
+                    new GenericParameterInfo() { FilteredContraints = CreateTypeInfo<TechnicalArchitectViewModel>(), Position = 1, Name = "TTo" }
                 },
                 FilteredInterfaces = new HandlerInfo[1]
                 {
@@ -684,10 +684,10 @@ namespace Handsey.Tests
                         Type = typeof(IHandler<>),
                         IsGenericType = true,
                         GenericTypeDefinition = typeof(IHandler<>),
-                        ConcreteNestedGenericParametersInfo = new Dictionary<string, GenericParameterInfo>()
+                        ConcreteNestedGenericParametersInfo = new List<GenericParameterInfo>()
                         {
-                            { "TTo" , new GenericParameterInfo() { Position = 0 } },
-                            { "TFrom" , new GenericParameterInfo() {Position = 1 } },
+                            new GenericParameterInfo() { Position = 0, Name = "TTo" },
+                            new GenericParameterInfo() {Position = 1, Name = "TFrom" },
                         }
                     }
                 }
@@ -709,10 +709,10 @@ namespace Handsey.Tests
             {
                 GenericParametersInfo = CreateGenericParameter<MapperPayload<Employee, EmployeeViewModel>>(),
                 Type = typeof(IHandler<MapperPayload<Developer, DeveloperViewModel>>),
-                ConcreteNestedGenericParametersInfo = new Dictionary<string, GenericParameterInfo>()
+                ConcreteNestedGenericParametersInfo = new List<GenericParameterInfo>()
                 {
-                    { "Developer" , new GenericParameterInfo() { Type = typeof(Developer) , Position = 0} },
-                    { "DeveloperViewModel" , new GenericParameterInfo() { Type = typeof(DeveloperViewModel), Position = 1  } }
+                    new GenericParameterInfo() { Type = typeof(Developer) , Position = 0, Name = "Developer" },
+                    new GenericParameterInfo() { Type = typeof(DeveloperViewModel), Position = 1, Name = "DeveloperViewModel"  }
                 },
                 IsInterface = true,
                 IsGenericType = true,
@@ -724,10 +724,10 @@ namespace Handsey.Tests
             {
                 GenericParametersInfo = CreateGenericParametersWithConstraints(typeof(Developer), typeof(DeveloperViewModel)),
                 Type = typeof(EmployeePayloadMappingHandler<,>),
-                ConcreteNestedGenericParametersInfo = new Dictionary<string, GenericParameterInfo>()
+                ConcreteNestedGenericParametersInfo = new List<GenericParameterInfo>()
                 {
-                    { "TFrom" , new GenericParameterInfo() { FilteredContraints = CreateTypeInfo<Developer>(), Position = 0 } },
-                    { "TTo" , new GenericParameterInfo() { FilteredContraints = CreateTypeInfo<DeveloperViewModel>(), Position = 1 } }
+                    new GenericParameterInfo() { FilteredContraints = CreateTypeInfo<Developer>(), Position = 0, Name =  "TFrom" },
+                    new GenericParameterInfo() { FilteredContraints = CreateTypeInfo<DeveloperViewModel>(), Position = 1, Name = "TTo" }
                 },
                 FilteredInterfaces = new HandlerInfo[1]
                 {
@@ -736,10 +736,10 @@ namespace Handsey.Tests
                         Type = typeof(IHandler<>),
                         IsGenericType = true,
                         GenericTypeDefinition = typeof(IHandler<>),
-                        ConcreteNestedGenericParametersInfo = new Dictionary<string, GenericParameterInfo>()
+                        ConcreteNestedGenericParametersInfo = new List<GenericParameterInfo>()
                         {
-                            { "TMapTo" , new GenericParameterInfo() { Position = 0 } },
-                            { "TMapFrom" , new GenericParameterInfo() {Position = 1 } },
+                            new GenericParameterInfo() { Position = 0 , Name = "TMapTo" },
+                            new GenericParameterInfo() {Position = 1, Name = "TMapFrom" },
                         }
                     }
                 }
@@ -757,10 +757,10 @@ namespace Handsey.Tests
             {
                 GenericParametersInfo = CreateGenericParameter<MapperPayload<Employee, EmployeeViewModel>>(),
                 Type = typeof(IHandler<MapperPayload<Developer, DeveloperViewModel>>),
-                ConcreteNestedGenericParametersInfo = new Dictionary<string, GenericParameterInfo>()
+                ConcreteNestedGenericParametersInfo = new List<GenericParameterInfo>()
                 {
-                    { "Developer" , new GenericParameterInfo() { Type = typeof(Developer) , Position = 0} },
-                    { "DeveloperViewModel" , new GenericParameterInfo() { Type = typeof(DeveloperViewModel), Position = 1  } }
+                    new GenericParameterInfo() { Type = typeof(Developer) , Position = 0 , Name = "Developer" },
+                    new GenericParameterInfo() { Type = typeof(DeveloperViewModel), Position = 1 , Name =  "DeveloperViewModel" }
                 },
                 IsInterface = true,
                 IsGenericType = true,
@@ -772,10 +772,10 @@ namespace Handsey.Tests
             {
                 GenericParametersInfo = CreateGenericParametersWithConstraints(typeof(Employee), typeof(EmployeeViewModel)),
                 Type = typeof(EmployeePayloadMappingHandler<,>),
-                ConcreteNestedGenericParametersInfo = new Dictionary<string, GenericParameterInfo>()
+                ConcreteNestedGenericParametersInfo = new List<GenericParameterInfo>()
                 {
-                    { "TFrom" , new GenericParameterInfo() { FilteredContraints = CreateTypeInfo<Employee>(), Position = 0 } },
-                    { "TTo" , new GenericParameterInfo() { FilteredContraints = CreateTypeInfo<EmployeeViewModel>(), Position = 1 } }
+                    new GenericParameterInfo() { FilteredContraints = CreateTypeInfo<Employee>(), Position = 0 , Name =  "TFrom"  },
+                    new GenericParameterInfo() { FilteredContraints = CreateTypeInfo<EmployeeViewModel>(), Position = 1 , Name = "TTo" }
                 },
                 FilteredInterfaces = new HandlerInfo[1]
                 {
@@ -785,10 +785,10 @@ namespace Handsey.Tests
                         IsGenericType = true,
                         GenericParametersInfo = CreateGenericParameters(typeof(MapperPayload<,>)),
                         GenericTypeDefinition = typeof(IHandler<>),
-                        ConcreteNestedGenericParametersInfo = new Dictionary<string, GenericParameterInfo>()
+                        ConcreteNestedGenericParametersInfo = new List<GenericParameterInfo>()
                         {
-                            { "TTo" , new GenericParameterInfo() { Position = 0 } },
-                            { "TFrom" , new GenericParameterInfo() {Position = 1 } },
+                            new GenericParameterInfo() { Position = 0, Name = "TTo"  },
+                            new GenericParameterInfo() {Position = 1, Name =  "TFrom" },
                         }
                     }
                 }

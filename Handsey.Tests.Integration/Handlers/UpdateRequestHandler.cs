@@ -8,20 +8,14 @@ using System.Threading.Tasks;
 namespace Handsey.Tests.Integration.Handlers
 {
     public class UpdateRequestHandler<TFromViewModel, TToViewModel>
-        : IOneToOneHandler<UpdateEmployeeRequest<TFromViewModel>, UpdateEmployeeRequest<TToViewModel>>
-        where TFromViewModel : EmployeeViewModel
-        where TToViewModel : EmployeeViewModel
+        : IOneToOneHandler<UpdateEmployeeRequest<TFromViewModel>, UpdateEmployeeResponse<TToViewModel>>
+        where TFromViewModel : EmployeeViewModel, IVerifiable
+        where TToViewModel : EmployeeViewModel, IVerifiable
     {
-        public void Handle(UpdateEmployeeRequest<TFromViewModel> arg1, UpdateEmployeeRequest<TToViewModel> args2)
+        public void Handle(UpdateEmployeeRequest<TFromViewModel> arg1, UpdateEmployeeResponse<TToViewModel> arg2)
         {
-            //ApplicationLocator
-            //    .Instance
-            //    .Invoke<IOneToOneHandler<UpdateEmployeeRequest<DeveloperViewModel>, UpdateEmployeeResponse<DeveloperViewModel>>>(
-            //    h => h.Handle(new UpdateEmployeeRequest<DeveloperViewModel>()
-            //        , new UpdateEmployeeResponse<DeveloperViewModel>()
-            //        ));
-
-            throw new NotImplementedException();
+            arg1.Employee.UpdateLog(this);
+            arg2.Employee.UpdateLog(this);
         }
     }
 }

@@ -70,13 +70,41 @@ namespace Handsey.Tests.Integration
                 Assert.That(employeeHandlerLog.Count(h => h.GetType() == typeof(AlertStateChangeHandler<Employee>)), Is.EqualTo(1));
                 Assert.That(employeeHandlerLog.Count(h => h.GetType() == typeof(SaveStateChangeHandler<Employee>)), Is.EqualTo(1));
 
-                // map to a view model
+                InvokeMappingHandler<DeveloperViewModel, DeveloperViewModel>();
+
+                // optionally clear the cache
                 if (clearRegistraionsCache)
                     _integrationContainer.ClearThreadRegistrations();
             });
 
             _stopwatch.Stop();
             Console.WriteLine("InvokeHandlersForIterations iterations {0}, clearRegistraionsCache {1}, took {2} milliseconds / {3} ticks", iterations, clearRegistraionsCache, _stopwatch.ElapsedMilliseconds, _stopwatch.ElapsedTicks);
+        }
+
+        public void InvokeMappingHandler<TFrom, TTo>()
+            where TFrom : EmployeeViewModel, new()
+            where TTo : EmployeeViewModel, new()
+        {
+            // map to a view model
+            TFrom developerFrom = new TFrom();
+            TTo developerTo = new TTo();
+
+            // invoke
+            ApplicationLocator
+                .Instance
+                .Invoke<IOneToOneHandler<UpdateEmployeeRequest<TFrom>, UpdateEmployeeResponse<TTo>>>(
+                h => h.Handle(new UpdateEmployeeRequest<TFrom>() { Employee = developerFrom }
+                    , new UpdateEmployeeResponse<TTo>() { Employee = developerTo }
+                    ));
+
+            IHandler[] developerFromHandlerLog = developerFrom.HandlerLog();
+            IHandler[] developerToHandlerLog = developerTo.HandlerLog();
+
+            Assert.That(developerFromHandlerLog.Count(), Is.EqualTo(1));
+            Assert.That(developerFromHandlerLog.Count(h => h.GetType() == typeof(UpdateRequestHandler<TFrom, TTo>)), Is.EqualTo(1));
+
+            Assert.That(developerToHandlerLog.Count(), Is.EqualTo(1));
+            Assert.That(developerToHandlerLog.Count(h => h.GetType() == typeof(UpdateRequestHandler<TFrom, TTo>)), Is.EqualTo(1));
         }
     }
 }

@@ -165,14 +165,14 @@ namespace Handsey.Tests
             Assert.That(classInfo, Is.Not.Null);
             Assert.That(classInfo.GenericParametersInfo.Count(), Is.EqualTo(2));
             Assert.That(classInfo.ConcreteNestedGenericParametersInfo.Count(), Is.EqualTo(2));
-            Assert.That(classInfo.ConcreteNestedGenericParametersInfo.ContainsKey("TFrom"), Is.True);
-            Assert.That(classInfo.ConcreteNestedGenericParametersInfo["TFrom"].Position, Is.EqualTo(0));
-            Assert.That(classInfo.ConcreteNestedGenericParametersInfo.ContainsKey("TTo"), Is.True);
-            Assert.That(classInfo.ConcreteNestedGenericParametersInfo["TTo"].Position, Is.EqualTo(1));
+            Assert.That(classInfo.ConcreteNestedGenericParametersInfo.Any(c => c.Name == "TFrom"), Is.True);
+            Assert.That(classInfo.ConcreteNestedGenericParametersInfo.First(c => c.Name == "TFrom").Position, Is.EqualTo(0));
+            Assert.That(classInfo.ConcreteNestedGenericParametersInfo.Any(c => c.Name == "TTo"), Is.True);
+            Assert.That(classInfo.ConcreteNestedGenericParametersInfo.First(c => c.Name == "TTo").Position, Is.EqualTo(1));
             Assert.That(classInfo.FilteredInterfaces.Count(), Is.EqualTo(1));
             Assert.That(classInfo.FilteredInterfaces[0].GenericTypeDefinition, Is.EqualTo(typeof(IHandler<>)));
-            Assert.That(classInfo.FilteredInterfaces[0].ConcreteNestedGenericParametersInfo.ContainsKey("TFrom"), Is.True);
-            Assert.That(classInfo.FilteredInterfaces[0].ConcreteNestedGenericParametersInfo.ContainsKey("TTo"), Is.True);
+            Assert.That(classInfo.FilteredInterfaces[0].ConcreteNestedGenericParametersInfo.Any(c => c.Name == "TFrom"), Is.True);
+            Assert.That(classInfo.FilteredInterfaces[0].ConcreteNestedGenericParametersInfo.Any(c => c.Name == "TTo"), Is.True);
 
             type = typeof(EmployeePayloadMappingHandler<Employee, EmployeeViewModel>);
 
@@ -181,8 +181,8 @@ namespace Handsey.Tests
             Assert.That(classInfo, Is.Not.Null);
             Assert.That(classInfo.GenericParametersInfo.Count(), Is.EqualTo(2));
             Assert.That(classInfo.ConcreteNestedGenericParametersInfo.Count(), Is.EqualTo(2));
-            Assert.That(classInfo.ConcreteNestedGenericParametersInfo.ContainsKey("Employee"), Is.True);
-            Assert.That(classInfo.ConcreteNestedGenericParametersInfo.ContainsKey("EmployeeViewModel"), Is.True);
+            Assert.That(classInfo.ConcreteNestedGenericParametersInfo.Any(c => c.Name == "Employee"), Is.True);
+            Assert.That(classInfo.ConcreteNestedGenericParametersInfo.Any(c => c.Name == "Employee"), Is.True);
         }
 
         [Test]

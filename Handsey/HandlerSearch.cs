@@ -123,12 +123,13 @@ namespace Handsey
             // Find the matching generic parameter on the object for this interface
             // once we have that generic parameter we will have all the generic contraints needed to workout
             // if this handler is a match
-            foreach (string key in matchedInterface.ConcreteNestedGenericParametersInfo.Keys)
+            foreach (GenericParameterInfo interfaceGenericParameterInfo in matchedInterface.ConcreteNestedGenericParametersInfo)
             {
                 // This check is for completeness but will probably never occur in a real system as
                 // a developer cannot implement an interface on a type without the generic parameters being present
-                GenericParameterInfo compareToGenericParameterInfo = null;
-                if (!toConstruct.ConcreteNestedGenericParametersInfo.TryGetValue(key, out compareToGenericParameterInfo))
+                GenericParameterInfo compareToGenericParameterInfo =
+                    toConstruct.ConcreteNestedGenericParametersInfo.FirstOrDefault(c => c.Name == interfaceGenericParameterInfo.Name);
+                if (compareToGenericParameterInfo == null)
                     return false;
 
                 if (!ConcreteNestedGenericParameterMatches(sourceHandler, compareToGenericParameterInfo))
@@ -143,7 +144,7 @@ namespace Handsey
             if (sourceHandler.ConcreteNestedGenericParametersInfo.Count() <= compareToGenericParameterInfo.Position)
                 return false;
 
-            if (GenericParameterAssignable(sourceHandler.ConcreteNestedGenericParametersInfo.ElementAt(compareToGenericParameterInfo.Position).Value, compareToGenericParameterInfo))
+            if (GenericParameterAssignable(sourceHandler.ConcreteNestedGenericParametersInfo[compareToGenericParameterInfo.Position], compareToGenericParameterInfo))
                 return true;
 
             return false;
