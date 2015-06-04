@@ -42,9 +42,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="HandlerCallLog.cs" />
     <Compile Include="Handlers\ProgrammingLanguagesChangedHandler.cs" />
-    <Compile Include="IHandlerCallLog.cs" />
+    <Compile Include="IVerifiable.cs" />
     <Compile Include="MainTest.cs" />
     <Compile Include="Handlers\AlertStateChangeHandler.cs" />
     <Compile Include="Handlers\IChangeHandler.cs" />

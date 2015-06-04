@@ -8,19 +8,16 @@ using System.Threading.Tasks;
 namespace Handsey.Tests.Integration.Handlers
 {
     public class AlertStateChangeHandler<TVersionable> : IChangeHandler<TVersionable>
-        where TVersionable : IVersionable
+        where TVersionable : IVersionable, IVerifiable
     {
-        private readonly IHandlerCallLog _handlerCallLog;
-
-        public AlertStateChangeHandler(IHandlerCallLog handlerCallLog)
+        public AlertStateChangeHandler()
         {
-            _handlerCallLog = handlerCallLog;
         }
 
         public void Handle(TVersionable arg1)
         {
             // Send an alert to inform the administrator a versionable object has changed
-            _handlerCallLog.Log.Add(this.GetType());
+            arg1.UpdateLog(this);
         }
     }
 }

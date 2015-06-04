@@ -8,19 +8,16 @@ using System.Threading.Tasks;
 namespace Handsey.Tests.Integration.Handlers
 {
     public class SaveStateChangeHandler<TVersionable> : IChangeHandler<TVersionable>
-        where TVersionable : IVersionable
+        where TVersionable : IVersionable, IVerifiable
     {
-        private readonly IHandlerCallLog _handlerCallLog;
-
-        public SaveStateChangeHandler(IHandlerCallLog handlerCallLog)
+        public SaveStateChangeHandler()
         {
-            _handlerCallLog = handlerCallLog;
         }
 
         public void Handle(TVersionable arg1)
         {
             // saves the changed made to a persisted storage area
-            _handlerCallLog.Log.Add(this.GetType());
+            arg1.UpdateLog(this);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Handsey.Tests.Integration.Handlers;
+﻿using Handsey.Handlers;
+using Handsey.Tests.Integration.Handlers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,13 +8,15 @@ using System.Threading.Tasks;
 
 namespace Handsey.Tests.Integration.Models
 {
-    public class SupportTicket : IVersionable
+    public class SupportTicket : IVersionable, IVerifiable
     {
         #region // Fields
 
         private readonly IApplicaton _application;
 
         protected List<Change> ChangeLog { get; private set; }
+
+        protected List<IHandler> _handlerLog;
 
         public Project Project { get; private set; }
 
@@ -147,6 +150,16 @@ namespace Handsey.Tests.Integration.Models
         protected void LogChange(string propertyName, string before, string after)
         {
             ChangeLog.Add(new Change(propertyName, before, after));
+        }
+
+        public IHandler[] HandlerLog()
+        {
+            return _handlerLog.ToArray();
+        }
+
+        public void UpdateLog(IHandler handler)
+        {
+            _handlerLog.Add(handler);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Handsey.Tests.Integration.Handlers;
+﻿using Handsey.Handlers;
+using Handsey.Tests.Integration.Handlers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,13 +11,15 @@ namespace Handsey.Tests.Integration.Models
     /// <summary>
     /// </summary>
     /// <remarks>need to think this through</remarks>
-    public class Employee : IVersionable
+    public class Employee : IVersionable, IVerifiable
     {
         private readonly IApplicaton _application;
 
         protected IApplicaton Application { get { return _application; } }
 
         protected List<Change> ChangeLog { get; private set; }
+
+        protected List<IHandler> _handlerLog;
 
         public Guid Id { get; private set; }
 
@@ -42,6 +45,7 @@ namespace Handsey.Tests.Integration.Models
 
             Id = Guid.NewGuid();
             ChangeLog = new List<Change>();
+            _handlerLog = new List<IHandler>();
         }
 
         public virtual void Change(string firstname, string lastName)
@@ -76,6 +80,14 @@ namespace Handsey.Tests.Integration.Models
             ChangeLog.Add(new Change(propertyName, before, after));
         }
 
-        public object IHandlesChange { get; set; }
+        public IHandler[] HandlerLog()
+        {
+            return _handlerLog.ToArray();
+        }
+
+        public void UpdateLog(IHandler handler)
+        {
+            _handlerLog.Add(handler);
+        }
     }
 }

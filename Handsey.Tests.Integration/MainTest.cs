@@ -15,14 +15,12 @@ namespace Handsey.Tests.Integration
     [TestFixture]
     public class MainTest
     {
-        private IHandlerCallLog _handlerCallLog;
         private IntegrationContainer _integrationContainer;
 
         [SetUp]
         public void Setup()
         {
-            _handlerCallLog = new HandlerCallLog();
-            _integrationContainer = new IntegrationContainer(_handlerCallLog);
+            _integrationContainer = new IntegrationContainer();
 
             ApplicationLocator.Configure(
                     new ApplicationConfiguration(typeof(IHandler)
@@ -30,14 +28,13 @@ namespace Handsey.Tests.Integration
                     , _integrationContainer);
         }
 
-        [TestCase(10)]
+        [TestCase(10000)]
         public void InvokeHandlersForIterations(int iterations)
         {
             // parallel loop
             Parallel.For(0, iterations, (i) =>
             {
                 int iteration = i + 1;
-                _handlerCallLog.Log = new List<Type>();
 
                 // create a new domain object
                 Developer developer = new Developer("paul", "kiernan", new string[] { "C#" });
@@ -46,11 +43,11 @@ namespace Handsey.Tests.Integration
                 developer.Change(developer.FirstName, developer.LastName, new string[] { "C#", "JS" });
 
                 // this won't work in a parralle FIX
-
-                Assert.That(_handlerCallLog.Log.Count, Is.EqualTo(3));
-                Assert.That(_handlerCallLog.Log.Contains(typeof(AlertStateChangeHandler<Developer>)), Is.True);
-                Assert.That(_handlerCallLog.Log.Contains(typeof(SaveStateChangeHandler<Developer>)), Is.True);
-                Assert.That(_handlerCallLog.Log.Contains(typeof(ProgrammingLanguagesChangedHandler<Developer>)), Is.True);
+                IHandler[] developerHandlerLog = developer.HandlerLog();
+                Assert.That(developerHandlerLog.Count(), Is.EqualTo(3));
+                Assert.That(developerHandlerLog.Count(h => h.GetType() == typeof(AlertStateChangeHandler<Developer>)), Is.EqualTo(1));
+                Assert.That(developerHandlerLog.Count(h => h.GetType() == typeof(SaveStateChangeHandler<Developer>)), Is.EqualTo(1));
+                Assert.That(developerHandlerLog.Count(h => h.GetType() == typeof(ProgrammingLanguagesChangedHandler<Developer>)), Is.EqualTo(1));
 
                 // create a new domain object
                 Employee employee = new Employee("paul", "kiernan");
@@ -58,14 +55,14 @@ namespace Handsey.Tests.Integration
                 // change it
                 employee.Change(employee.FirstName, "Mc Kiernan");
 
-                // this won't work in a parralle FIX
-                Assert.That(_handlerCallLog.Log.Count, Is.EqualTo(5));
-                Assert.That(_handlerCallLog.Log.Contains(typeof(AlertStateChangeHandler<Employee>)), Is.True);
-                Assert.That(_handlerCallLog.Log.Contains(typeof(SaveStateChangeHandler<Employee>)), Is.True);
+                //// this won't work in a parralle FIX
+                IHandler[] employeeHandlerLog = employee.HandlerLog();
+                Assert.That(employeeHandlerLog.Count(), Is.EqualTo(2));
+                Assert.That(employeeHandlerLog.Count(h => h.GetType() == typeof(AlertStateChangeHandler<Employee>)), Is.EqualTo(1));
+                Assert.That(employeeHandlerLog.Count(h => h.GetType() == typeof(SaveStateChangeHandler<Employee>)), Is.EqualTo(1));
 
-                // need to stop the IntegrationContainer registering the same handlers twice
-                // OR we should use the specific type
-                _integrationContainer.ClearRegistrations();
+                //
+                _integrationContainer.ClearThreadRegistrations();
                 // map to a view model
             });
         }
