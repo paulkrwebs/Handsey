@@ -62,7 +62,7 @@ namespace Handsey.Tests.Integration
                 Assert.That(employeeHandlerLog.Count(h => h.GetType() == typeof(SaveStateChangeHandler<Employee>)), Is.EqualTo(1));
 
                 //
-                _integrationContainer.ClearThreadRegistrations();
+                // _integrationContainer.ClearThreadRegistrations();
                 // map to a view model
             });
         }
