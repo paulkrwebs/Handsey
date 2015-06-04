@@ -6,6 +6,7 @@ using Handsey.Tests.Integration.ViewModels;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,26 +17,34 @@ namespace Handsey.Tests.Integration
     public class MainTest
     {
         private IntegrationContainer _integrationContainer;
+        private Stopwatch _stopwatch;
 
         [SetUp]
         public void Setup()
         {
             _integrationContainer = new IntegrationContainer();
+            _stopwatch = new Stopwatch();
+
+            _stopwatch.Start();
 
             ApplicationLocator.Configure(
                     new ApplicationConfiguration(typeof(IHandler)
                     , new string[] { "Handsey.Tests.Integration" })
                     , _integrationContainer);
+
+            _stopwatch.Stop();
+            Console.WriteLine("Configuration took {0} milliseconds / {1} ticks", _stopwatch.ElapsedMilliseconds, _stopwatch.ElapsedTicks);
         }
 
-        [TestCase(10000)]
-        public void InvokeHandlersForIterations(int iterations)
+        [TestCase(10000, false)]
+        [TestCase(10000, true)]
+        public void InvokeHandlersForIterations(int iterations, bool clearRegistraionsCache)
         {
+            _stopwatch.Restart();
+
             // parallel loop
             Parallel.For(0, iterations, (i) =>
             {
-                int iteration = i + 1;
-
                 // create a new domain object
                 Developer developer = new Developer("paul", "kiernan", new string[] { "C#" });
 
@@ -61,10 +70,13 @@ namespace Handsey.Tests.Integration
                 Assert.That(employeeHandlerLog.Count(h => h.GetType() == typeof(AlertStateChangeHandler<Employee>)), Is.EqualTo(1));
                 Assert.That(employeeHandlerLog.Count(h => h.GetType() == typeof(SaveStateChangeHandler<Employee>)), Is.EqualTo(1));
 
-                //
-                // _integrationContainer.ClearThreadRegistrations();
                 // map to a view model
+                if (clearRegistraionsCache)
+                    _integrationContainer.ClearThreadRegistrations();
             });
+
+            _stopwatch.Stop();
+            Console.WriteLine("InvokeHandlersForIterations iterations {0}, clearRegistraionsCache {1}, took {2} milliseconds / {3} ticks", iterations, clearRegistraionsCache, _stopwatch.ElapsedMilliseconds, _stopwatch.ElapsedTicks);
         }
     }
 }
