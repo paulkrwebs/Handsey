@@ -36,6 +36,8 @@ namespace Handsey.Tests.Integration
             Console.WriteLine("Configuration took {0} milliseconds / {1} ticks", _stopwatch.ElapsedMilliseconds, _stopwatch.ElapsedTicks);
         }
 
+        [TestCase(10000, false)]
+        [TestCase(10000, true)]
         [TestCase(1000000, false)]
         [TestCase(1000000, true)]
         public void IterationsTest(int iterations, bool clearRegistraionsCache)
@@ -49,6 +51,8 @@ namespace Handsey.Tests.Integration
                 ChangeHandlerTests.TriggerChangeOnADeveloper();
 
                 ChangeHandlerTests.TriggerChangeOnAnEmployee();
+
+                ChangeHandlerTests.TriggerMultipleChangesOnAnSupportTicket();
 
                 OneToOneHandlerTests.UpdateRequestHandler_MapDeveloperViewModelToDevelopViewModel();
 

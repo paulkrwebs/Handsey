@@ -82,6 +82,7 @@ namespace Handsey.Tests.Integration
                 , new Employee("Jane", "Doe"));
 
             // change it
+            supportTicket.Open();
             supportTicket.AssignTo(new Employee("paul", "kiernan"));
             supportTicket.Resolve(SupportTicketResolution.Completed);
             supportTicket.ReOpen();
@@ -90,9 +91,10 @@ namespace Handsey.Tests.Integration
 
             //// this won't work in a parralle FIX
             IHandler[] handlerLog = supportTicket.HandlerLog();
-            Assert.That(handlerLog.Count(), Is.EqualTo(10));
+            Assert.That(handlerLog.Count(), Is.EqualTo(11));
             Assert.That(handlerLog.Count(h => h.GetType() == typeof(AlertStateChangeHandler<SupportTicket>)), Is.EqualTo(5));
             Assert.That(handlerLog.Count(h => h.GetType() == typeof(SaveStateChangeHandler<SupportTicket>)), Is.EqualTo(5));
+            Assert.That(handlerLog.Count(h => h.GetType() == typeof(NewSupportTicketCreated)), Is.EqualTo(1));
         }
     }
 }

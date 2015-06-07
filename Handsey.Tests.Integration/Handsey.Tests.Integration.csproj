@@ -43,6 +43,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChangeHandlerTests.cs" />
+    <Compile Include="Handlers\INewSupportTicketCreated.cs" />
+    <Compile Include="Handlers\NewSupportTicketCreated.cs" />
     <Compile Include="OneToOneHandlerTests.cs" />
     <Compile Include="Handlers\ModelMapperHandler.cs" />
     <Compile Include="Handlers\ProgrammingLanguagesChangedHandler.cs" />

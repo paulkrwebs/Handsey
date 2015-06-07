@@ -93,6 +93,11 @@ namespace Handsey.Tests.Integration.Models
 
         #endregion Constructors
 
+        public void Open()
+        {
+            _application.Invoke<INewSupportTicketCreated>(h => h.Handle(this));
+        }
+
         public void AssignTo(Employee assignee)
         {
             LogChange("Assignee", Assignee.Id.ToString(), assignee.Id.ToString());
