@@ -13,5 +13,7 @@ namespace Handsey
         public Type[] ExecutesAfter { get; set; }
 
         public IList<GenericParameterInfo> ConcreteNestedGenericParametersInfo { get; set; }
+
+        public string GenericSignature { get; set; }
     }
 }

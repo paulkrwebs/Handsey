@@ -101,10 +101,32 @@ namespace Handsey
 
             // There can only be one interface of any given type on a class so its safe to find the first (as it will be the only one)
             return handlerToSearch.FilteredInterfaces
-                            .FirstOrDefault(i => i.IsGenericType
-                                && i.GenericTypeDefinition == interfaceHandler.GenericTypeDefinition
-                                && HandlerCanBeConstructedByConcreteNestedGenericParameters(interfaceHandler, handlerToSearch, i)
-                                );
+                            .FirstOrDefault(i => InterfaceMatches(handlerToSearch, i, interfaceHandler));
+        }
+
+        private static bool InterfaceMatches(HandlerInfo handlerToSearch, HandlerInfo currentInterface, HandlerInfo interfaceHandler)
+        {
+            if (!InterfaceDefinitionMatches(currentInterface, interfaceHandler))
+                return false;
+
+            if (!HandlerCanBeConstructedByConcreteNestedGenericParameters(interfaceHandler, handlerToSearch, currentInterface))
+                return false;
+
+            return true;
+        }
+
+        private static bool InterfaceDefinitionMatches(HandlerInfo currentInterface, HandlerInfo interfaceHandler)
+        {
+            if (!currentInterface.IsGenericType)
+                return false;
+
+            if (String.IsNullOrWhiteSpace(currentInterface.GenericSignature))
+                return false;
+
+            if (currentInterface.GenericSignature != interfaceHandler.GenericSignature)
+                return false;
+
+            return true;
         }
 
         private static bool IsGenericInterface(HandlerInfo sourceHandler)

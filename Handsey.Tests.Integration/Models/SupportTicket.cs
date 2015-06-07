@@ -88,6 +88,7 @@ namespace Handsey.Tests.Integration.Models
             Created = DateTime.Now;
             Id = Guid.NewGuid();
             ChangeLog = new List<Change>();
+            _handlerLog = new List<IHandler>();
         }
 
         #endregion Constructors
@@ -130,6 +131,18 @@ namespace Handsey.Tests.Integration.Models
         {
             LogChange("Resolution", Resolution.ToString(), resolution.ToString());
             Resolution = resolution;
+
+            LogChange("Status", Status.ToString(), SupportTicketStatus.Closed.ToString());
+            Status = SupportTicketStatus.Closed;
+
+            Updated = DateTime.Now;
+            _application.Invoke<IChangeHandler<SupportTicket>>(h => h.Handle(this));
+        }
+
+        public void ReOpen()
+        {
+            LogChange("Status", Status.ToString(), SupportTicketStatus.ReOpened.ToString());
+            Status = SupportTicketStatus.ReOpened;
 
             Updated = DateTime.Now;
 

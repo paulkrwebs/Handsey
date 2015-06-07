@@ -44,25 +44,46 @@ namespace Handsey
             PopulateAttributeInfo(type, handlerInfo);
 
             handlerInfo.ConcreteNestedGenericParametersInfo = new List<GenericParameterInfo>();
-            PopulateNestedGenericParameters(handlerInfo, handlerInfo.GenericParametersInfo);
+            PopulateNestedGenericParameters(type, handlerInfo, handlerInfo.GenericParametersInfo);
 
             return handlerInfo;
         }
 
-        private void PopulateNestedGenericParameters(HandlerInfo handlerInfo, IList<GenericParameterInfo> genericParameterInfo)
+        private void PopulateNestedGenericParameters(Type type
+            , HandlerInfo handlerInfo
+            , IList<GenericParameterInfo> genericParameterInfo)
+        {
+            StringBuilder genericSignature = new StringBuilder(type.Name);
+            PopulateNestedGenericParameters(handlerInfo, handlerInfo.GenericParametersInfo, ref genericSignature);
+
+            handlerInfo.GenericSignature += genericSignature.ToString();
+        }
+
+        private void PopulateNestedGenericParameters(HandlerInfo handlerInfo
+            , IList<GenericParameterInfo> genericParameterInfo
+            , ref StringBuilder genericSignature)
         {
             if (genericParameterInfo == null)
                 return;
+
+            genericSignature.Append("<");
 
             foreach (GenericParameterInfo param in genericParameterInfo)
             {
                 if (!param.IsGenericType)
                 {
                     handlerInfo.ConcreteNestedGenericParametersInfo.Add(param);
+                    genericSignature.Append(",");
+                    continue;
                 }
 
-                PopulateNestedGenericParameters(handlerInfo, param.GenericParametersInfo);
+                genericSignature.Append(param.Name);
+                PopulateNestedGenericParameters(handlerInfo, param.GenericParametersInfo, ref genericSignature);
+                genericSignature.Append(",");
             }
+
+            genericSignature = genericSignature.Remove(genericSignature.Length - 1, 1);
+            genericSignature.Append(">");
         }
 
         private TTypeInfo CreateTypeInfo<TTypeInfo>(Type type)

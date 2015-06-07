@@ -560,6 +560,7 @@ namespace Handsey.Tests
             {
                 GenericParametersInfo = CreateGenericParameter<MapperPayload<Employee, EmployeeViewModel>>(),
                 Type = typeof(IHandler<MapperPayload<Developer, DeveloperViewModel>>),
+                GenericSignature = "IHandler`1<MapperPayload`2<>>",
                 ConcreteNestedGenericParametersInfo = new List<GenericParameterInfo>()
                 {
                     new GenericParameterInfo() { Type = typeof(Developer) , Position = 0 , Name = "Developer"} ,
@@ -575,6 +576,7 @@ namespace Handsey.Tests
             {
                 GenericParametersInfo = CreateGenericParametersWithConstraints(typeof(Employee), typeof(EmployeeViewModel)),
                 Type = typeof(EmployeePayloadMappingHandler<,>),
+                GenericSignature = "IHandler`1<MapperPayload`2<>>",
                 ConcreteNestedGenericParametersInfo = new List<GenericParameterInfo>()
                 {
                     new GenericParameterInfo() { FilteredContraints = CreateTypeInfo<Employee>(), Position = 0, Name = "TFrom"},
@@ -588,6 +590,7 @@ namespace Handsey.Tests
                         IsGenericType = true,
                         GenericParametersInfo = CreateGenericParameters(typeof(MapperPayload<,>)),
                         GenericTypeDefinition = typeof(IHandler<>),
+                        GenericSignature = "IHandler`1<MapperPayload`2<>>",
                         ConcreteNestedGenericParametersInfo = new List<GenericParameterInfo>()
                         {
                             new GenericParameterInfo() { Position = 0 , Name = "TTo"},
@@ -757,6 +760,7 @@ namespace Handsey.Tests
             {
                 GenericParametersInfo = CreateGenericParameter<MapperPayload<Employee, EmployeeViewModel>>(),
                 Type = typeof(IHandler<MapperPayload<Developer, DeveloperViewModel>>),
+                GenericSignature = "IHandler`1<MapperPayload`2<>>",
                 ConcreteNestedGenericParametersInfo = new List<GenericParameterInfo>()
                 {
                     new GenericParameterInfo() { Type = typeof(Developer) , Position = 0 , Name = "Developer" },
@@ -772,6 +776,7 @@ namespace Handsey.Tests
             {
                 GenericParametersInfo = CreateGenericParametersWithConstraints(typeof(Employee), typeof(EmployeeViewModel)),
                 Type = typeof(EmployeePayloadMappingHandler<,>),
+                GenericSignature = "EmployeePayloadMappingHandler`2<,>",
                 ConcreteNestedGenericParametersInfo = new List<GenericParameterInfo>()
                 {
                     new GenericParameterInfo() { FilteredContraints = CreateTypeInfo<Employee>(), Position = 0 , Name =  "TFrom"  },
@@ -785,10 +790,11 @@ namespace Handsey.Tests
                         IsGenericType = true,
                         GenericParametersInfo = CreateGenericParameters(typeof(MapperPayload<,>)),
                         GenericTypeDefinition = typeof(IHandler<>),
+                        GenericSignature = "IHandler`1<MapperPayload`2<>>",
                         ConcreteNestedGenericParametersInfo = new List<GenericParameterInfo>()
                         {
                             new GenericParameterInfo() { Position = 0, Name = "TTo"  },
-                            new GenericParameterInfo() {Position = 1, Name =  "TFrom" },
+                            new GenericParameterInfo() { Position = 1, Name =  "TFrom" },
                         }
                     }
                 }
@@ -797,6 +803,55 @@ namespace Handsey.Tests
             IHandlerSearch search = new HandlerSearch();
 
             Assert.That(search.FindMatchingGenericInterface(a, b), Is.Not.Null);
+        }
+
+        [Test]
+        public void FindMatchingGenericInterface_HandlerInfoAndHandlerInfo_SearchedHandlerIsInterfacAndHasGenericParameterWithNestedGenericParametersNoMatch()
+        {
+            HandlerInfo a = new HandlerInfo()
+            {
+                GenericParametersInfo = CreateGenericParameter<Payload<Employee>>(),
+                Type = typeof(IHandler<Payload<Developer>>),
+                ConcreteNestedGenericParametersInfo = new List<GenericParameterInfo>()
+                {
+                    new GenericParameterInfo() { Type = typeof(Developer) , Position = 0 , Name = "Developer" },
+                },
+                IsInterface = true,
+                IsGenericType = true,
+                GenericTypeDefinition = typeof(IHandler<>),
+                GenericSignature = "IHandler`1<Payload`1<>>"
+            };
+            a.GenericParametersInfo[0].GenericParametersInfo = CreateGenericParameters<Employee, EmployeeViewModel>();
+
+            HandlerInfo b = new HandlerInfo()
+            {
+                GenericParametersInfo = CreateGenericParametersWithConstraints(typeof(Employee)),
+                Type = typeof(EmployeePayloadHandler<>),
+                GenericSignature = "EmployeePayloadHandler`1<>",
+                ConcreteNestedGenericParametersInfo = new List<GenericParameterInfo>()
+                {
+                    new GenericParameterInfo() { FilteredContraints = CreateTypeInfo<Employee>(), Position = 0 , Name =  "TData1"  },
+                },
+                FilteredInterfaces = new HandlerInfo[1]
+                {
+                    new HandlerInfo()
+                    {
+                        Type = typeof(IHandler<>),
+                        GenericSignature = "IHandler`1<>",
+                        IsGenericType = true,
+                        GenericParametersInfo = CreateGenericParameters(typeof(Payload<>)),
+                        GenericTypeDefinition = typeof(IHandler<>),
+                        ConcreteNestedGenericParametersInfo = new List<GenericParameterInfo>()
+                        {
+                            new GenericParameterInfo() { Position = 0, Name =  "TData1" },
+                        }
+                    }
+                }
+            };
+
+            IHandlerSearch search = new HandlerSearch();
+
+            Assert.That(search.FindMatchingGenericInterface(a, b), Is.Null);
         }
 
         #region // Helpers MOVE TO UTILITIES

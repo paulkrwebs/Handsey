@@ -9,6 +9,15 @@ using System.Threading.Tasks;
 
 namespace Handsey.Tests.TestObjects.Handlers
 {
+    public class EmployeePayloadHandler<TData1> : IHandler<Payload<TData1>>
+        where TData1 : Employee
+    {
+        public void Handle(Payload<TData1> arg1)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public class EmployeePayloadHandler<TPayload, TData1> : IHandler<TPayload>
         where TPayload : Payload<TData1>
         where TData1 : Employee

@@ -139,7 +139,7 @@ namespace Handsey.Tests
         }
 
         [Test]
-        public void Create_TypeAndType_ClassInfoForGenericTypeWithGenericWithNestedGenericParameters()
+        public void Create_TypeAndType_ClassInfoForGenericTypeWithNestedGenericParameters()
         {
             Type type = typeof(IHandler<MapperPayload<Employee, EmployeeViewModel>>);
 
@@ -157,6 +157,7 @@ namespace Handsey.Tests
             Assert.That(classInfo.GenericParametersInfo[0].GenericParametersInfo[0].IsConstructed, Is.True);
             Assert.That(classInfo.GenericParametersInfo[0].GenericParametersInfo[0].Position, Is.EqualTo(0));
             Assert.That(classInfo.GenericParametersInfo[0].GenericParametersInfo[0].Position, Is.EqualTo(0), "Only gets position for a generic parameter not a generic parameter of a constructed type");
+            Assert.That(classInfo.GenericSignature, Is.EqualTo("IHandler`1<MapperPayload`2<,>>"));
 
             type = typeof(EmployeePayloadMappingHandler<,>);
 
@@ -173,6 +174,7 @@ namespace Handsey.Tests
             Assert.That(classInfo.FilteredInterfaces[0].GenericTypeDefinition, Is.EqualTo(typeof(IHandler<>)));
             Assert.That(classInfo.FilteredInterfaces[0].ConcreteNestedGenericParametersInfo.Any(c => c.Name == "TFrom"), Is.True);
             Assert.That(classInfo.FilteredInterfaces[0].ConcreteNestedGenericParametersInfo.Any(c => c.Name == "TTo"), Is.True);
+            Assert.That(classInfo.GenericSignature, Is.EqualTo("EmployeePayloadMappingHandler`2<,>"));
 
             type = typeof(EmployeePayloadMappingHandler<Employee, EmployeeViewModel>);
 
@@ -183,6 +185,7 @@ namespace Handsey.Tests
             Assert.That(classInfo.ConcreteNestedGenericParametersInfo.Count(), Is.EqualTo(2));
             Assert.That(classInfo.ConcreteNestedGenericParametersInfo.Any(c => c.Name == "Employee"), Is.True);
             Assert.That(classInfo.ConcreteNestedGenericParametersInfo.Any(c => c.Name == "Employee"), Is.True);
+            Assert.That(classInfo.GenericSignature, Is.EqualTo("EmployeePayloadMappingHandler`2<,>"));
         }
 
         [Test]

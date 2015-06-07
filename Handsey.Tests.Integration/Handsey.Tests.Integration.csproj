@@ -42,10 +42,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ChangeHandlerTests.cs" />
+    <Compile Include="OneToOneHandlerTests.cs" />
     <Compile Include="Handlers\ModelMapperHandler.cs" />
     <Compile Include="Handlers\ProgrammingLanguagesChangedHandler.cs" />
     <Compile Include="IVerifiable.cs" />
-    <Compile Include="MainTest.cs" />
+    <Compile Include="ThreadingTest.cs" />
     <Compile Include="Handlers\AlertStateChangeHandler.cs" />
     <Compile Include="Handlers\IChangeHandler.cs" />
     <Compile Include="Handlers\IOneToOneHandler.cs" />
