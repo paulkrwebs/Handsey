@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Handsey.Utilitites", "Hands
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Handsey.Tests.Integration", "Handsey.Tests.Integration\Handsey.Tests.Integration.csproj", "{8A454B59-863F-42FB-BC35-26049F4B5668}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Handsey.Tests.ProfilerHarness", "Handsey.Tests.ProfilerHarness\Handsey.Tests.ProfilerHarness.csproj", "{FBD47D3D-79FD-42C3-B32B-997F4879D62B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -37,8 +39,15 @@ Global
 		{8A454B59-863F-42FB-BC35-26049F4B5668}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8A454B59-863F-42FB-BC35-26049F4B5668}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8A454B59-863F-42FB-BC35-26049F4B5668}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FBD47D3D-79FD-42C3-B32B-997F4879D62B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FBD47D3D-79FD-42C3-B32B-997F4879D62B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FBD47D3D-79FD-42C3-B32B-997F4879D62B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FBD47D3D-79FD-42C3-B32B-997F4879D62B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
 	EndGlobalSection
 EndGlobal

@@ -22,8 +22,8 @@ namespace Handsey.Tests.Integration
         [TestFixtureSetUp]
         public void Setup()
         {
-            _integrationContainer = new IntegrationContainer();
             _stopwatch = new Stopwatch();
+            _integrationContainer = new IntegrationContainer();
 
             _stopwatch.Start();
 
@@ -36,11 +36,14 @@ namespace Handsey.Tests.Integration
             Console.WriteLine("Configuration took {0} milliseconds / {1} ticks", _stopwatch.ElapsedMilliseconds, _stopwatch.ElapsedTicks);
         }
 
-        [TestCase(10000, false)]
-        [TestCase(10000, true)]
-        [TestCase(1000000, false)]
-        [TestCase(1000000, true)]
-        public void IterationsTest(int iterations, bool clearRegistraionsCache)
+        /// <summary>
+        /// This test checks that there are no threading issues with invoking handers. It makes sure the read / write locks are working correcly for reads specifically
+        /// There is not expected to be any contention issues running this test
+        /// </summary>
+        /// <param name="iterations"></param>
+        [TestCase(10000)]
+        [TestCase(1000000)]
+        public void TriggerHandlersIterationsTest(int iterations)
         {
             _stopwatch.Restart();
 
@@ -57,14 +60,10 @@ namespace Handsey.Tests.Integration
                 OneToOneHandlerTests.UpdateRequestHandler_MapDeveloperViewModelToDevelopViewModel();
 
                 OneToOneHandlerTests.ModelMapperHandler_MapTechnicalArchitectToTechnicalArchitectViewModel();
-
-                // optionally clear the cache
-                if (clearRegistraionsCache)
-                    _integrationContainer.ClearThreadRegistrations();
             });
 
             _stopwatch.Stop();
-            Console.WriteLine("InvokeHandlersForIterations iterations {0}, clearRegistraionsCache {1}, took {2} milliseconds / {3} ticks", iterations, clearRegistraionsCache, _stopwatch.ElapsedMilliseconds, _stopwatch.ElapsedTicks);
+            Console.WriteLine("TriggerHandlersIterationsTest iterations {0}, took {1} milliseconds / {2} ticks", iterations, _stopwatch.ElapsedMilliseconds, _stopwatch.ElapsedTicks);
         }
     }
 }

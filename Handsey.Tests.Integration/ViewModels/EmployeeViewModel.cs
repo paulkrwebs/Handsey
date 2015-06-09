@@ -17,6 +17,11 @@ namespace Handsey.Tests.Integration.ViewModels
 
         public string LastName { get; set; }
 
+        public EmployeeViewModel()
+        {
+            _handlerLog = new List<IHandler>();
+        }
+
         public IHandler[] HandlerLog()
         {
             return _handlerLog.ToArray();

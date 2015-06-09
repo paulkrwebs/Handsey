@@ -4,15 +4,16 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{8A454B59-863F-42FB-BC35-26049F4B5668}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <ProjectGuid>{FBD47D3D-79FD-42C3-B32B-997F4879D62B}</ProjectGuid>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Handsey.Tests.Integration</RootNamespace>
-    <AssemblyName>Handsey.Tests.Integration</AssemblyName>
+    <RootNamespace>Handsey.Tests.ProfilerHarness</RootNamespace>
+    <AssemblyName>Handsey.Tests.ProfilerHarness</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -22,6 +23,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -30,13 +32,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="nunit.framework">
-      <HintPath>..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -44,50 +41,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ChangeHandlerTests.cs" />
-    <Compile Include="Handlers\INewSupportTicketCreated.cs" />
-    <Compile Include="Handlers\NewSupportTicketCreated.cs" />
-    <Compile Include="IocContainers\IntegrationContainer.cs" />
-    <Compile Include="OneToOneHandlerTests.cs" />
-    <Compile Include="Handlers\ModelMapperHandler.cs" />
-    <Compile Include="Handlers\ProgrammingLanguagesChangedHandler.cs" />
-    <Compile Include="IVerifiable.cs" />
-    <Compile Include="ThreadingTest.cs" />
-    <Compile Include="Handlers\AlertStateChangeHandler.cs" />
-    <Compile Include="Handlers\IChangeHandler.cs" />
-    <Compile Include="Handlers\IOneToOneHandler.cs" />
-    <Compile Include="Handlers\SaveStateChangeHandler.cs" />
-    <Compile Include="Handlers\UpdateRequestHandler.cs" />
-    <Compile Include="Models\Change.cs" />
-    <Compile Include="Models\Project.cs" />
-    <Compile Include="Models\SupportTicketPriority.cs" />
-    <Compile Include="Models\Developer.cs" />
-    <Compile Include="Models\Employee.cs" />
-    <Compile Include="Models\IVersionable.cs" />
-    <Compile Include="Models\Manager.cs" />
-    <Compile Include="Models\SupportTicket.cs" />
-    <Compile Include="Models\SupportTicketResolution.cs" />
-    <Compile Include="Models\SupportTicketStatus.cs" />
-    <Compile Include="Models\TechnicalArchitect.cs" />
-    <Compile Include="Models\TechnicalEmployee.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ViewModels\UpdateEmployeeResponse.cs" />
-    <Compile Include="ViewModels\DeveloperViewModel.cs" />
-    <Compile Include="ViewModels\EmployeeViewModel.cs" />
-    <Compile Include="ViewModels\UpdateEmployeeRequest.cs" />
-    <Compile Include="ViewModels\TechnicalArchitectViewModel.cs" />
-    <Compile Include="ViewModels\TechnicalEmployeeViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Handsey.Tests.Integration\Handsey.Tests.Integration.csproj">
+      <Project>{8a454b59-863f-42fb-bc35-26049f4b5668}</Project>
+      <Name>Handsey.Tests.Integration</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Handsey\Handsey.csproj">
       <Project>{f7d0e786-06c2-4e37-be6f-8ff42a016443}</Project>
       <Name>Handsey</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

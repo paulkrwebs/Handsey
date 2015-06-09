@@ -242,7 +242,7 @@ namespace Handsey
         /// Locks performed are handler type specific
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        private static class Lock<T>
+        internal static class Lock<T>
         {
             public static readonly ReaderWriterLockSlim _readerWriterLockSlim;
 

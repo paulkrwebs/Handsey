@@ -21,10 +21,9 @@ namespace Handsey.Tests.Integration.IocContainers
         /// check registrations without clearing the other threads registrations and other threads will still
         /// walk thorugh the whole handler search lifecycle. Allows us to check thread concurrency
         /// </remarks>
-        [ThreadStatic]
-        protected static ConcurrentDictionary<Type, List<Func<object>>> _factories;
+        protected static ConcurrentDictionary<Type, ConcurrentQueue<Func<object>>> _factories;
 
-        protected static ConcurrentDictionary<Type, List<Func<object>>> Factories
+        protected static ConcurrentDictionary<Type, ConcurrentQueue<Func<object>>> Factories
         {
             get
             {
@@ -32,7 +31,7 @@ namespace Handsey.Tests.Integration.IocContainers
                     lock (initLock)
                     {
                         if (_factories == null)
-                            _factories = new ConcurrentDictionary<Type, List<Func<object>>>();
+                            _factories = new ConcurrentDictionary<Type, ConcurrentQueue<Func<object>>>();
                     }
 
                 return _factories;
@@ -41,11 +40,9 @@ namespace Handsey.Tests.Integration.IocContainers
 
         public void Register(Type from, Type to)
         {
-            List<Func<object>> factory;
-
-            Factories.AddOrUpdate(from, new List<Func<object>>() { MakeConstructor(to) }, (t, f) =>
+            Factories.AddOrUpdate(from, new ConcurrentQueue<Func<object>>(new List<Func<object>> { MakeConstructor(to) }), (t, f) =>
                 {
-                    f.Add(MakeConstructor(to));
+                    f.Enqueue(MakeConstructor(to));
                     return f;
                 });
         }
@@ -57,7 +54,7 @@ namespace Handsey.Tests.Integration.IocContainers
 
         public TResolve[] ResolveAll<TResolve>()
         {
-            List<Func<object>> factory;
+            ConcurrentQueue<Func<object>> factory;
 
             if (Factories.TryGetValue(typeof(TResolve), out factory))
                 return factory.Select(f => (TResolve)f()).ToArray();
@@ -68,11 +65,6 @@ namespace Handsey.Tests.Integration.IocContainers
         private Func<object> MakeConstructor(Type to)
         {
             return () => to.GetConstructor(new Type[0]).Invoke(null);
-        }
-
-        public void ClearThreadRegistrations()
-        {
-            Factories.Clear();
         }
     }
 }
