@@ -30,6 +30,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Castle.Core">
+      <HintPath>..\packages\Castle.Core.3.3.3\lib\net45\Castle.Core.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -58,6 +61,7 @@
     <Compile Include="IHandlersSort.cs" />
     <Compile Include="HandlersSort.cs" />
     <Compile Include="ApplicationLocator.cs" />
+    <Compile Include="Logging\LoggingProxy.cs" />
     <Compile Include="RequestedHandlerNotValidException.cs" />
     <Compile Include="TypeConstructor.cs" />
     <Compile Include="HandlerFactory.cs" />
@@ -79,6 +83,9 @@
       <Project>{1c0513d9-4da5-46c1-a98b-ed89c260c01a}</Project>
       <Name>Handsey.Utilitites</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
