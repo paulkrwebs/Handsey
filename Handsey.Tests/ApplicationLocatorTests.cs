@@ -21,7 +21,7 @@ namespace Handsey.Tests
         [Test]
         public void Instance_NoParams_InstanceBuiltCorrectly()
         {
-            ApplicationLocator.Configure(new ApplicationConfiguration(typeof(IHandler), new string[1] { "Handsey.Tests" })
+            ApplicationLocator.Configure(new ApplicationConfiguration(typeof(IHandler), new string[1] { "Handsey.Tests" }, true)
                 , new Mock<IIocContainer>().Object);
 
             Assert.That(ApplicationLocator.Instance, Is.Not.Null);

@@ -46,10 +46,35 @@ namespace Handsey
 
         #region Methods
 
+        /// <summary>
+        /// Registers all matching handlers without invoking them. Us this method with ApplicationConfiguration.DynamicHandlerRegistration set to false
+        /// </summary>
+        /// <typeparam name="THandler"></typeparam>
+        public void RegisterAll<THandler>()
+        {
+            RegisterHandlersWithWriteLock<THandler>(null);
+        }
+
+        /// <summary>
+        /// Invoke with dynamic regisration
+        /// </summary>
+        /// <typeparam name="THandler"></typeparam>
+        /// <param name="trigger"></param>
         public void Invoke<THandler>(Action<THandler> trigger)
         {
+            if (!_applicationConfiguration.DynamicHandlerRegistration)
+            {
+                // Try and invoke handlers
+                PerformCheck.IsTrue(() => !TryInvokeWithReadLock(ResolveHandlers<THandler>(), trigger)).
+                    Throw<RequestedHandlerNotRegsiteredException>(() =>
+                        new RequestedHandlerNotRegsiteredException("The handler of type " + typeof(THandler).FullName + " has not been registered. Turn on dynamic handler registration or call RegisterAll<THandler>()")
+                        );
+
+                return;
+            }
+
             // try to resolve
-            if (TryInvokeWithReadLock(_iocContainer.ResolveAll<THandler>(), trigger))
+            if (TryInvokeWithReadLock(ResolveHandlers<THandler>(), trigger))
                 return;
 
             // if we are here we couldn't resolve handlers
@@ -57,7 +82,7 @@ namespace Handsey
                 return;
 
             // Construct the handlers from the IOC container now we have registered them
-            TryInvokeWithReadLock(_iocContainer.ResolveAll<THandler>(), trigger);
+            TryInvokeWithReadLock(ResolveHandlers<THandler>(), trigger);
         }
 
         /// <summary>
@@ -67,7 +92,7 @@ namespace Handsey
         /// False if handlers were invoked because they were already registered by another thread
         /// </summary>
         /// <typeparam name="THandler"></typeparam>
-        /// <param name="trigger"></param>
+        /// <param name="trigger">If null is passed in double-check locking will not be performed</param>
         /// <returns>False if the handlers were invoked without registering</returns>
         private bool RegisterHandlersWithWriteLock<THandler>(Action<THandler> trigger)
         {
@@ -77,23 +102,10 @@ namespace Handsey
                 // This second check is a form of "Double-Check Locking" idiom
                 // Make sure the handlers haven't been registered in another thread.
                 // If it has been registered then invoke
-                if (TryInvoke(_iocContainer.ResolveAll<THandler>(), trigger))
+                if (trigger != null && TryInvoke(ResolveHandlers<THandler>(), trigger))
                     return false;
 
-                // create handler
-                HandlerInfo toSearchFor = CreateHandler<THandler>();
-
-                // Find
-                IList<HandlerInfo> handlersList = FindHandlers<THandler>(toSearchFor);
-
-                // order
-                handlersList = Order(handlersList);
-
-                // construct
-                IEnumerable<Type> constructedTypes = ConstructTypes(toSearchFor, handlersList);
-
-                // If it hasn't then register
-                RegisterTypesAsHandler<THandler>(constructedTypes);
+                RegisterHandlers<THandler>();
 
                 return true;
             }
@@ -102,6 +114,24 @@ namespace Handsey
                 // end write lock
                 Lock<THandler>.ReaderWriterLockSlim.ExitWriteLock();
             }
+        }
+
+        private void RegisterHandlers<THandler>()
+        {
+            // create handler
+            HandlerInfo toSearchFor = CreateHandler<THandler>();
+
+            // Find
+            IList<HandlerInfo> handlersList = FindHandlers<THandler>(toSearchFor);
+
+            // order
+            handlersList = Order(handlersList);
+
+            // construct
+            IEnumerable<Type> constructedTypes = ConstructTypes(toSearchFor, handlersList);
+
+            // register handler
+            RegisterTypesAsHandler<THandler>(constructedTypes);
         }
 
         private bool TryInvokeWithReadLock<THandler>(THandler[] handlers, Action<THandler> trigger)
@@ -116,6 +146,11 @@ namespace Handsey
             {
                 Lock<THandler>.ReaderWriterLockSlim.ExitReadLock();
             }
+        }
+
+        private THandler[] ResolveHandlers<THandler>()
+        {
+            return _iocContainer.ResolveAll<THandler>();
         }
 
         private bool TryInvoke<THandler>(THandler[] handlers, Action<THandler> trigger)
