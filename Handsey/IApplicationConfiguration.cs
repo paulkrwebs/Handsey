@@ -12,5 +12,7 @@ namespace Handsey
         Type BaseType { get; }
 
         string[] AssemblyNamePrefixes { get; }
+
+        bool DynamicHandlerRegistration { get; }
     }
 }

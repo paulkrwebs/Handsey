@@ -29,7 +29,8 @@ namespace Handsey.Tests.Integration
 
             ApplicationLocator.Configure(
                     new ApplicationConfiguration(typeof(IHandler)
-                    , new string[] { "Handsey.Tests.Integration" })
+                    , new string[] { "Handsey.Tests.Integration" }
+                    , true)
                     , _integrationContainer);
 
             _stopwatch.Stop();

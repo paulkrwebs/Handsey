@@ -10,5 +10,7 @@ namespace Handsey
     public interface IApplicaton
     {
         void Invoke<THandler>(Action<THandler> trigger);
+
+        void RegisterAll<THandler>();
     }
 }

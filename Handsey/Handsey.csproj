@@ -58,6 +58,7 @@
     <Compile Include="IHandlersSort.cs" />
     <Compile Include="HandlersSort.cs" />
     <Compile Include="ApplicationLocator.cs" />
+    <Compile Include="RequestedHandlerNotRegsiteredException.cs" />
     <Compile Include="RequestedHandlerNotValidException.cs" />
     <Compile Include="TypeConstructor.cs" />
     <Compile Include="HandlerFactory.cs" />
