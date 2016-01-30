@@ -67,7 +67,9 @@ namespace Handsey
                 // Try and invoke handlers
                 PerformCheck.IsTrue(() => !TryInvokeWithReadLock(ResolveHandlers<THandler>(), trigger)).
                     Throw<RequestedHandlerNotRegsiteredException>(() =>
-                        new RequestedHandlerNotRegsiteredException("The handler of type " + typeof(THandler).FullName + " has not been registered. Turn on dynamic handler registration or call RegisterAll<THandler>()")
+                        new RequestedHandlerNotRegsiteredException("The handler of type " 
+                        + typeof(THandler).FullName + 
+                        " has not been registered. Turn on dynamic handler registration or call RegisterAll<THandler>()")
                         );
 
                 return;
