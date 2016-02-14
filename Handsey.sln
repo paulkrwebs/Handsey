@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Handsey", "Handsey\Handsey.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Handsey.Tests", "Handsey.Tests\Handsey.Tests.csproj", "{413594FB-2A44-4FEE-BDC8-7121AA40D069}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Handsey.Practices", "Handsey.Practices\Handsey.Practices.csproj", "{B2B728A5-1F42-419B-8DDF-0E970DA29525}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Handsey.Utilitites", "Handsey.Utilitites\Handsey.Utilitites.csproj", "{1C0513D9-4DA5-46C1-A98B-ED89C260C01A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Handsey.Tests.Integration", "Handsey.Tests.Integration\Handsey.Tests.Integration.csproj", "{8A454B59-863F-42FB-BC35-26049F4B5668}"
@@ -29,10 +27,6 @@ Global
 		{413594FB-2A44-4FEE-BDC8-7121AA40D069}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{413594FB-2A44-4FEE-BDC8-7121AA40D069}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{413594FB-2A44-4FEE-BDC8-7121AA40D069}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B2B728A5-1F42-419B-8DDF-0E970DA29525}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B2B728A5-1F42-419B-8DDF-0E970DA29525}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B2B728A5-1F42-419B-8DDF-0E970DA29525}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B2B728A5-1F42-419B-8DDF-0E970DA29525}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1C0513D9-4DA5-46C1-A98B-ED89C260C01A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1C0513D9-4DA5-46C1-A98B-ED89C260C01A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1C0513D9-4DA5-46C1-A98B-ED89C260C01A}.Release|Any CPU.ActiveCfg = Release|Any CPU
