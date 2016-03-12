@@ -12,8 +12,6 @@ namespace Handsey
     /// </summary>
     public interface IIocContainer
     {
-        void Register(Type from, Type to);
-
         void Register(Type from, Type to, string name);
 
         TResolve[] ResolveAll<TResolve>();

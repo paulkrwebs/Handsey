@@ -67,8 +67,8 @@ namespace Handsey
                 // Try and invoke handlers
                 PerformCheck.IsTrue(() => !TryInvokeWithReadLock(ResolveHandlers<THandler>(), trigger)).
                     Throw<RequestedHandlerNotRegsiteredException>(() =>
-                        new RequestedHandlerNotRegsiteredException("The handler of type " 
-                        + typeof(THandler).FullName + 
+                        new RequestedHandlerNotRegsiteredException("The handler of type "
+                        + typeof(THandler).FullName +
                         " has not been registered. Turn on dynamic handler registration or call RegisterAll<THandler>()")
                         );
 
@@ -271,8 +271,14 @@ namespace Handsey
         {
             foreach (Type type in constructedTypes)
             {
-                _iocContainer.Register(typeof(THandler), type);
+                // Need to use a named regisration for Unity implementations of IIocContainer
+                _iocContainer.Register(typeof(THandler), type, BuildUniqueRegistrationId());
             }
+        }
+
+        private static string BuildUniqueRegistrationId()
+        {
+            return Guid.NewGuid().ToString();
         }
 
         /// <summary>

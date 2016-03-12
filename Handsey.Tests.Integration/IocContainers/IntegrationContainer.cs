@@ -38,18 +38,13 @@ namespace Handsey.Tests.Integration.IocContainers
             }
         }
 
-        public void Register(Type from, Type to)
-        {
-            Factories.AddOrUpdate(from, new ConcurrentQueue<Func<object>>(new List<Func<object>> { MakeConstructor(to) }), (t, f) =>
-                {
-                    f.Enqueue(MakeConstructor(to));
-                    return f;
-                });
-        }
-
         public void Register(Type from, Type to, string name)
         {
-            throw new NotImplementedException();
+            Factories.AddOrUpdate(from, new ConcurrentQueue<Func<object>>(new List<Func<object>> { MakeConstructor(to) }), (t, f) =>
+            {
+                f.Enqueue(MakeConstructor(to));
+                return f;
+            });
         }
 
         public TResolve[] ResolveAll<TResolve>()

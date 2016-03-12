@@ -72,7 +72,7 @@ namespace Handsey.Tests
             _applicationHandlers.Verify(a => a.Find(It.IsAny<HandlerInfo>(), It.IsAny<IHandlerSearch>()), Times.Never(), "ApplicationHanlders.Find should not be called");
             _handlerSort.Verify(h => h.Sort(It.IsAny<IEnumerable<HandlerInfo>>()), Times.Never(), "HandlerSort.Sort should not be called");
             _typeConstructor.Verify(t => t.Create(It.IsAny<HandlerInfo>(), It.IsAny<IList<HandlerInfo>>()), Times.Never(), "TypeConstructor.Create should not be called");
-            _iocContainer.Verify(i => i.Register(It.IsAny<Type>(), It.IsAny<Type>()), Times.Never(), "IocContainer.Register should not be called");
+            _iocContainer.Verify(i => i.Register(It.IsAny<Type>(), It.IsAny<Type>(), It.IsAny<string>()), Times.Never(), "IocContainer.Register should not be called");
 
             _iocContainer.Verify(i => i.ResolveAll<Mock<IHandler>>(), Times.Once, "Resolve all should be called");
             trigger.Verify(t => t(It.IsAny<Mock<IHandler>>()), Times.Once);
@@ -209,7 +209,7 @@ namespace Handsey.Tests
 
             _application.Invoke<Mock<IHandler>>(trigger.Object);
 
-            _iocContainer.Verify(i => i.Register(It.IsAny<Type>(), It.IsAny<Type>()), Times.Never(), "TYpe should have been registered");
+            _iocContainer.Verify(i => i.Register(It.IsAny<Type>(), It.IsAny<Type>(), It.IsAny<string>()), Times.Never(), "TYpe should have been registered");
             _iocContainer.Verify(i => i.ResolveAll<Mock<IHandler>>(), Times.Exactly(2), "TYpe should have been registered");
 
             _handlerFactory.Verify(h => h.Create(It.Is<Type>(t => t == typeof(Mock<IHandler>))), Times.Never(), "Handler factory should not be called");
@@ -250,7 +250,7 @@ namespace Handsey.Tests
             _applicationHandlers.Verify(a => a.Find(It.IsAny<HandlerInfo>(), It.IsAny<IHandlerSearch>()), Times.Once(), "Should only try to find handlers once");
             _handlerSort.Verify(h => h.Sort(It.IsAny<IEnumerable<HandlerInfo>>()), Times.Never(), "Only one handler so doesn't need to be sorted");
             _typeConstructor.Verify(t => t.Create(It.IsAny<HandlerInfo>(), It.IsAny<IList<HandlerInfo>>()), Times.Once(), "Type should be constructed once");
-            _iocContainer.Verify(i => i.Register(It.IsAny<Type>(), It.IsAny<Type>()), Times.Once(), "TYpe should have been registered");
+            _iocContainer.Verify(i => i.Register(It.IsAny<Type>(), It.IsAny<Type>(), It.IsAny<string>()), Times.Once(), "TYpe should have been registered");
             _iocContainer.Verify(i => i.ResolveAll<Mock<IHandler>>(), Times.Exactly(3), "TYpe should have been registered");
             trigger.Verify(t => t(It.IsAny<Mock<IHandler>>()), Times.Once);
         }
@@ -303,7 +303,7 @@ namespace Handsey.Tests
             _applicationHandlers.Verify(a => a.Find(It.IsAny<HandlerInfo>(), It.IsAny<IHandlerSearch>()), Times.Once(), "Should only try to find handlers once");
             _handlerSort.Verify(h => h.Sort(It.IsAny<IEnumerable<HandlerInfo>>()), Times.Once(), "Multiple handlers so requires sort");
             _typeConstructor.Verify(t => t.Create(It.IsAny<HandlerInfo>(), It.IsAny<IList<HandlerInfo>>()), Times.Once(), "Type should be constructed once");
-            _iocContainer.Verify(i => i.Register(It.IsAny<Type>(), It.IsAny<Type>()), Times.Exactly(3), "TYpe should have been registered");
+            _iocContainer.Verify(i => i.Register(It.IsAny<Type>(), It.IsAny<Type>(), It.IsAny<string>()), Times.Exactly(3), "TYpe should have been registered");
             _iocContainer.Verify(i => i.ResolveAll<Mock<IHandler>>(), Times.Exactly(3), "TYpe should have been registered");
             trigger.Verify(t => t(It.IsAny<Mock<IHandler>>()), Times.Exactly(3));
         }
@@ -344,7 +344,7 @@ namespace Handsey.Tests
             _applicationHandlers.Verify(a => a.Find(It.IsAny<HandlerInfo>(), It.IsAny<IHandlerSearch>()), Times.Once(), "Should only try to find handlers once");
             _handlerSort.Verify(h => h.Sort(It.IsAny<IEnumerable<HandlerInfo>>()), Times.Once(), "Multiple handlers so requires sort");
             _typeConstructor.Verify(t => t.Create(It.IsAny<HandlerInfo>(), It.IsAny<IList<HandlerInfo>>()), Times.Once(), "Type should be constructed once");
-            _iocContainer.Verify(i => i.Register(It.IsAny<Type>(), It.IsAny<Type>()), Times.Exactly(3), "TYpe should have been registered");
+            _iocContainer.Verify(i => i.Register(It.IsAny<Type>(), It.IsAny<Type>(), It.IsAny<string>()), Times.Exactly(3), "TYpe should have been registered");
             _iocContainer.Verify(i => i.ResolveAll<Mock<IHandler>>(), Times.Never, "TYpe should never be resolved");
         }
     }
