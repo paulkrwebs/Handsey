@@ -8,6 +8,6 @@ namespace Handsey.Handlers
 {
     public interface IHandlerAsync<TArgs1, TArgs2> : IHandler
     {
-        Task Handle(TArgs1 arg1, TArgs2 args2);
+        Task HandleAsync(TArgs1 arg1, TArgs2 args2);
     }
 }
