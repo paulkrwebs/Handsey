@@ -45,6 +45,12 @@
     <Compile Include="ApplicationHandlersFactory.cs" />
     <Compile Include="HandlerCannotBeConstructedException.cs" />
     <Compile Include="HandlerNotFoundException.cs" />
+    <Compile Include="Handlers\IHandlerAsync`1.cs" />
+    <Compile Include="Handlers\IHandlerAsync`2.cs" />
+    <Compile Include="Handlers\IHandlerAsync`3.cs" />
+    <Compile Include="Handlers\IHandler`3.cs" />
+    <Compile Include="Handlers\IHandler`2.cs" />
+    <Compile Include="Handlers\IHandler`1.cs" />
     <Compile Include="IApplicationHandlers.cs" />
     <Compile Include="IApplicationHandlersFactory.cs" />
     <Compile Include="AssemblyWalker.cs" />
