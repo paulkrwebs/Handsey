@@ -54,7 +54,7 @@ namespace Handsey.Tests
             _iocContainer.Setup(i => i.ResolveAll<Mock<IHandler>>()).
                 Returns(new Mock<IHandler>[0]);
 
-            Assert.That(() => _application.Invoke<Mock<IHandler>>(trigger.Object), Throws.Exception.TypeOf<RequestedHandlerNotRegsiteredException>());
+            Assert.That(_application.Invoke<Mock<IHandler>>(trigger.Object), Is.False);
         }
 
         [Test]
@@ -67,7 +67,7 @@ namespace Handsey.Tests
             _iocContainer.Setup(i => i.ResolveAll<Mock<IHandler>>()).
                 Returns(new Mock<IHandler>[0]);
 
-            Assert.That(async () => await _application.InvokeAsync<Mock<IHandler>>(trigger.Object), Throws.Exception.TypeOf<RequestedHandlerNotRegsiteredException>());
+            Assert.That(await _application.InvokeAsync<Mock<IHandler>>(trigger.Object), Is.False);
         }
 
         [Test]
@@ -80,7 +80,7 @@ namespace Handsey.Tests
             _iocContainer.Setup(i => i.ResolveAll<Mock<IHandler>>()).
                 Returns(new Mock<IHandler>[1] { new Mock<IHandler>() });
 
-            _application.Invoke<Mock<IHandler>>(trigger.Object);
+            Assert.That(_application.Invoke<Mock<IHandler>>(trigger.Object), Is.True);
 
             _handlerFactory.Verify(h => h.Create(It.Is<Type>(t => t == typeof(Mock<IHandler>))), Times.Never(), "HandlerFactory.Create should not be called");
             _applicationHandlers.Verify(a => a.Find(It.IsAny<HandlerInfo>(), It.IsAny<IHandlerSearch>()), Times.Never(), "ApplicationHanlders.Find should not be called");
@@ -102,7 +102,7 @@ namespace Handsey.Tests
             _iocContainer.Setup(i => i.ResolveAll<Mock<IHandler>>()).
                 Returns(new Mock<IHandler>[1] { new Mock<IHandler>() });
 
-            await _application.InvokeAsync(trigger.Object);
+            Assert.That(await _application.InvokeAsync(trigger.Object), Is.True);
 
             _handlerFactory.Verify(h => h.Create(It.Is<Type>(t => t == typeof(Mock<IHandler>))), Times.Never(), "HandlerFactory.Create should not be called");
             _applicationHandlers.Verify(a => a.Find(It.IsAny<HandlerInfo>(), It.IsAny<IHandlerSearch>()), Times.Never(), "ApplicationHanlders.Find should not be called");
@@ -122,7 +122,7 @@ namespace Handsey.Tests
             _iocContainer.Setup(i => i.ResolveAll<Mock<IHandler>>()).
                 Returns(new Mock<IHandler>[2] { new Mock<IHandler>(), new Mock<IHandler>() });
 
-            _application.Invoke<Mock<IHandler>>(trigger.Object);
+            Assert.That(_application.Invoke<Mock<IHandler>>(trigger.Object), Is.True);
 
             trigger.Verify(t => t(It.IsAny<Mock<IHandler>>()), Times.Exactly(2));
         }
@@ -135,7 +135,7 @@ namespace Handsey.Tests
             _iocContainer.Setup(i => i.ResolveAll<Mock<IHandler>>()).
                 Returns(new Mock<IHandler>[2] { new Mock<IHandler>(), new Mock<IHandler>() });
 
-            await _application.InvokeAsync(trigger.Object);
+            Assert.That(await _application.InvokeAsync(trigger.Object), Is.True);
 
             trigger.Verify(t => t(It.IsAny<Mock<IHandler>>()), Times.Exactly(2));
         }
@@ -179,7 +179,7 @@ namespace Handsey.Tests
             _applicationHandlers.Setup(a => a.Find(It.IsAny<HandlerInfo>(), It.IsAny<IHandlerSearch>()))
                 .Returns<IEnumerable<HandlerInfo>>(null);
 
-            Assert.That(() => _application.Invoke<Mock<IHandler>>(trigger.Object), Throws.Exception.TypeOf<HandlerNotFoundException>());
+            Assert.That(_application.Invoke<Mock<IHandler>>(trigger.Object), Is.False);
             trigger.Verify(t => t(It.IsAny<Mock<IHandler>>()), Times.Never);
             _handlerFactory.Verify(h => h.Create(It.Is<Type>(t => t == typeof(Mock<IHandler>))), Times.Once(), "All call create handler once");
             _applicationHandlers.Verify(a => a.Find(It.IsAny<HandlerInfo>(), It.IsAny<IHandlerSearch>()), Times.Once(), "Should only try to find handlers once");
@@ -196,7 +196,7 @@ namespace Handsey.Tests
             _applicationHandlers.Setup(a => a.Find(It.IsAny<HandlerInfo>(), It.IsAny<IHandlerSearch>()))
                 .Returns<IEnumerable<HandlerInfo>>(null);
 
-            Assert.That(async () => await _application.InvokeAsync(trigger.Object), Throws.Exception.TypeOf<HandlerNotFoundException>());
+            Assert.That(await _application.InvokeAsync(trigger.Object), Is.False);
             trigger.Verify(t => t(It.IsAny<Mock<IHandler>>()), Times.Never);
             _handlerFactory.Verify(h => h.Create(It.Is<Type>(t => t == typeof(Mock<IHandler>))), Times.Once(), "All call create handler once");
             _applicationHandlers.Verify(a => a.Find(It.IsAny<HandlerInfo>(), It.IsAny<IHandlerSearch>()), Times.Once(), "Should only try to find handlers once");
@@ -213,7 +213,7 @@ namespace Handsey.Tests
             _applicationHandlers.Setup(a => a.Find(It.IsAny<HandlerInfo>(), It.IsAny<IHandlerSearch>()))
                 .Returns(Enumerable.Empty<HandlerInfo>());
 
-            Assert.That(() => _application.Invoke<Mock<IHandler>>(trigger.Object), Throws.Exception.TypeOf<HandlerNotFoundException>());
+            Assert.That(_application.Invoke<Mock<IHandler>>(trigger.Object), Is.False);
             trigger.Verify(t => t(It.IsAny<Mock<IHandler>>()), Times.Never);
             _handlerFactory.Verify(h => h.Create(It.Is<Type>(t => t == typeof(Mock<IHandler>))), Times.Once(), "All call create handler once");
             _applicationHandlers.Verify(a => a.Find(It.IsAny<HandlerInfo>(), It.IsAny<IHandlerSearch>()), Times.Once(), "Should only try to find handlers once");
@@ -230,7 +230,8 @@ namespace Handsey.Tests
             _applicationHandlers.Setup(a => a.Find(It.IsAny<HandlerInfo>(), It.IsAny<IHandlerSearch>()))
                 .Returns(Enumerable.Empty<HandlerInfo>());
 
-            Assert.That(async () => await _application.InvokeAsync<Mock<IHandler>>(trigger.Object), Throws.Exception.TypeOf<HandlerNotFoundException>());
+            Assert.That(await _application.InvokeAsync<Mock<IHandler>>(trigger.Object), Is.False);
+
             trigger.Verify(t => t(It.IsAny<Mock<IHandler>>()), Times.Never);
             _handlerFactory.Verify(h => h.Create(It.Is<Type>(t => t == typeof(Mock<IHandler>))), Times.Once(), "All call create handler once");
             _applicationHandlers.Verify(a => a.Find(It.IsAny<HandlerInfo>(), It.IsAny<IHandlerSearch>()), Times.Once(), "Should only try to find handlers once");
@@ -348,7 +349,7 @@ namespace Handsey.Tests
                     return new Mock<IHandler>[0];
                 });
 
-            _application.Invoke<Mock<IHandler>>(trigger.Object);
+            Assert.That(_application.Invoke<Mock<IHandler>>(trigger.Object), Is.True);
 
             _iocContainer.Verify(i => i.Register(It.IsAny<Type>(), It.IsAny<Type>(), It.IsAny<string>()), Times.Never(), "TYpe should have been registered");
             _iocContainer.Verify(i => i.ResolveAll<Mock<IHandler>>(), Times.Exactly(2), "TYpe should have been registered");
@@ -385,7 +386,7 @@ namespace Handsey.Tests
                     return new Mock<IHandler>[0];
                 });
 
-            await _application.InvokeAsync(trigger.Object);
+            Assert.That(await _application.InvokeAsync(trigger.Object), Is.True);
 
             _iocContainer.Verify(i => i.Register(It.IsAny<Type>(), It.IsAny<Type>(), It.IsAny<string>()), Times.Never(), "TYpe should have been registered");
             _iocContainer.Verify(i => i.ResolveAll<Mock<IHandler>>(), Times.Exactly(2), "TYpe should have been registered");
@@ -422,7 +423,7 @@ namespace Handsey.Tests
                     return new Mock<IHandler>[0];
                 });
 
-            _application.Invoke<Mock<IHandler>>(trigger.Object);
+            Assert.That(_application.Invoke<Mock<IHandler>>(trigger.Object), Is.True);
 
             _handlerFactory.Verify(h => h.Create(It.Is<Type>(t => t == typeof(Mock<IHandler>))), Times.Once(), "All call create handler once");
             _applicationHandlers.Verify(a => a.Find(It.IsAny<HandlerInfo>(), It.IsAny<IHandlerSearch>()), Times.Once(), "Should only try to find handlers once");
@@ -457,7 +458,7 @@ namespace Handsey.Tests
                     return new Mock<IHandler>[0];
                 });
 
-            await _application.InvokeAsync(trigger.Object);
+            Assert.That(await _application.InvokeAsync(trigger.Object), Is.True);
 
             _handlerFactory.Verify(h => h.Create(It.Is<Type>(t => t == typeof(Mock<IHandler>))), Times.Once(), "All call create handler once");
             _applicationHandlers.Verify(a => a.Find(It.IsAny<HandlerInfo>(), It.IsAny<IHandlerSearch>()), Times.Once(), "Should only try to find handlers once");
@@ -510,7 +511,7 @@ namespace Handsey.Tests
                     return new Mock<IHandler>[0];
                 });
 
-            _application.Invoke<Mock<IHandler>>(trigger.Object);
+            Assert.That(_application.Invoke<Mock<IHandler>>(trigger.Object), Is.True);
 
             _handlerFactory.Verify(h => h.Create(It.Is<Type>(t => t == typeof(Mock<IHandler>))), Times.Once(), "All call create handler once");
             _applicationHandlers.Verify(a => a.Find(It.IsAny<HandlerInfo>(), It.IsAny<IHandlerSearch>()), Times.Once(), "Should only try to find handlers once");
@@ -563,7 +564,7 @@ namespace Handsey.Tests
                     return new Mock<IHandler>[0];
                 });
 
-            await _application.InvokeAsync(trigger.Object);
+            Assert.That(await _application.InvokeAsync(trigger.Object), Is.True);
 
             _handlerFactory.Verify(h => h.Create(It.Is<Type>(t => t == typeof(Mock<IHandler>))), Times.Once(), "All call create handler once");
             _applicationHandlers.Verify(a => a.Find(It.IsAny<HandlerInfo>(), It.IsAny<IHandlerSearch>()), Times.Once(), "Should only try to find handlers once");

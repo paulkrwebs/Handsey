@@ -60,31 +60,24 @@ namespace Handsey
         /// </summary>
         /// <typeparam name="THandler"></typeparam>
         /// <param name="trigger"></param>
-        public void Invoke<THandler>(Action<THandler> trigger)
+        public bool Invoke<THandler>(Action<THandler> trigger)
         {
             if (!_applicationConfiguration.DynamicHandlerRegistration)
             {
                 // Try and invoke handlers
-                PerformCheck.IsTrue(() => !TryInvokeWithReadLock(ResolveHandlers<THandler>(), trigger)).
-                    Throw<RequestedHandlerNotRegsiteredException>(() =>
-                        new RequestedHandlerNotRegsiteredException("The handler of type "
-                        + typeof(THandler).FullName +
-                        " has not been registered. Turn on dynamic handler registration or call RegisterAll<THandler>()")
-                        );
-
-                return;
+                return TryInvokeWithReadLock(ResolveHandlers<THandler>(), trigger);
             }
 
             // try to resolve
             if (TryInvokeWithReadLock(ResolveHandlers<THandler>(), trigger))
-                return;
+                return true;
 
             // if we are here we couldn't resolve handlers
             if (!RegisterHandlersWithWriteLock<THandler>(trigger))
-                return;
+                return true;
 
             // Construct the handlers from the IOC container now we have registered them
-            TryInvokeWithReadLock(ResolveHandlers<THandler>(), trigger);
+            return TryInvokeWithReadLock(ResolveHandlers<THandler>(), trigger);
         }
 
         /// <summary>
@@ -97,13 +90,7 @@ namespace Handsey
         {
             if (!_applicationConfiguration.DynamicHandlerRegistration)
             {
-                // Try and invoke handlers
-                if (!await TryInvokeWithReadLockAsync(ResolveHandlers<THandler>(), trigger))
-                    throw new RequestedHandlerNotRegsiteredException("The handler of type "
-                        + typeof(THandler).FullName +
-                        " has not been registered. Turn on dynamic handler registration or call RegisterAll<THandler>()");
-
-                return true;
+                return await TryInvokeWithReadLockAsync(ResolveHandlers<THandler>(), trigger);
             }
 
             // try to resolve
@@ -150,22 +137,25 @@ namespace Handsey
             }
         }
 
-        private void RegisterHandlers<THandler>()
+        private bool RegisterHandlers<THandler>()
         {
             // create handler
             HandlerInfo toSearchFor = CreateHandler<THandler>();
 
             // Find
-            IList<HandlerInfo> handlersList = FindHandlers<THandler>(toSearchFor);
+            IEnumerable<HandlerInfo> handlers;
+            if (!TryFindHandlers<THandler>(toSearchFor, out handlers))
+                return false;
 
             // order
-            handlersList = Order(handlersList);
-
+            IList<HandlerInfo> handlersList = Order(handlers.ToList());
             // construct
             IEnumerable<Type> constructedTypes = ConstructTypes(toSearchFor, handlersList);
 
             // register handler
             RegisterTypesAsHandler<THandler>(constructedTypes);
+
+            return true;
         }
 
         private bool TryInvokeWithReadLock<THandler>(THandler[] handlers, Action<THandler> trigger)
@@ -252,32 +242,6 @@ namespace Handsey
         }
 
         /// <summary>
-        /// Finds handlers
-        /// </summary>
-        /// <typeparam name="THandler"></typeparam>
-        /// <param name="handlerTypeName"></param>
-        /// <param name="toSearchFor"></param>
-        /// <exception cref="HandlerNotFoundException"></exception>
-        /// <returns></returns>
-        private IList<HandlerInfo> FindHandlers<THandler>(HandlerInfo toSearchFor)
-        {
-            IEnumerable<HandlerInfo> handlersFound = null;
-            PerformCheck.IsTrue(() => !TryFindHandlers<THandler>(toSearchFor, out handlersFound)).
-                Throw<HandlerNotFoundException>(() =>
-                    new HandlerNotFoundException("The handler of type " + typeof(THandler).FullName + " could not be found")
-                    );
-
-            // check some are returned
-            IList<HandlerInfo> handlersList = handlersFound.ToList();
-            PerformCheck.IsTrue(() => !handlersList.Any())
-                .Throw<HandlerNotFoundException>(() =>
-                    new HandlerNotFoundException("The handler of type " + typeof(THandler).FullName + " could not be found")
-                    );
-
-            return handlersList;
-        }
-
-        /// <summary>
         /// Finds handlers in the ApplicationHandlers object
         /// </summary>
         /// <param name="toSearchFor"></param>
@@ -286,7 +250,7 @@ namespace Handsey
         {
             // try to find
             handlersFound = _applicationHandlers.Find(toSearchFor, _handlerSearch);
-            return handlersFound != null;
+            return handlersFound != null && handlersFound.Any();
         }
 
         private IList<HandlerInfo> Order(IList<HandlerInfo> handlersList)
