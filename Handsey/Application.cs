@@ -56,7 +56,7 @@ namespace Handsey
         }
 
         /// <summary>
-        /// Invoke with dynamic regisration
+        /// Invoke with dynamic regisration (depends on application DynamicHandlerRegistration flag)
         /// </summary>
         /// <typeparam name="THandler"></typeparam>
         /// <param name="trigger"></param>
@@ -85,6 +85,38 @@ namespace Handsey
 
             // Construct the handlers from the IOC container now we have registered them
             TryInvokeWithReadLock(ResolveHandlers<THandler>(), trigger);
+        }
+
+        /// <summary>
+        /// Invoke handlers asynchronously with dynamic regisration (depends on application DynamicHandlerRegistration flag).
+        /// Dynamic registration occurs synchronously.
+        /// </summary>
+        /// <typeparam name="THandler"></typeparam>
+        /// <param name="trigger"></param>
+        public async Task<bool> InvokeAsync<THandler>(Func<THandler, Task> trigger)
+        {
+            if (!_applicationConfiguration.DynamicHandlerRegistration)
+            {
+                // Try and invoke handlers
+                if (!await TryInvokeWithReadLockAsync(ResolveHandlers<THandler>(), trigger))
+                    throw new RequestedHandlerNotRegsiteredException("The handler of type "
+                        + typeof(THandler).FullName +
+                        " has not been registered. Turn on dynamic handler registration or call RegisterAll<THandler>()");
+
+                return true;
+            }
+
+            // try to resolve
+            if (await TryInvokeWithReadLockAsync(ResolveHandlers<THandler>(), trigger))
+                return true;
+
+            // if we are here we couldn't resolve handlers
+            // There is no point performing an await" here because the method is thread blocking
+            if (!RegisterHandlersWithWriteLock<THandler>((h) => trigger(h)))
+                return true;
+
+            // Construct the handlers from the IOC container now we have registered them
+            return await TryInvokeWithReadLockAsync(ResolveHandlers<THandler>(), trigger);
         }
 
         /// <summary>
@@ -150,9 +182,36 @@ namespace Handsey
             }
         }
 
+        private async Task<bool> TryInvokeWithReadLockAsync<THandler>(THandler[] handlers, Func<THandler, Task> trigger)
+        {
+            // Enter read lock
+            Lock<THandler>.ReaderWriterLockSlim.EnterReadLock();
+            try
+            {
+                return await TryInvokeAsync<THandler>(handlers, trigger);
+            }
+            finally
+            {
+                Lock<THandler>.ReaderWriterLockSlim.ExitReadLock();
+            }
+        }
+
         private THandler[] ResolveHandlers<THandler>()
         {
             return _iocContainer.ResolveAll<THandler>();
+        }
+
+        private async Task<bool> TryInvokeAsync<THandler>(THandler[] handlers, Func<THandler, Task> trigger)
+        {
+            bool invoked = false;
+
+            foreach (THandler handle in handlers)
+            {
+                await trigger(handle);
+                invoked = true;
+            }
+
+            return invoked;
         }
 
         private bool TryInvoke<THandler>(THandler[] handlers, Action<THandler> trigger)
